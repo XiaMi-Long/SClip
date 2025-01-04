@@ -15,6 +15,19 @@ export default defineConfig({
         '@renderer': resolve('src/renderer/src')
       }
     },
+    // 配置scss 2.0版本过期标识，使用新的api
+    css: {
+      preprocessorOptions: {
+        scss: {
+          api: 'modern-compiler', // 或 "modern"，"legacy"
+          importers: [
+            // ...
+          ],
+        },
+      }
+    },
+
     plugins: [vue()]
-  }
+  },
+
 })
