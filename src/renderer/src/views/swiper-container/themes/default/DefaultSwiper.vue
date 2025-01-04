@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue'
 import { useSwiper } from './hooks'
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { Pagination, Keyboard } from 'swiper/modules';
+import VClipboardCard from '../../../../components/VClipboardCard/index.vue'
 import { useSwiperStore } from '@renderer/store/useSwiperStore'
 // 导入必要的样式
 import 'swiper/css'
@@ -30,7 +31,11 @@ onMounted(() => {
 <template>
     <div>
         <Swiper v-bind="swiperParams">
-            <SwiperSlide v-for="item in swiperStore.getSwiperLength" :key="item">12312</SwiperSlide>
+            <SwiperSlide v-for="item in swiperStore.getSwiperLength" :key="item">
+                <div class="clipboard-list">
+                    <VClipboardCard types="text" />
+                </div>
+            </SwiperSlide>
         </Swiper>
     </div>
 
@@ -38,7 +43,13 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .swiper {
-    width: 100vw;
     height: 100vh;
+
+    .clipboard-list {
+        height: 100vh;
+        width: 100vw;
+        box-sizing: border-box;
+        padding: 5px;
+    }
 }
 </style>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, onMounted, shallowRef, defineAsyncComponent, watch, ref } from 'vue'
 import { VSwiperProps } from './types'
+
+import { computed, onMounted, shallowRef, defineAsyncComponent, watch, ref } from 'vue'
 
 const props = defineProps<VSwiperProps>()
 
@@ -48,10 +49,14 @@ watch(
 </script>
 
 <template>
-    <div>
+    <div class="swiper-container">
         <component v-if="currentComponent" :is="currentComponent" v-bind="{ ...props, }" />
     </div>
 
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.swiper-container {
+    height: 100vh;
+}
+</style>

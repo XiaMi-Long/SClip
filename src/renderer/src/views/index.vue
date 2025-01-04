@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import VSwiper from './VSwiper/index.vue'
+import SwiperContainer from './swiper-container/index.vue'
 </script>
 
 <template>
     <div>
-        <VSwiper theme="default" />
+        <SwiperContainer theme="default" />
     </div>
 </template>
 

@@ -1,0 +1,8 @@
+:root {
+    --clipboard-list-bg: #ffffff;
+}
+
+/* 剪贴板列表背景 */
+body {
+    background-color: var(--clipboard-list-bg);
+}
