@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { useSwiper } from './hooks'
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { Pagination, Keyboard } from 'swiper/modules';
-import VClipboardCard from '../../../../components/VClipboardCard/index.vue'
+import VClipboardCard from "./card/index.vue"
+import { useConfigStore } from '@renderer/store/useConfigStore'
 import { useSwiperStore } from '@renderer/store/useSwiperStore'
+import { useClipboardStore } from '@renderer/store/useClipboardStore'
 // 导入必要的样式
 import 'swiper/css'
 import 'swiper/css/pagination';
 import 'swiper/css/keyboard';
 // const { } = useSwiper()
+const configStore = useConfigStore()
 const swiperStore = useSwiperStore()
+const clipboardStore = useClipboardStore()
 const swiperParams = ref({
     keyboard: {
         enabled: true,
@@ -18,22 +21,28 @@ const swiperParams = ref({
     },
     modules: [Pagination, Keyboard],
 })
-
-function initSwiper() {
-
-}
-
 onMounted(() => {
-    initSwiper()
+
 })
 </script>
 
 <template>
     <div>
         <Swiper v-bind="swiperParams">
-            <SwiperSlide v-for="item in swiperStore.getSwiperLength" :key="item">
+            <!-- 循环swiper长度 -->
+            <SwiperSlide v-for="(swiper_item, swiper_index) in swiperStore.getSwiperLength" :key="swiper_index">
+
                 <div class="clipboard-list">
-                    <VClipboardCard types="text" />
+
+                    <!-- 循环swiper内部card长度 -->
+                    <template v-for="(card_item, card_index) in configStore.swiperConfig.swiperShowCount">
+
+                        <!-- 注释计算方式：swiper_index * configStore.swiperConfig.swiperShowCount + card_index -->
+                        <VClipboardCard
+                            :clipboardOptions="clipboardStore.getClipboard[swiper_index * configStore.swiperConfig.swiperShowCount + card_index]" />
+
+                    </template>
+
                 </div>
             </SwiperSlide>
         </Swiper>

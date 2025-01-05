@@ -34,7 +34,7 @@ const currentComponent = shallowRef()
  * 加载对应主题的组件
  * @param theme - 轮播图主题类型
  */
-const loadComponent = (theme: SwiperTheme) => {
+const loadComponent = (theme: string) => {
     currentComponent.value = asyncComponents[theme]
 }
 

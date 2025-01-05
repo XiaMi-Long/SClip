@@ -7,7 +7,7 @@ export const useClipboardStore = defineStore('clipboard', {
         /**
          * 剪贴板列表
          */
-        clipboardList: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        clipboardList: []
     }),
     getters: {
         /**
@@ -26,6 +26,15 @@ export const useClipboardStore = defineStore('clipboard', {
             const configStore = useConfigStore()
             const swiperConfig = configStore.getSwiperConfig
             return Math.ceil(this.clipboardList.length / swiperConfig.swiperShowCount)
+        }
+    },
+    actions: {
+        /**
+         * 设置剪贴板列表
+         * @param {Array} list 剪贴板列表
+         */
+        pushClipboard(list: any) {
+            this.clipboardList.unshift(list)
         }
     }
 })

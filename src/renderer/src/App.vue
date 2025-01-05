@@ -1,7 +1,16 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import { RouterView } from 'vue-router'
+import { useClipboardStore } from './store/useClipboardStore'
 
-const ipcHandle = () => window.electron.ipcRenderer.send('ping')
+onMounted(() => {
+  window.clipboard.getClipboard((lastCopy) => {
+    console.log(lastCopy);
+
+    useClipboardStore().pushClipboard(lastCopy)
+  })
+})
+
 </script>
 
 <template>

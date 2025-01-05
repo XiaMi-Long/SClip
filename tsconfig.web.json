@@ -3,6 +3,8 @@
   "include": [
     "src/renderer/src/env.d.ts",
     "src/renderer/src/**/*",
+    "src/types/global.d.ts",
+    "src/types/plist.d.ts",
     "src/renderer/src/**/*.vue",
     "src/preload/*.d.ts"
   ],

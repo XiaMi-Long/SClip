@@ -1,7 +1,17 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { loopReadClipboard } from './clipboard/index'
+import { registerGlobalShortcut } from './command/index'
+import { app, shell, BrowserWindow, ipcMain, clipboard } from 'electron'
+import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+
+// import clipboard from './clipboard/index'
+// const {  } = require('electron')
+console.log(clipboard.readImage(), clipboard.readImage().toPNG())
+console.log(clipboard.readText())
+console.log(clipboard.readRTF())
+console.log(clipboard.readHTML())
+console.log(clipboard.readBookmark())
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
@@ -21,6 +31,7 @@ function createWindow(): void {
     mainWindow.show()
     mainWindow.maximizable = false
     mainWindow.resizable = false
+    mainWindow.setAlwaysOnTop(true, 'screen-saver')
     // 打开开发者工具
     mainWindow.webContents.openDevTools()
   })
@@ -36,11 +47,15 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+
+  // 监听剪贴板
+  loopReadClipboard(mainWindow)
 }
 
 
 app.whenReady().then(() => {
-
+  // 注册全局快捷键
+  registerGlobalShortcut()
   electronApp.setAppUserModelId('com.electron')
 
 
