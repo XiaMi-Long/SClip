@@ -9,15 +9,6 @@ import { promisify } from 'util'
 import fs from 'fs'
 const execAsync = promisify(exec)
 
-interface ClipboardState {
-    type: 'text' | 'html' | 'image' | 'file' | 'url'          // 剪贴板格式
-    contentHash?: string     // 内容哈希
-    timestamp: number        // 时间戳
-    content: string         // 内容 真正传输到渲染进程展示的内容
-    text: string            // 文本 目前只用于本地文件的判断和使用，其他两类不涉及
-    meta: any
-    time: number
-}
 let lastState: ClipboardState = {
     type: 'text',
     timestamp: 0,

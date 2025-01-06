@@ -22,6 +22,7 @@ const swiperParams = ref({
     modules: [Pagination, Keyboard],
 })
 onMounted(() => {
+    console.log(configStore.getSetting);
 
 })
 </script>
@@ -35,11 +36,11 @@ onMounted(() => {
                 <div class="clipboard-list">
 
                     <!-- 循环swiper内部card长度 -->
-                    <template v-for="(card_item, card_index) in configStore.swiperConfig.swiperShowCount">
+                    <template v-for="(card_item, card_index) in configStore.getSetting.swiperShowCount">
 
                         <!-- 注释计算方式：swiper_index * configStore.swiperConfig.swiperShowCount + card_index -->
                         <VClipboardCard
-                            :clipboardOptions="clipboardStore.getClipboard[swiper_index * configStore.swiperConfig.swiperShowCount + card_index]" />
+                            :clipboardOptions="clipboardStore.getClipboard[swiper_index * configStore.getSetting.swiperShowCount + card_index]" />
 
                     </template>
 

@@ -2,20 +2,21 @@ import { defineStore } from 'pinia'
 
 export const useConfigStore = defineStore('config', {
     state: () => ({
-        swiperConfig: {
-            /**
-             * 每页显示的swiper数量
-             */
+        setting: {
+            isShowHtmlClipboard: false,
+            isGlobalShortcut: true,
+            isSwipeClipboardCard: true,
             swiperShowCount: 3,
         }
     }),
     getters: {
-        /**
-         * 获取swiper配置
-         * @returns {Object} swiper配置
-         */
-        getSwiperConfig() {
-            return this.swiperConfig
+        getSetting(): Setting {
+            return this.setting
+        }
+    },
+    actions: {
+        setSetting(setting: Setting) {
+            this.setting = setting
         }
     }
 })

@@ -2,7 +2,7 @@
 import { onMounted, useTemplateRef, ref } from 'vue'
 
 const props = defineProps<{
-    clipboardOptions: ClipboardOptions
+    clipboardOptions: ClipboardState
 }>()
 
 const clipboardCardImage = useTemplateRef('clipboardCardImage')

@@ -3,7 +3,7 @@ import { ref, computed } from 'vue'
 import TextCard from './card-style/text.vue'
 import ImageCard from './card-style/image.vue'
 const props = defineProps<{
-    clipboardOptions: ClipboardOptions
+    clipboardOptions: ClipboardState
 }>()
 
 const cardStyle = ref({

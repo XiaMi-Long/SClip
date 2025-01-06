@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 
 const props = defineProps<{
-    clipboardOptions: ClipboardOptions
+    clipboardOptions: ClipboardState
 }>()
 
 console.log(props.clipboardOptions);
