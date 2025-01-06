@@ -2,16 +2,8 @@ import { join } from 'path'
 import icon from '../../resources/icon.png?asset'
 import { loopReadClipboard } from './clipboard/index'
 import { registerGlobalShortcut } from './command/index'
-import { app, shell, BrowserWindow, ipcMain, clipboard } from 'electron'
+import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-
-// import clipboard from './clipboard/index'
-// const {  } = require('electron')
-console.log(clipboard.readImage(), clipboard.readImage().toPNG())
-console.log(clipboard.readText())
-console.log(clipboard.readRTF())
-console.log(clipboard.readHTML())
-console.log(clipboard.readBookmark())
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({

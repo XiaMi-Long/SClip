@@ -1,111 +1,204 @@
 import { clipboard } from 'electron'
 import { BrowserWindow } from 'electron'
 import { SETTING } from '../config/setting'
+import { createHash } from 'crypto'
+import { Logger } from '../utils/logger'
+import { DBManager } from '../database/index'
+import { exec } from 'child_process'
+import { promisify } from 'util'
+import fs from 'fs'
+const execAsync = promisify(exec)
 
-// /**
-//  * 监听剪贴板
-//  * @param {BrowserWindow} mainWindow 主窗口
-//  */
-function loopReadClipboard(mainWindow: BrowserWindow) {
-    let lastCopy = ""
-    setInterval(() => {
-        console.log("正在监听剪贴板：");
-        console.log("剪贴板支持的格式：", clipboard.availableFormats());
-        const { hasText, hasHtml, hasImage, hasFile } = checkClipboardContent()
-        console.log(`文本: ${hasText}, HTML: ${hasHtml}, 图片: ${hasImage}, 文件: ${hasFile}`);
-
-
-        // let currentContent: any = null;
-        // let type = '';
-        // let meta = {};
-
-        // function getClipboard() {
-        //     {
-        //         // 获取剪贴板中的文件路径
-        //         const hasFileFormat = clipboard.has('public.image') // Mac 特定格式
-        //             || clipboard.has('FileNameW') // Windows 格式
-
-        //         if (hasFileFormat) {
-        //             console.log("有文件");
-
-        //             // 如果是文件，直接尝试读取图片内容
-        //             const image = clipboard.readImage()
-        //             if (!image.isEmpty()) {
-        //                 currentContent = image.toDataURL()
-        //                 type = 'image'
-        //                 meta = {
-        //                     origin: 'local-file'
-        //                 }
-        //             }
-
-        //         }
-        //     }
-
-        //     {
-        //         // 获取剪贴板中的文本
-        //         const text = clipboard.readText()
-        //         console.log(text)
-        //         if (text.length === 0) {
-        //             // 没有文本，检查是否为图片
-        //             const image = clipboard.readImage()
-        //             if (!image.isEmpty()) {
-        //                 currentContent = image.toDataURL();
-        //                 type = 'image';
-        //             }
-        //         } else {
-        //             // 有文本，根据设置判断是普通文本还是 HTML
-        //             if (SETTING.isShowHtmlClipboard) {
-        //                 const html = clipboard.readHTML()
-        //                 currentContent = html;
-        //                 type = 'html';
-
-        //             } else {
-        //                 currentContent = text;
-        //                 type = 'text';
-        //             }
-        //         }
-        //     }
-
-
-        // }
-
-        // getClipboard()
-
-        // // 内容变化时发送
-        // if (currentContent && currentContent !== lastCopy) {
-        //     lastCopy = currentContent;
-        //     mainWindow.webContents.send('get-clipboard', {
-        //         content: currentContent,
-        //         time: new Date().getTime(),
-        //         type: type,
-        //         meta: meta
-        //     });
-        // }
-    }, 1000);
+interface ClipboardState {
+    type: 'text' | 'html' | 'image' | 'file' | 'url'          // 剪贴板格式
+    contentHash?: string     // 内容哈希
+    timestamp: number        // 时间戳
+    content: string         // 内容 真正传输到渲染进程展示的内容
+    text: string            // 文本 目前只用于本地文件的判断和使用，其他两类不涉及
+    meta: any
+    time: number
+}
+let lastState: ClipboardState = {
+    type: 'text',
+    timestamp: 0,
+    contentHash: '',
+    text: '',
+    content: '',
+    meta: {},
+    time: 0,
 }
 
-function checkClipboardContent() {
-    // 检查文本
-    const hasText = clipboard.has('text/plain')
-        || clipboard.has('public.utf8-plain-text')
-        || clipboard.has('CF_UNICODETEXT')
+const db = DBManager.getInstance()
+function loopReadClipboard(mainWindow: BrowserWindow) {
 
-    // 检查HTML
-    const hasHtml = clipboard.has('text/html')
-        || clipboard.has('public.html')
-        || clipboard.has('HTML Format')
+    setInterval(async () => {
+        Logger.info('Clipboard', '正在监听剪贴板')
+        Logger.debug('Clipboard', '剪贴板支持的格式', clipboard.availableFormats())
 
-    // 检查图片
-    const hasImage = clipboard.has('image/png')
-        || clipboard.has('public.image')
-        || clipboard.has('CF_DIB')
 
-    // 检查文件
-    const hasFile = clipboard.has('text/uri-list')
-        || clipboard.has('public.file-url')
-        || clipboard.has('FileNameW')
+        const text = clipboard.readText()
+        Logger.debug('Clipboard', '剪贴板文本', text)
+        const clipboardTypes = clipboard.availableFormats()
 
-    return { hasText, hasHtml, hasImage, hasFile }
+        if (clipboardTypes.includes('text/uri-list')) {
+            Logger.info('Clipboard', '检测到文件')
+            if (text === lastState.text) {
+                Logger.debug('Clipboard', '文件内容相同')
+                return
+            }
+            lastState.text = text
+            const actualPath = await getActualPath()
+            const imageBase64 = await getImageBase64(actualPath)
+            const time = new Date().getTime()
+            if (imageBase64) {
+                lastState.content = imageBase64
+                lastState.type = 'image'
+                lastState.timestamp = time
+                lastState.meta = {
+                    origin: 'local-file',
+                }
+                sendClipboardContent(mainWindow)
+            } else {
+                lastState.content = text
+                lastState.type = 'text'
+                lastState.timestamp = time
+                lastState.meta = {
+                    origin: 'local-file-no-image',
+                }
+                sendClipboardContent(mainWindow)
+                Logger.info('Clipboard', '文件不是图片')
+            }
+            return
+        }
+
+        if (clipboardTypes.includes('image/png')) {
+            Logger.info('Clipboard', '检测到图片')
+            let contentHash = ''
+            const imageBuffer = clipboard.readImage().toPNG()
+            contentHash = createHash('md5')
+                .update(imageBuffer.subarray(0, 1024))
+                .digest('hex')
+            if (contentHash === lastState.contentHash) {
+                Logger.debug('Clipboard', '图片内容相同')
+                return
+            }
+
+            lastState.contentHash = contentHash
+            lastState.content = clipboard.readImage().toDataURL()
+            lastState.type = 'image'
+            lastState.timestamp = new Date().getTime()
+            sendClipboardContent(mainWindow)
+        }
+
+        if (clipboardTypes.includes('text/plain') || clipboardTypes.includes('text/html')) {
+            let contentHash = ''
+            contentHash = createHash('md5')
+                .update(text)
+                .digest('hex')
+            if (contentHash === lastState.contentHash) {
+                Logger.debug('Clipboard', '文本内容相同')
+                return
+            }
+            lastState.contentHash = contentHash
+            if (SETTING.isShowHtmlClipboard) {
+                lastState.content = clipboard.readHTML()
+                lastState.type = 'html'
+            } else {
+                lastState.content = text
+                lastState.type = 'text'
+            }
+            lastState.timestamp = new Date().getTime()
+            sendClipboardContent(mainWindow)
+        }
+        Logger.debug('Clipboard', '分割线', '--------------------------------')
+
+    }, 1000)
+}
+
+/**
+ * 处理mac和window系统图片路径函数
+ * @param {string} path 图片路径
+ * @returns {string} 处理后的图片路径
+ */
+async function getActualPath(): Promise<string> {
+    try {
+        let buffer
+        let filePathStr = ''
+        if (process.platform === 'darwin') {
+            // macOS
+            buffer = clipboard.readBuffer('public.file-url')
+        } else if (process.platform === 'win32') {
+            // Windows
+            buffer = clipboard.readBuffer('FileNameW')
+        } else {
+            // Linux
+            buffer = clipboard.readBuffer('text/uri-list')
+        }
+
+        if (buffer) {
+            // 转换 Buffer 为字符串
+            filePathStr = buffer.toString('utf8')
+            Logger.info('Clipboard', '文件路径:', filePathStr)
+        }
+
+        // Mac 系统
+        if (process.platform === 'darwin') {
+            if (filePathStr.includes('.file/id=')) {
+                const script = `osascript -e 'get POSIX path of ((POSIX file "${filePathStr}") as alias)'`
+                const { stdout } = await execAsync(script)
+                return stdout.trim()
+            }
+            return decodeURIComponent(filePathStr.replace('file://', ''))
+        }
+
+        // Windows 系统
+        if (process.platform === 'win32') {
+            // 移除 file:// 前缀
+            let windowsPath = filePathStr.replace('file:///', '')
+            // 解码 URL 编码的字符
+            windowsPath = decodeURIComponent(windowsPath)
+            // 替换正斜杠为反斜杠
+            windowsPath = windowsPath.replace(/\//g, '\\')
+            return windowsPath
+        }
+
+        // Linux 系统
+        return decodeURIComponent(filePathStr.replace('file://', ''))
+    } catch (error) {
+        Logger.error('Clipboard', '路径转换错误:', error)
+        return ''
+    }
+}
+
+/**
+ * 根据文件路径文件的后缀名判断是否为图片，如果是图片获取base64
+ * @param {string} path 文件路径
+ * @returns {Promise<string>} 返回base64字符串的Promise
+ */
+async function getImageBase64(path: string): Promise<string> {
+    const ext = path.split('.').pop()
+    if (ext === 'png' || ext === 'jpg' || ext === 'jpeg' || ext === 'gif' || ext === 'bmp' || ext === 'tiff' || ext === 'ico') {
+        const buffer = await fs.readFileSync(path)
+        return 'data:image/' + ext + ';base64,' + buffer.toString('base64')
+    }
+    return ''
+}
+
+/**
+ * 发送剪贴板内容
+ * @param {BrowserWindow} mainWindow 主窗口
+ */
+function sendClipboardContent(mainWindow: BrowserWindow) {
+    const id = db.insertClipboardItem({
+        content: lastState.content,
+        type: lastState.type,
+        contentHash: lastState.contentHash || '',
+        meta: lastState.meta
+    })
+    Logger.info('Database', `保存剪贴板记录 ID: ${id}`)
+    mainWindow.webContents.send('get-clipboard', {
+        ...lastState
+    });
 }
 
 export { loopReadClipboard }

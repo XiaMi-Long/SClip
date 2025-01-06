@@ -36,7 +36,7 @@ const cardType = computed(() => {
 <style scoped lang="scss">
 .clipboard-card-container {
     // 计算高度：(362px - 15px margin) / 3 cards ≈ 115px
-    height: 137px;
+    height: 136px;
     box-sizing: border-box;
     box-shadow: 0 2px 4px rgb(132 132 132 / 10%);
 
@@ -47,24 +47,27 @@ const cardType = computed(() => {
     // 确保内容不会溢出
     overflow: hidden;
 
+    margin-bottom: 2px;
+
     cursor: pointer;
 
     color: #3c3c43;
 
-    font-size: 14px;
+    font-size: 12px;
 
     border-radius: 5px;
+
 }
 
 // 卡片样式
 .clipboard-card {
-    height: 100vh;
+    height: 100%;
     padding: 10px;
 }
 
 // 图片类型卡片
 .image-type-card {
-    padding: 0px;
+    padding: 2px 0px;
     height: 100%;
 }
 </style>

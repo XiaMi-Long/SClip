@@ -4,14 +4,24 @@ import { ref } from 'vue'
 const props = defineProps<{
     clipboardOptions: ClipboardOptions
 }>()
-const clipboardOptions = ref(props.clipboardOptions)
+
+console.log(props.clipboardOptions);
+
 </script>
 
 <template>
-    <div>
-        {{ props.clipboardOptions }}
+    <div class="clipboard-card-text-container">
+        <!-- {{ props.clipboardOptions }} -->
+        <!-- <br> -->
         {{ props.clipboardOptions.content }}
     </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.clipboard-card-text-container {
+    height: 90%;
+    overflow: hidden;
+    white-space: pre;
+    word-wrap: break-word;
+}
+</style>
