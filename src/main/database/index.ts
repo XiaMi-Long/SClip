@@ -48,12 +48,7 @@ export class DBManager {
     /**
      * 插入剪贴板记录
      */
-    public insertClipboardItem(data: {
-        content: string
-        type: string
-        contentHash: string
-        meta?: any
-    }): number {
+    public insertClipboardItem(data: ClipboardState): number {
         const stmt = this.db.prepare(`
             INSERT INTO clipboard_history (content, type, content_hash, meta, created_at)
             VALUES (?, ?, ?, ?, ?)
@@ -64,7 +59,7 @@ export class DBManager {
             data.type,
             data.contentHash,
             data.meta ? JSON.stringify(data.meta) : null,
-            Date.now()
+            data.timestamp
         )
 
         return result.lastInsertRowid as number

@@ -47,8 +47,6 @@ const cardType = computed(() => {
     // 确保内容不会溢出
     overflow: hidden;
 
-    margin-bottom: 2px;
-
     cursor: pointer;
 
     color: #3c3c43;
@@ -63,7 +61,9 @@ const cardType = computed(() => {
 .clipboard-card {
     height: 100%;
     padding: 10px;
+
 }
+
 
 // 图片类型卡片
 .image-type-card {

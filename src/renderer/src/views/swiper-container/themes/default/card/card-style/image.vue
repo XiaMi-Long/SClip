@@ -10,9 +10,32 @@ const objectFit = ref<'contain' | 'cover'>('cover')
 
 // 设置宽高比阈值
 const RATIO_THRESHOLD = {
-    MIN: 0.5,    // 高度是宽度的2倍以上认为是过长
-    MAX: 2       // 宽度是高度的2倍以上认为是过宽
+    MIN: 0.5,
+    MAX: 2
 }
+
+// 生成 -10 到 10 之间的随机数
+const getRandomPosition = () => Math.random() * 20 - 18
+
+// 定义浮动动画
+const imgMotion = ref({
+    initial: {
+        scale: 1.1,
+        x: 0,
+        y: 0
+    },
+    visible: {  // 使用 visible 实现持续动画
+        scale: 1.1,
+        x: 0,  // 初始值
+        y: 0,  // 初始值
+        transition: {
+            duration: 6000,
+            repeat: Infinity,
+            repeatType: 'reverse', // 反向重复
+            ease: "easeInOut"
+        }
+    }
+})
 
 /**
  * 处理图片加载完成事件
@@ -48,6 +71,10 @@ onMounted(() => {
             handleImageLoad()
         }
         img.addEventListener('load', handleImageLoad)
+
+        // 动态更新 x 和 y 的值
+        imgMotion.value.visible.x = getRandomPosition()
+        imgMotion.value.visible.y = getRandomPosition()
     }
 })
 </script>
@@ -55,7 +82,7 @@ onMounted(() => {
 <template>
     <div class="clipboard-card-image-container">
         <img :src="props.clipboardOptions.content" alt="" class="clipboard-card-image" ref="clipboardCardImage"
-            :style="{ objectFit }">
+            :style="{ objectFit }" v-motion="imgMotion">
     </div>
 </template>
 
@@ -63,11 +90,14 @@ onMounted(() => {
 .clipboard-card-image-container {
     width: 100%;
     height: 100%;
+    overflow: hidden; // 防止放大后溢出
 }
 
 .clipboard-card-image {
     width: 100%;
     height: 100%;
     border-radius: 5px;
+    will-change: transform; // 优化动画性能
+
 }
 </style>

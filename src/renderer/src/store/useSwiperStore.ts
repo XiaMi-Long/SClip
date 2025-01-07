@@ -13,7 +13,7 @@ export const useSwiperStore = defineStore('swiper', {
          * 获取swiper长度
          * @returns {number} swiper长度
          */
-        getSwiperLength() {
+        getSwiperLength(): number {
             const clipboardStore = useClipboardStore()
             this.swiperLength = clipboardStore.getClipboardLength
             // 如果swiper长度为0，则设置为1

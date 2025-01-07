@@ -5,11 +5,10 @@ import { useClipboardStore } from './store/useClipboardStore'
 import { useConfigStore } from './store/useConfigStore';
 
 onMounted(() => {
-  window.clipboard.getClipboard((lastCopy: ClipboardState) => {
-    console.log(lastCopy);
-    useClipboardStore().pushClipboard(lastCopy)
+  window.clipboard.setClipboard((clipboardState: ClipboardState[]) => {
+    useClipboardStore().pushClipboard(clipboardState)
   })
-  window.setting.getSetting((setting: Setting) => {
+  window.setting.setSetting((setting: Setting) => {
     useConfigStore().setSetting(setting)
   })
 })

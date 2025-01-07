@@ -3,10 +3,10 @@ import { ElectronAPI } from '@electron-toolkit/preload'
 declare global {
   interface Window {
     clipboard: {
-      getClipboard: (callback: (lastCopy: any) => void) => void
+      setClipboard: (callback: (clipboardState: ClipboardState[]) => void) => void
     },
     setting: {
-      getSetting: (callback: (setting: any) => void) => void
+      setSetting: (callback: (setting: Setting) => void) => void
     }
   }
 

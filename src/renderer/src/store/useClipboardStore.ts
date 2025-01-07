@@ -34,8 +34,8 @@ export const useClipboardStore = defineStore('clipboard', {
          * 设置剪贴板列表
          * @param {Array} list 剪贴板列表
          */
-        pushClipboard(list: ClipboardState): void {
-            this.clipboardList.unshift(list)
+        pushClipboard(list: ClipboardState[]): void {
+            this.clipboardList.unshift(...list)
         }
     }
 })

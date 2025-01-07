@@ -10,11 +10,19 @@ export const useConfigStore = defineStore('config', {
         }
     }),
     getters: {
+        /**
+         * 获取设置
+         * @returns {Setting} 设置
+         */
         getSetting(): Setting {
             return this.setting
         }
     },
     actions: {
+        /**
+         * 设置设置
+         * @param {Setting} setting 设置
+         */
         setSetting(setting: Setting) {
             this.setting = setting
         }

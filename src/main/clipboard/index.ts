@@ -3,10 +3,12 @@ import { BrowserWindow } from 'electron'
 import { SETTING } from '../config/setting'
 import { createHash } from 'crypto'
 import { Logger } from '../utils/logger'
-import { DBManager } from '../database/index'
 import { exec } from 'child_process'
 import { promisify } from 'util'
 import fs from 'fs'
+import sendRenderer from '../utils/send_renderer'
+import { setClipboardHistory } from '../utils/get_data_base'
+
 const execAsync = promisify(exec)
 
 let lastState: ClipboardState = {
@@ -19,22 +21,16 @@ let lastState: ClipboardState = {
     time: 0,
 }
 
-const db = DBManager.getInstance()
 function loopReadClipboard(mainWindow: BrowserWindow) {
 
     setInterval(async () => {
         Logger.info('Clipboard', '正在监听剪贴板')
-        Logger.debug('Clipboard', '剪贴板支持的格式', clipboard.availableFormats())
-
-
         const text = clipboard.readText()
         Logger.debug('Clipboard', '剪贴板文本', text)
         const clipboardTypes = clipboard.availableFormats()
 
         if (clipboardTypes.includes('text/uri-list')) {
-            Logger.info('Clipboard', '检测到文件')
             if (text === lastState.text) {
-                Logger.debug('Clipboard', '文件内容相同')
                 return
             }
             lastState.text = text
@@ -48,7 +44,8 @@ function loopReadClipboard(mainWindow: BrowserWindow) {
                 lastState.meta = {
                     origin: 'local-file',
                 }
-                sendClipboardContent(mainWindow)
+                setClipboardHistory(lastState)
+                sendRenderer.setClipboard([lastState])
             } else {
                 lastState.content = text
                 lastState.type = 'text'
@@ -56,21 +53,21 @@ function loopReadClipboard(mainWindow: BrowserWindow) {
                 lastState.meta = {
                     origin: 'local-file-no-image',
                 }
-                sendClipboardContent(mainWindow)
+                setClipboardHistory(lastState)
+                sendRenderer.setClipboard([lastState])
                 Logger.info('Clipboard', '文件不是图片')
             }
             return
         }
 
         if (clipboardTypes.includes('image/png')) {
-            Logger.info('Clipboard', '检测到图片')
+
             let contentHash = ''
             const imageBuffer = clipboard.readImage().toPNG()
             contentHash = createHash('md5')
                 .update(imageBuffer.subarray(0, 1024))
                 .digest('hex')
             if (contentHash === lastState.contentHash) {
-                Logger.debug('Clipboard', '图片内容相同')
                 return
             }
 
@@ -78,7 +75,8 @@ function loopReadClipboard(mainWindow: BrowserWindow) {
             lastState.content = clipboard.readImage().toDataURL()
             lastState.type = 'image'
             lastState.timestamp = new Date().getTime()
-            sendClipboardContent(mainWindow)
+            setClipboardHistory(lastState)
+            sendRenderer.setClipboard([lastState])
         }
 
         if (clipboardTypes.includes('text/plain') || clipboardTypes.includes('text/html')) {
@@ -87,7 +85,7 @@ function loopReadClipboard(mainWindow: BrowserWindow) {
                 .update(text)
                 .digest('hex')
             if (contentHash === lastState.contentHash) {
-                Logger.debug('Clipboard', '文本内容相同')
+
                 return
             }
             lastState.contentHash = contentHash
@@ -99,11 +97,12 @@ function loopReadClipboard(mainWindow: BrowserWindow) {
                 lastState.type = 'text'
             }
             lastState.timestamp = new Date().getTime()
-            sendClipboardContent(mainWindow)
+            setClipboardHistory(lastState)
+            sendRenderer.setClipboard([lastState])
         }
         Logger.debug('Clipboard', '分割线', '--------------------------------')
 
-    }, 1000)
+    }, 1500)
 }
 
 /**
@@ -175,21 +174,6 @@ async function getImageBase64(path: string): Promise<string> {
     return ''
 }
 
-/**
- * 发送剪贴板内容
- * @param {BrowserWindow} mainWindow 主窗口
- */
-function sendClipboardContent(mainWindow: BrowserWindow) {
-    const id = db.insertClipboardItem({
-        content: lastState.content,
-        type: lastState.type,
-        contentHash: lastState.contentHash || '',
-        meta: lastState.meta
-    })
-    Logger.info('Database', `保存剪贴板记录 ID: ${id}`)
-    mainWindow.webContents.send('get-clipboard', {
-        ...lastState
-    });
-}
+
 
 export { loopReadClipboard }
