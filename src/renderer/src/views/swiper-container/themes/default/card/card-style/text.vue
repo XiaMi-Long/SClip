@@ -5,7 +5,6 @@ const props = defineProps<{
     clipboardOptions: ClipboardState
 }>()
 
-console.log(props.clipboardOptions);
 
 </script>
 

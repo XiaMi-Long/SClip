@@ -16,6 +16,7 @@ function createWindow(): void {
     height: 450,
     show: false,
     autoHideMenuBar: true,
+    // focusable: false,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
@@ -24,12 +25,13 @@ function createWindow(): void {
     }
   })
 
+
   mainWindow.on('ready-to-show', () => {
     if (mainWindow) {
       mainWindow.show()
       mainWindow.maximizable = false
       mainWindow.resizable = false
-      mainWindow.setAlwaysOnTop(true, 'screen-saver')
+      // mainWindow.setAlwaysOnTop(true, 'screen-saver')
 
       // 初始化剪贴板数据
       {
@@ -48,6 +50,7 @@ function createWindow(): void {
       mainWindow?.hide()
     }
   })
+
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)

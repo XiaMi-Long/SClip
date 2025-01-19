@@ -17,7 +17,7 @@ const cardType = computed(() => {
 
 
 </script>
-ß
+
 <template>
     <div class="clipboard-card-container">
         <div v-if="props?.clipboardOptions?.type" :class="cardType">

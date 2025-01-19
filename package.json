@@ -27,6 +27,7 @@
     "@vueuse/motion": "^2.2.6",
     "better-sqlite3": "^11.7.2",
     "electron-updater": "^6.1.7",
+    "gsap": "^3.12.5",
     "pinia": "^2.3.0",
     "sass-embedded": "^1.83.1",
     "swiper": "^11.2.0",

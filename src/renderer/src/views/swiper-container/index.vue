@@ -10,7 +10,7 @@ const props = defineProps<VSwiperProps>()
  */
 const asyncComponents = {
     default: defineAsyncComponent({
-        loader: () => import('./themes/default/DefaultSwiper.vue'),
+        loader: () => import('./themes/default/swiper.vue'),
         loadingComponent: () => import('../../components/VDefaultLoading/index.vue'),
         errorComponent: () => import('../../components/VErrorLoding/index.vue'),
         delay: 200,
