@@ -1,9 +1,7 @@
 import { join } from 'path'
 import sendRenderer from './utils/send_renderer'
 import icon from '../../resources/icon.png?asset'
-import { appOnEvent } from './utils/app_on_event'
 import { loopReadClipboard } from './clipboard/index'
-import { registerGlobalShortcut } from './command/index'
 import { getClipboardHistory } from './utils/get_data_base'
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
@@ -71,9 +69,6 @@ function createWindow(): void {
 
 
 app.whenReady().then(() => {
-  // 注册全局快捷键
-  registerGlobalShortcut()
-
   electronApp.setAppUserModelId('com.electron')
 
 
@@ -87,10 +82,6 @@ app.whenReady().then(() => {
   ipcMain.on('ping', () => console.log('pong'))
 
   createWindow()
-
-  // 初始化监听应用事件
-  appOnEvent()
-
 
   app.on('activate', function () {
     if (mainWindow === null) {

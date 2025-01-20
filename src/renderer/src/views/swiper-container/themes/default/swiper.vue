@@ -1,194 +1,39 @@
 <script setup lang="ts">
 import { onMounted, ref, useTemplateRef, watch, computed } from 'vue'
 import { Swiper, SwiperSlide } from 'swiper/vue'
-import { Pagination, Keyboard } from 'swiper/modules'
+
 import VClipboardCard from "./card/index.vue"
 import { useConfigStore } from '@renderer/store/useConfigStore'
 import { useSwiperStore } from '@renderer/store/useSwiperStore'
 import { useClipboardStore } from '@renderer/store/useClipboardStore'
 import { Swiper as SwiperClass } from 'swiper/types'
+import { useSwiper } from './hooks'
 
 // 导入样式
 import 'swiper/css'
 import 'swiper/css/pagination'
 import 'swiper/css/keyboard'
 
+const {
+    swiperInstance,
+    selectSwiper,
+    floatingBallXY,
+    floatingBallStyle,
+    swiperParams,
+    swiperShowCount,
+    handleKeyPress,
+    onSwiperInit,
+    getPageCards,
+    isFirstCard,
+    getCardKey,
+    getFloatingBallPosition
+} = useSwiper()
 
-const swiperInstance = ref<SwiperClass | null>(null)
-// 当前选中的swiper
-const selectSwiper = ref(0)
-const floatingBallXY = ref({
-    x: 275,
-    y: 5
-})
 const floatingBall = useTemplateRef('floatingBall')
 // 使用组合式API优化store调用
 const configStore = useConfigStore()
 const swiperStore = useSwiperStore()
 const clipboardStore = useClipboardStore()
-const swiperShowCount = ref(configStore.getSetting.swiperShowCount)
-
-// 键盘事件处理函数
-const handleKeyPress = (_swiper: SwiperClass, keyCode: number) => {
-    console.log('Key pressed:', keyCode)
-    switch (keyCode) {
-        case 39:
-            handleKeyPressRight()
-            break;
-        case 37:
-            handleKeyPressLeft()
-            break;
-        case 38:
-            handleKeyPressUp()
-            break;
-        case 40:
-            handleKeyPressDown()
-            break;
-        case 87:
-            handleKeyPressUp()
-            break;
-        case 83:
-            handleKeyPressDown()
-            break;
-        case 65:
-            if (swiperInstance.value) {
-                swiperInstance.value.slidePrev(500)
-            }
-            handleKeyPressLeft()
-            break;
-        case 68:
-            if (swiperInstance.value) {
-                swiperInstance.value.slideNext(500)
-            }
-            handleKeyPressRight()
-            break;
-        case 32:
-            // 空格选中
-            window.clipboard.getClipboard({
-                content: "123",
-                timestamp: 123,
-                type: "text",
-                text: "123",
-                meta: "123",
-                time: 123
-            })
-            break;
-        case 13:
-            // 空格选中
-            window.clipboard.getClipboard({
-                content: "123",
-                timestamp: 123,
-                type: "text",
-                text: "123",
-                meta: "123",
-                time: 123
-            })
-            break;
-    }
-    console.log("selectSwiper：", selectSwiper.value);
-
-}
-
-const floatingBallStyle = computed(() => {
-    return {
-        '--ball-x': `${floatingBallXY.value.x}px`,
-        '--ball-y': `${floatingBallXY.value.y}px`
-    }
-})
-
-const getFloatingBallPosition = () => {
-    if (swiperInstance.value === null) {
-        floatingBallXY.value = {
-            x: 275,
-            y: 5
-        }
-        return
-    }
-
-    const swiperActiveIndex = swiperInstance.value.activeIndex
-    console.log("swiperActiveIndex：", swiperActiveIndex);
-    floatingBallXY.value.x = 275 + 300 * swiperActiveIndex
-    floatingBallXY.value.y = 5
-
-    if (selectSwiper.value === 1) {
-        floatingBallXY.value.y = 140 + 5
-    }
-    if (selectSwiper.value === 2) {
-        floatingBallXY.value.y = 140 + 140 + 5
-    }
-
-}
-// 右键
-const handleKeyPressRight = () => {
-    console.log('Right key pressed');
-}
-// 左键
-const handleKeyPressLeft = () => {
-    console.log('Left key pressed');
-}
-// 上键
-const handleKeyPressUp = () => {
-    if (selectSwiper.value > 0) {
-        selectSwiper.value--
-    } else {
-        // 如果已经是第一个，则跳到最后一个
-        selectSwiper.value = swiperShowCount.value - 1
-    }
-}
-// 下键
-const handleKeyPressDown = () => {
-    if (selectSwiper.value < swiperShowCount.value - 1) {
-        selectSwiper.value++
-    } else {
-        // 如果已经是最后一个，则跳到第一个
-        selectSwiper.value = 0
-    }
-}
-
-// 抽离配置
-const swiperParams = ref({
-    keyboard: {
-        enabled: true,
-        onlyInViewport: false,
-    },
-    pagination: {
-        enabled: true,
-        dynamicBullets: true,
-        type: "bullets" as const
-    },
-    modules: [Pagination, Keyboard],
-    initialSlide: 0,
-    speed: 500
-})
-
-// 使用 onSwiper 来获取 Swiper 实例
-const onSwiperInit = (swiper: any) => {
-    swiperInstance.value = swiper
-    // 添加键盘事件监听
-    swiper.on('keyPress', handleKeyPress)
-    swiper.on('activeIndexChange', () => {
-        console.log("activeIndexChange");
-        getFloatingBallPosition()
-    })
-}
-
-// 计算每页的卡片数据
-const getPageCards = (pageIndex: number) => {
-    const startIndex = pageIndex * swiperShowCount.value
-    const endIndex = startIndex + swiperShowCount.value
-    return clipboardStore.getClipboard.slice(startIndex, endIndex)
-}
-
-// 判断是否是第一个卡片
-const isFirstCard = (swiperIndex: number, cardIndex: number): boolean => {
-    return swiperIndex === 0 && cardIndex === 0
-}
-
-// 生成卡片的key
-const getCardKey = (swiperIndex: number, cardIndex: number, timestamp: number): string => {
-    return isFirstCard(swiperIndex, cardIndex) ? `card-${timestamp}` : `card-${swiperIndex}-${cardIndex}`
-}
-
 
 watch(selectSwiper, () => {
     getFloatingBallPosition()
