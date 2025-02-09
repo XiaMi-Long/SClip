@@ -7,31 +7,23 @@ declare global {
 
     interface ClipboardState {
         type: ClipboardType          // 剪贴板格式
-        contentHash?: string     // 内容哈希
+        contentHash?: string     // 内容哈希，用于文本类型和普通的图片，取值为文件md5(content)，用于判断是否重复
         timestamp: number        // 时间戳
         content: string         // 内容 真正传输到渲染进程展示的内容
-        text: string            // 文本 目前只用于本地文件的判断和使用，其他两类不涉及
+        last_file_name_text: string            // 上一次的文件名，用于判断是否重复
         meta: any
-        time: number
     }
 
     interface Setting {
         /**
-         * 是否显示HTML剪贴板
+         * 应用主题
          */
-        isShowHtmlClipboard: boolean;
+        applicationTheme: 'light' | 'dark'
         /**
-         * 是否启用全局快捷键
+         * 剪贴板主题
          */
-        isGlobalShortcut: boolean;
-        /**
-         * 是否启用剪贴板卡片滑动
-         */
-        isSwipeClipboardCard: boolean;
-        /**
-         * 每页显示的剪贴板卡片数量
-         */
-        swiperShowCount: number;
+        clipboardTheme: 'default' | 'card'
+
     }
 }
 

@@ -1,6 +1,4 @@
-import { globalShortcut, BrowserWindow, screen } from 'electron'
-import { BrowserWindowManager } from './browser_window_manager'
-
+import { globalShortcut } from 'electron'
 /**
  * 全局快捷键管理类
  * 用于管理应用的全局快捷键注册和注销

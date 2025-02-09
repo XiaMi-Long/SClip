@@ -3,11 +3,9 @@ import { defineStore } from 'pinia'
 export const useConfigStore = defineStore('config', {
     state: () => ({
         setting: {
-            isShowHtmlClipboard: false,
-            isGlobalShortcut: true,
-            isSwipeClipboardCard: true,
-            swiperShowCount: 3,
-        }
+            applicationTheme: 'light',
+            clipboardTheme: 'default'
+        } as Setting
     }),
     getters: {
         /**
@@ -23,7 +21,7 @@ export const useConfigStore = defineStore('config', {
          * 设置设置
          * @param {Setting} setting 设置
          */
-        setSetting(setting: Setting) {
+        setSettingToRender(setting: Setting) {
             this.setting = setting
         }
     }

@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { VSwiperProps } from './types'
 
 import { computed, onMounted, shallowRef, defineAsyncComponent, watch, ref } from 'vue'
 
-const props = defineProps<VSwiperProps>()
+const props = defineProps<{
+    setting: Setting
+}>()
 
 /**
  * 动态导入组件映射
@@ -40,7 +41,7 @@ const loadComponent = (theme: string) => {
 
 // 监听主题变化，立即执行一次以加载初始组件
 watch(
-    () => props.theme,
+    () => props.setting.clipboardTheme,
     (newTheme) => {
         loadComponent(newTheme)
     },

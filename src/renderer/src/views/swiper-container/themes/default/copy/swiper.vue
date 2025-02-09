@@ -14,26 +14,55 @@ import 'swiper/css'
 import 'swiper/css/pagination'
 import 'swiper/css/keyboard'
 
-const { swiperServices, paginatedClipboardList, cardMotion } = useSwiper()
+const {
+    swiperInstance,
+    selectSwiper,
+    floatingBallXY,
+    floatingBallStyle,
+    swiperParams,
+    swiperShowCount,
+    handleKeyPress,
+    onSwiperInit,
+    getPageCards,
+    isFirstCard,
+    getCardKey,
+    getFloatingBallPosition
+} = useSwiper()
 
-console.log(paginatedClipboardList.value);
+const floatingBall = useTemplateRef('floatingBall')
+// 使用组合式API优化store调用
+const configStore = useConfigStore()
+const swiperStore = useSwiperStore()
+const clipboardStore = useClipboardStore()
 
-
+watch(selectSwiper, () => {
+    getFloatingBallPosition()
+})
 
 </script>
 
 <template>
     <div class="swiper-container">
-        <Swiper v-bind="swiperServices.params" @swiper="swiperServices.onSwiperInit" ref="swiperRef">
-            <SwiperSlide v-for="(pageItems, pageIndex) in paginatedClipboardList" :key="`page-${pageIndex}`">
+        <Swiper v-bind="swiperParams" @swiper="onSwiperInit" ref="swiperRef">
+            <SwiperSlide v-for="swiperIndex in swiperStore.getSwiperLength" :key="`page-${swiperIndex}`">
                 <div class="clipboard-list">
-
-                    <div v-if="pageIndex === 0" class="floating-ball" ref="floatingBall"
-                        :style="swiperServices.floatingBallStyle">
+                    <div v-if="swiperIndex === 1" class="floating-ball" ref="floatingBall" :style="floatingBallStyle">
                     </div>
 
-                    <div v-for="(card, cardIndex) in pageItems" :key="card.contentHash" class="card-wrapper">
-                        <VClipboardCard :clipboardOptions="card" v-motion="cardMotion(cardIndex)" />
+                    <div v-for="(card, cardIndex) in getPageCards(swiperIndex - 1)"
+                        :key="getCardKey(swiperIndex - 1, cardIndex, card.timestamp)" class="card-wrapper" v-motion="isFirstCard(swiperIndex - 1, cardIndex) ? {
+                            initial: { opacity: 0, y: -100 },
+                            enter: {
+                                opacity: 1,
+                                y: 0,
+                                transition: {
+                                    type: 'spring',
+                                    stiffness: 300,
+                                    damping: 15
+                                }
+                            }
+                        } : {}">
+                        <VClipboardCard :clipboardOptions="card" />
                     </div>
                 </div>
             </SwiperSlide>

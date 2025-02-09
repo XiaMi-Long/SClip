@@ -16,16 +16,6 @@ export const useClipboardStore = defineStore('clipboard', {
         getClipboard(): ClipboardState[] {
             return this.clipboardList
         },
-
-        /**
-         * 获取剪贴板列表长度
-         * @returns {number} 剪贴板列表长度
-         */
-        getClipboardLength(): number {
-            const configStore = useConfigStore()
-            const systemSetting = configStore.getSetting
-            return Math.ceil(this.clipboardList.length / systemSetting.swiperShowCount)
-        }
     },
     actions: {
         /**
@@ -33,6 +23,7 @@ export const useClipboardStore = defineStore('clipboard', {
          * @param {Array} list 剪贴板列表
          */
         pushClipboard(list: ClipboardState[]): void {
+            console.log(list);
             this.clipboardList.unshift(...list)
         }
     }

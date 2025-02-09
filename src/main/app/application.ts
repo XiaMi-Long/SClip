@@ -2,7 +2,9 @@ import { join } from 'path'
 import icon from '../../../resources/icon.png?asset'
 import { app, shell, BrowserWindow, ipcMain, BrowserWindowConstructorOptions, powerMonitor } from 'electron'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import { BrowserWindowManager } from "../utils/browser_window_manager";
+import { BrowserWindowManager } from "../window/window.manager";
+import { ClipboardManager } from '../clipboard';
+import { GlobalShortcut } from '../shortcuts/shortcut.manager.ts';
 
 /**
  * 基础事件注册接口
@@ -16,7 +18,7 @@ interface registerEvent {
  * 主窗口方法接口
  * 扩展自 registerEvent
  */
-interface MainWindowMethod extends registerEvent {
+interface WindowMethod extends registerEvent {
     getMainWindow(): BrowserWindow | undefined
     createMainWindow(): void
 }
@@ -29,11 +31,16 @@ interface appRegisterEvent extends registerEvent {
     registerIPCEvent(): void
 }
 
+interface mainWindowMethod extends WindowMethod {
+    startClipboardListening(): void
+    startGlobalShortcut(): void
+}
+
 /**
  * 应用注册管理类
  * 负责管理应用的窗口创建、事件注册等
  */
-export class AppRegister {
+export class ApplicationRegister {
     /**
      * 主窗口的配置参数
      */
@@ -45,7 +52,7 @@ export class AppRegister {
         // focusable: false,
         ...(process.platform === 'linux' ? { icon } : {}),
         webPreferences: {
-            preload: join(__dirname, '../../preload/index.js'),
+            preload: join(__dirname, '../preload/index.js'),
             sandbox: false,
             scrollBounce: true
         }
@@ -78,9 +85,9 @@ export class AppRegister {
 
             // 监听应用激活事件
             app.on('activate', function () {
-                const mainWindow = AppRegister.getMainWindowMethod().getMainWindow()
+                const mainWindow = ApplicationRegister.getMainWindowMethod().getMainWindow()
                 if (mainWindow === undefined) {
-                    AppRegister.getMainWindowMethod().createMainWindow()
+                    ApplicationRegister.getMainWindowMethod().createMainWindow()
                 } else {
                     mainWindow.show()
                 }
@@ -94,7 +101,7 @@ export class AppRegister {
 
             // 清理资源
             app.on('before-quit', () => {
-                const mainWindow = AppRegister.getMainWindowMethod().getMainWindow()
+                const mainWindow = ApplicationRegister.getMainWindowMethod().getMainWindow()
                 // 允许窗口关闭
                 mainWindow?.removeAllListeners('close')
             })
@@ -110,7 +117,7 @@ export class AppRegister {
             powerMonitor.on('resume', () => {
                 // const clipboardHistory = getClipboardHistory()
                 // Logger.info('Database', `恢复剪贴板记录`)
-                // sendRenderer.setClipboard({
+                // sendRenderer.setClipboardToRenderer({
                 //     ...clipboardHistory
                 // });
             })
@@ -118,7 +125,7 @@ export class AppRegister {
             /**
              * 监听渲染进程通信-渲染进程通知主进程准备复制剪贴板的内容到用户输入区域
              */
-            ipcMain.on('paste-selected-text', (event, clipboardState: ClipboardState) => {
+            ipcMain.on('change-clipboard', (event, clipboardState: ClipboardState) => {
                 // Logger.info('Database', `渲染进程通信-获取剪贴板记录`)
                 // console.log(clipboardState);
                 // const window = BrowserWindow.getAllWindows()[0]
@@ -137,7 +144,7 @@ export class AppRegister {
      * 获取主窗口相关方法
      * @returns MainWindowMethod 主窗口方法对象
      */
-    public static getMainWindowMethod(): MainWindowMethod {
+    public static getMainWindowMethod(): mainWindowMethod {
         return {
             /**
              * 注册主窗口事件
@@ -145,6 +152,8 @@ export class AppRegister {
             init() {
                 this.createMainWindow()
                 this.registerEvent()
+                this.startClipboardListening()
+                this.startGlobalShortcut()
             },
 
             /**
@@ -153,7 +162,7 @@ export class AppRegister {
             createMainWindow() {
                 BrowserWindowManager.createBrowserWindow({
                     key: 'main',
-                    browserWindow: AppRegister.mainWindowParams
+                    browserWindow: ApplicationRegister.mainWindowParams
                 })
             },
 
@@ -180,7 +189,7 @@ export class AppRegister {
                             // 初始化剪贴板数据
                             // {
                             //     const clipboardHistory = getClipboardHistory()
-                            //     sendRenderer.setClipboard(clipboardHistory)
+                            //     sendRenderer.setClipboardToRenderer(clipboardHistory)
                             // }
 
                             // 打开开发者工具
@@ -208,9 +217,35 @@ export class AppRegister {
                     } else {
                         mainWindow.loadFile(join(__dirname, '../../renderer/index.html'))
                     }
+
+
+
                 } else {
                     console.error('主窗口未创建')
                 }
+            },
+
+            /**
+             * 启动剪贴板监听
+             */
+            startClipboardListening() {
+                ClipboardManager.getInstance().startListening()
+            },
+
+            /**
+             * 注册全局显示窗口快捷键
+             */
+            startGlobalShortcut() {
+                GlobalShortcut.registerShortcut("Alt+V", () => {
+                    const window = BrowserWindowManager.getBrowserWindow('main')
+                    if (window) {
+                        if (window.isVisible()) {
+                            window.hide()
+                        } else {
+                            window.showInactive()
+                        }
+                    }
+                })
             }
         }
     }

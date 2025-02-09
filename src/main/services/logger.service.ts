@@ -1,7 +1,11 @@
 /**
  * 日志工具类
  */
+import { DBManager } from '../database/database.manager'
+
 export class Logger {
+    private static db = DBManager.getInstance()
+
     private static getTime(): string {
         return new Date().toLocaleTimeString('zh-CN', {
             hour12: false,
@@ -19,10 +23,17 @@ export class Logger {
      * @param data 额外数据
      */
     static info(module: string, message: string, data?: any): void {
-        console.log(
-            `[${this.getTime()}] 📘 [${module}] ${message}`,
-            data ? data + '\n' : ''
-        )
+        const logMessage = `[${this.getTime()}] 📘 [${module}] ${message}`
+        console.log(logMessage, data ? data + '\n' : '')
+
+        // 保存到数据库
+        this.db.insertLog({
+            level: 'info',
+            module,
+            message,
+            data: data ? JSON.stringify(data) : undefined,
+            created_at: Date.now()
+        })
     }
 
     /**
@@ -36,6 +47,15 @@ export class Logger {
             `[${this.getTime()}] 📙 [${module}] ${message}`,
             data ? data + '\n' : ''
         )
+
+        // 保存到数据库
+        this.db.insertLog({
+            level: 'warn',
+            module,
+            message,
+            data: data ? JSON.stringify(data) : undefined,
+            created_at: Date.now()
+        })
     }
 
     /**
@@ -49,6 +69,15 @@ export class Logger {
             `[${this.getTime()}] 📕 [${module}] ${message}`,
             error ? error + '\n' : ''
         )
+
+        // 保存到数据库
+        this.db.insertLog({
+            level: 'error',
+            module,
+            message,
+            data: error ? JSON.stringify(error) : undefined,
+            created_at: Date.now()
+        })
     }
 
     /**
@@ -64,5 +93,14 @@ export class Logger {
                 data ? data + '\n' : ''
             )
         }
+
+        // 保存到数据库
+        this.db.insertLog({
+            level: 'debug',
+            module,
+            message,
+            data: data ? JSON.stringify(data) : undefined,
+            created_at: Date.now()
+        })
     }
 }
