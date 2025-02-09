@@ -5,6 +5,9 @@ declare global {
     type ClipboardType = 'text' | 'html' | 'image' | 'file' | 'url'
 
 
+    /**
+     * 剪贴板状态对象类型
+     */
     interface ClipboardState {
         type: ClipboardType          // 剪贴板格式
         contentHash?: string     // 内容哈希，用于文本类型和普通的图片，取值为文件md5(content)，用于判断是否重复
@@ -14,6 +17,9 @@ declare global {
         meta: any
     }
 
+    /**
+     * 设置对象类型
+     */
     interface Setting {
         /**
          * 应用主题

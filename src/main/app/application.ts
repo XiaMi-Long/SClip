@@ -31,6 +31,10 @@ interface appRegisterEvent extends registerEvent {
     registerIPCEvent(): void
 }
 
+/**
+ * 主窗口方法接口
+ * 扩展自 WindowMethod
+ */
 interface mainWindowMethod extends WindowMethod {
     startClipboardListening(): void
     startGlobalShortcut(): void
@@ -238,13 +242,16 @@ export class ApplicationRegister {
             startGlobalShortcut() {
                 GlobalShortcut.registerShortcut("Alt+V", () => {
                     const window = BrowserWindowManager.getBrowserWindow('main')
+                    console.log("before", window?.isVisible());
+
                     if (window) {
                         if (window.isVisible()) {
                             window.hide()
                         } else {
-                            window.showInactive()
+                            window.show()
                         }
                     }
+                    console.log("after", window?.isVisible());
                 })
             }
         }

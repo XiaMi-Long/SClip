@@ -1,12 +1,6 @@
 <script setup lang="ts">
-import { onMounted, ref, useTemplateRef, watch, computed } from 'vue'
 import { Swiper, SwiperSlide } from 'swiper/vue'
-
 import VClipboardCard from "./card/index.vue"
-import { useConfigStore } from '@renderer/store/useConfigStore'
-import { useSwiperStore } from '@renderer/store/useSwiperStore'
-import { useClipboardStore } from '@renderer/store/useClipboardStore'
-import { Swiper as SwiperClass } from 'swiper/types'
 import { useSwiper } from './hooks'
 
 // 导入样式
@@ -18,20 +12,17 @@ const { swiperServices, paginatedClipboardList, cardMotion } = useSwiper()
 
 console.log(paginatedClipboardList.value);
 
-
-
 </script>
 
 <template>
     <div class="swiper-container">
+        <div v-if="paginatedClipboardList.length > 0" class="floating-ball" ref="floatingBall"
+            :style="swiperServices.floatingBallStyle">
+        </div>
         <Swiper v-bind="swiperServices.params" @swiper="swiperServices.onSwiperInit" ref="swiperRef">
+
             <SwiperSlide v-for="(pageItems, pageIndex) in paginatedClipboardList" :key="`page-${pageIndex}`">
                 <div class="clipboard-list">
-
-                    <div v-if="pageIndex === 0" class="floating-ball" ref="floatingBall"
-                        :style="swiperServices.floatingBallStyle">
-                    </div>
-
                     <div v-for="(card, cardIndex) in pageItems" :key="card.contentHash" class="card-wrapper">
                         <VClipboardCard :clipboardOptions="card" v-motion="cardMotion(cardIndex)" />
                     </div>
