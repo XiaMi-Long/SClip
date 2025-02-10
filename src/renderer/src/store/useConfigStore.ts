@@ -4,7 +4,8 @@ export const useConfigStore = defineStore('config', {
     state: () => ({
         setting: {
             applicationTheme: 'light',
-            clipboardTheme: 'default'
+            clipboardTheme: 'default',
+            rtfTextZoom: 1
         } as Setting
     }),
     getters: {

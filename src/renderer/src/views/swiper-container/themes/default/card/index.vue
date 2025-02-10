@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import TextCard from './card-style/text.vue'
 import ImageCard from './card-style/image.vue'
+import RtfCard from './card-style/rtf.vue'
 const props = defineProps<{
     clipboardOptions: ClipboardState
 }>()
@@ -26,6 +27,9 @@ const cardType = computed(() => {
             </template>
             <template v-if="props?.clipboardOptions?.type === 'image'">
                 <ImageCard :clipboardOptions="props.clipboardOptions" />
+            </template>
+            <template v-if="props?.clipboardOptions?.type === 'rtf'">
+                <RtfCard :clipboardOptions="props.clipboardOptions" />
             </template>
         </div>
     </div>

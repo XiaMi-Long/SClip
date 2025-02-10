@@ -2,7 +2,7 @@
 declare global {
 
     // 剪贴板内容类型
-    type ClipboardType = 'text' | 'html' | 'image' | 'file' | 'url'
+    type ClipboardType = 'text' | 'html' | 'image' | 'file' | 'url' | 'rtf'
 
 
     /**
@@ -29,7 +29,10 @@ declare global {
          * 剪贴板主题
          */
         clipboardTheme: 'default' | 'card'
-
+        /**
+         * rtf 文本缩放
+         */
+        rtfTextZoom: number
     }
 }
 

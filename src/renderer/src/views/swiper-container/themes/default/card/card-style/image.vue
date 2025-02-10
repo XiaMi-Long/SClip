@@ -81,8 +81,9 @@ onMounted(() => {
 
 <template>
     <div class="clipboard-card-image-container">
+        <!-- {{ props.clipboardOptions.content }} -->
         <img :src="props.clipboardOptions.content" alt="" class="clipboard-card-image" ref="clipboardCardImage"
-            :style="{ objectFit }" v-motion="imgMotion">
+            :style="{ objectFit }" v-motion="imgMotion" />
     </div>
 </template>
 

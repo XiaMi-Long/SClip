@@ -47,10 +47,10 @@ export class DBManager {
     private initTables(): void {
         try {
             // 删除旧表（如果存在）
-            this.db.exec(`
-                DROP TABLE IF EXISTS clipboard_history;
-                DROP TABLE IF EXISTS app_logs;
-            `)
+            // this.db.exec(`
+            //     DROP TABLE IF EXISTS clipboard_history;
+            //     DROP TABLE IF EXISTS app_logs;
+            // `)
 
             // 创建剪贴板历史表
             this.db.exec(`
@@ -58,10 +58,11 @@ export class DBManager {
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     type TEXT NOT NULL,
                     timestamp INTEGER NOT NULL,
-                    content_hash TEXT UNIQUE,
+                    content_hash TEXT,
                     text TEXT,
                     content TEXT NOT NULL,
-                    meta TEXT
+                    meta TEXT,
+                    last_file_name_text TEXT
                 )
             `)
 
@@ -103,9 +104,10 @@ export class DBManager {
                     timestamp,
                     content_hash,
                     content,
-                    meta
+                    meta,
+                    last_file_name_text
                 )
-                VALUES (?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?)
             `)
 
             const result = stmt.run(
@@ -113,7 +115,8 @@ export class DBManager {
                 data.timestamp,
                 data.contentHash,
                 data.content,
-                JSON.stringify(data.meta)
+                JSON.stringify(data.meta),
+                data.last_file_name_text
             )
 
             return result.lastInsertRowid as number
@@ -134,7 +137,8 @@ export class DBManager {
                     timestamp,
                     content_hash as contentHash,
                     content,
-                    meta
+                    meta,
+                    last_file_name_text
                 FROM clipboard_history
                 ORDER BY timestamp DESC
                 LIMIT ?

@@ -23,7 +23,7 @@ console.log(paginatedClipboardList.value);
 
             <SwiperSlide v-for="(pageItems, pageIndex) in paginatedClipboardList" :key="`page-${pageIndex}`">
                 <div class="clipboard-list">
-                    <div v-for="(card, cardIndex) in pageItems" :key="card.contentHash" class="card-wrapper">
+                    <div v-for="(card, cardIndex) in pageItems" :key="card.contentHash + 'key' + cardIndex" class="card-wrapper">
                         <VClipboardCard :clipboardOptions="card" v-motion="cardMotion(cardIndex)" />
                     </div>
                 </div>

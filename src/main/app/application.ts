@@ -5,6 +5,12 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { BrowserWindowManager } from "../window/window.manager";
 import { ClipboardManager } from '../clipboard';
 import { GlobalShortcut } from '../shortcuts/shortcut.manager.ts';
+import { DBManager } from '../database/database.manager';
+import { Logger } from '../services/logger.service';
+import sendRenderer from '../services/ipc.service';
+import { clipboard, nativeImage } from 'electron'
+import robot from 'robotjs'
+import { ConfigManager } from '../config/app.config';
 
 /**
  * 基础事件注册接口
@@ -119,27 +125,41 @@ export class ApplicationRegister {
              * 监听应用恢复事件
              */
             powerMonitor.on('resume', () => {
-                // const clipboardHistory = getClipboardHistory()
-                // Logger.info('Database', `恢复剪贴板记录`)
-                // sendRenderer.setClipboardToRenderer({
-                //     ...clipboardHistory
-                // });
+                try {
+                    const clipboardHistory = DBManager.getInstance().getClipboardHistory()
+                    sendRenderer.setClipboardToRenderer(clipboardHistory)
+                } catch (error) {
+                    Logger.error('Application', `恢复剪贴板记录失败`, error)
+                }
             })
 
             /**
              * 监听渲染进程通信-渲染进程通知主进程准备复制剪贴板的内容到用户输入区域
              */
             ipcMain.on('change-clipboard', (event, clipboardState: ClipboardState) => {
-                // Logger.info('Database', `渲染进程通信-获取剪贴板记录`)
-                // console.log(clipboardState);
-                // const window = BrowserWindow.getAllWindows()[0]
-                // if (window) {
-                //     window.hide()
-                //     setTimeout(() => {
-                //         robot.mouseClick('left')
-                //         robot.typeString(clipboardState.text)
-                //     }, 1000);
-                // }
+                console.warn(clipboardState);
+
+                Logger.info('Application', `主进程通信-获取到渲染进程剪贴板记录`)
+                const window = BrowserWindow.getAllWindows()[0]
+                if (!window) return;
+
+                window.hide()
+                try {
+                    // 根据类型处理不同内容
+                    if (clipboardState.type === 'image') {
+                        const image = nativeImage.createFromDataURL(clipboardState.content)
+                        clipboard.writeImage(image)
+                    } else {
+                        clipboard.writeText(clipboardState.content)
+                    }
+
+                    // 模拟粘贴操作
+                    robot.mouseClick('left')
+                    robot.keyTap('v', process.platform === 'darwin' ? 'command' : 'control')
+
+                } catch (error) {
+                    Logger.error('Application', '粘贴内容失败', error)
+                }
             })
         }
     }
@@ -189,15 +209,24 @@ export class ApplicationRegister {
                             mainWindow.maximizable = false
                             mainWindow.resizable = false
                             // mainWindow.setAlwaysOnTop(true, 'screen-saver')
+                            try {
+                                const clipboardHistory = DBManager.getInstance().getClipboardHistory()
+                                sendRenderer.setClipboardToRenderer(clipboardHistory)
+                            } catch (error) {
+                                Logger.error('Application', `初始化应用恢复剪贴板记录失败`, error)
+                            }
 
-                            // 初始化剪贴板数据
-                            // {
-                            //     const clipboardHistory = getClipboardHistory()
-                            //     sendRenderer.setClipboardToRenderer(clipboardHistory)
-                            // }
+                            try {
+                                const setting = ConfigManager.getInstance().getSetting()
+                                sendRenderer.setSettingToRender(setting)
+                            } catch (error) {
+                                Logger.error('Application', `初始化应用恢复设置失败`, error)
+                            }
+
 
                             // 打开开发者工具
                             mainWindow.webContents.openDevTools()
+                            // mainWindow.setAlwaysOnTop(true, 'screen-saver')
                         }
                     })
 
@@ -207,6 +236,11 @@ export class ApplicationRegister {
                             event.preventDefault()
                             mainWindow.hide()
                         }
+                    })
+
+                    // 监听主窗口失去焦点事件
+                    mainWindow.on('blur', () => {
+                        mainWindow.hide()
                     })
 
                     // 监听主窗口打开外部链接事件
@@ -242,8 +276,6 @@ export class ApplicationRegister {
             startGlobalShortcut() {
                 GlobalShortcut.registerShortcut("Alt+V", () => {
                     const window = BrowserWindowManager.getBrowserWindow('main')
-                    console.log("before", window?.isVisible());
-
                     if (window) {
                         if (window.isVisible()) {
                             window.hide()
@@ -251,7 +283,6 @@ export class ApplicationRegister {
                             window.show()
                         }
                     }
-                    console.log("after", window?.isVisible());
                 })
             }
         }

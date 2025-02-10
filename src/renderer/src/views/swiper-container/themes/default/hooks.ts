@@ -1,10 +1,8 @@
-import { ref, computed, watch, reactive } from 'vue'
+import { ref, computed, watch, reactive, toRaw } from 'vue'
 import { Swiper as SwiperClass } from 'swiper/types'
 import { useConfigStore } from '@renderer/store/useConfigStore'
 import { Pagination, Keyboard } from 'swiper/modules'
 import { useClipboardStore } from '@renderer/store/useClipboardStore'
-import robot from 'robotjs'
-
 export function useSwiper() {
     const ITEMS_PER_PAGE = 3
     const clipboardStore = useClipboardStore()
@@ -109,8 +107,15 @@ export function useSwiper() {
                 case 13:
                     // 回车
                     // 根据目前选择的第几项，获取对应的剪贴板数据
-                    // const clipboardData = getPageCards(changeSwiperIndex.value)
-                    // console.log(clipboardData);
+                    if (swiperState.value.swiperInstance) {
+                        const activeIndex = swiperState.value.swiperInstance.activeIndex * swiperState.value.swiperItemsPerPage + swiperState.value.changeSwiperIndex
+                        const clipboardData = clipboardStore.getClipboard[activeIndex]
+                        if (clipboardData) {
+                            // 使用 toRaw 解包响应式对象
+                            const rawClipboardData = toRaw(clipboardData)
+                            window.clipboard.changeClipboard(rawClipboardData)
+                        }
+                    }
 
                     break
             }

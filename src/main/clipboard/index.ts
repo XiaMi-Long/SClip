@@ -1,5 +1,4 @@
 import { clipboard } from 'electron'
-import { SETTING } from '../config/app.config'
 import { createHash } from 'crypto'
 import { Logger } from '../services/logger.service'
 import { exec } from 'child_process'
@@ -7,6 +6,22 @@ import { promisify } from 'util'
 import fs from 'fs'
 import sendRenderer from '../services/ipc.service'
 import { DBManager } from '../database/database.manager'
+
+const readFileAsync = promisify(fs.readFile)
+
+/**
+ * 支持的文件扩展名与对应的 MIME 类型映射
+ */
+const mimeTypes: { [key: string]: string } = {
+    'png': 'image/png',
+    'jpg': 'image/jpeg',
+    'jpeg': 'image/jpeg',
+    'gif': 'image/gif',
+    'bmp': 'image/bmp',
+    'tiff': 'image/tiff',
+    'ico': 'image/x-icon',
+    'svg': 'image/svg+xml'
+}
 
 /**
  * 剪贴板管理器类
@@ -17,10 +32,13 @@ export class ClipboardManager {
     private lastState: ClipboardState
     private execAsync: any
     private intervalId: NodeJS.Timeout | null
+    private isSystemPasting: boolean = false
+    private readonly SYSTEM_MARK = 'SClip-system-read-stop-luoqi' // 新增系统标记常量
 
     private constructor() {
         this.execAsync = promisify(exec)
         this.intervalId = null
+        this.isSystemPasting = false
         this.lastState = {
             type: 'text',
             timestamp: 0,
@@ -29,6 +47,7 @@ export class ClipboardManager {
             content: '',
             meta: {},
         }
+        Logger.info('Clipboard', '正在监听剪贴板')
     }
 
     /**
@@ -67,15 +86,44 @@ export class ClipboardManager {
      * 处理剪贴板变化
      */
     private async handleClipboardChange(): Promise<void> {
-        Logger.info('Clipboard', '正在监听剪贴板')
+        // 如果是系统粘贴状态，直接返回
+        // if (this.isSystemPasting) {
+        //     this.isSystemPasting = false
+        //     return
+        // }
+
         const text = clipboard.readText()
+        // console.warn(clipboard.readHTML());
+        // console.log(clipboard.readRTF());
+
+
         Logger.debug('Clipboard', '剪贴板文本', text)
+
+        // 如果剪贴板内容为空，则从数据库中获取剪贴板历史记录第一条，防止应用第一次启动的时候因为原始数据为空，会把重复数据重新添加一遍
+        if (this.lastState.contentHash === '') {
+            const clipboardHistory = DBManager.getInstance().getClipboardHistory(1)
+            if (clipboardHistory.length > 0) {
+                this.lastState = clipboardHistory[0]
+            }
+        }
+
+        // 如果是系统标记，直接返回
+        // if (text === this.SYSTEM_MARK) {
+        //     return
+        // }
+
         const clipboardTypes = clipboard.availableFormats()
+        console.log(clipboardTypes);
+
 
         if (clipboardTypes.includes('text/uri-list')) {
             await this.handleUriList(text)
         } else if (clipboardTypes.includes('image/png')) {
             await this.handleImage()
+        } else if (clipboardTypes.includes('text/rtf')) {
+            const rtf = clipboard.readRTF()
+            const html = clipboard.readHTML()
+            await this.handleRtf(text, rtf, html)
         } else if (clipboardTypes.includes('text/plain') || clipboardTypes.includes('text/html')) {
             await this.handleText(text)
         }
@@ -95,10 +143,10 @@ export class ClipboardManager {
         const time = new Date().getTime()
 
         if (imageBase64) {
-            this.updateLastState('image', imageBase64, time, { origin: 'local-file' })
+            this.updateLastState('image', imageBase64, time, { origin: 'local-file', actualPath })
         } else {
-            this.updateLastState('text', text, time, { origin: 'local-file-no-image' })
-            Logger.info('Clipboard', '文件不是图片')
+            this.updateLastState('text', text, time, { origin: 'local-file-no-image', actualPath })
+            Logger.info('Clipboard', '文件不是支持的图片格式')
         }
     }
 
@@ -118,6 +166,25 @@ export class ClipboardManager {
             clipboard.readImage().toDataURL(),
             new Date().getTime(),
             {},
+            contentHash
+        )
+    }
+
+    /**
+     * 处理rtf类型的剪贴板内容
+     */
+    private async handleRtf(text: string, rtf: string, html: string): Promise<void> {
+        const contentHash = createHash('md5')
+            .update(text)
+            .digest('hex')
+
+        if (contentHash === this.lastState.contentHash) return
+
+        this.updateLastState(
+            'rtf',
+            rtf,
+            new Date().getTime(),
+            { rtf_text: text, rtf_html: html },
             contentHash
         )
     }
@@ -219,16 +286,38 @@ export class ClipboardManager {
     }
 
     /**
-     * 根据文件路径文件的后缀名判断是否为图片，如果是图片获取base64
-     * @param {string} path 文件路径
-     * @returns {Promise<string>} 返回base64字符串的Promise
+     * 根据文件路径获取图片的 Base64 字符串
+     * @param {string} path 图片路径
+     * @returns {Promise<string>} Base64 字符串
      */
     private async getImageBase64(path: string): Promise<string> {
-        const ext = path.split('.').pop()
-        if (ext === 'png' || ext === 'jpg' || ext === 'jpeg' || ext === 'gif' || ext === 'bmp' || ext === 'tiff' || ext === 'ico') {
-            const buffer = await fs.readFileSync(path)
-            return 'data:image/' + ext + ';base64,' + buffer.toString('base64')
+        const ext = path.split('.').pop()?.toLowerCase()
+
+        if (ext && mimeTypes.hasOwnProperty(ext)) {
+            try {
+                const buffer = await readFileAsync(path)
+                const mimeType = mimeTypes[ext]
+                return `data:${mimeType};base64,${buffer.toString('base64')}`
+            } catch (error) {
+                Logger.error('Clipboard', '读取图片文件失败:', error)
+                return ''
+            }
         }
         return ''
+    }
+
+    /**
+     * 写入系统标记到剪贴板
+     */
+    public writeSystemMark(): void {
+        clipboard.writeText(this.SYSTEM_MARK)
+    }
+
+    /**
+     * 设置系统粘贴状态
+     * @param {boolean} status - 粘贴状态
+     */
+    public setSystemPasting(status: boolean): void {
+        this.isSystemPasting = status
     }
 }
