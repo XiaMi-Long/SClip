@@ -1,13 +1,4 @@
-:root {
-    --clipboard-list-bg: #f3f3f3;
-    --clipboard-card-bg: #ffffff;
-    /* 轮播图进度条颜色 */
-    --swiper-pagination-color: #ec6b5e;
-    /* 轮播图进度条大小 */
-    --swiper-pagination-bullet-size: 5px;
-    --swiper-pagination-bullet-width: 5px;
-    --swiper-pagination-bullet-height: 5px;
-}
+:root {}
 
 /* 剪贴板列表背景 */
 body {

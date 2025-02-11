@@ -146,19 +146,48 @@ export class ApplicationRegister {
                 window.hide()
                 try {
                     // 根据类型处理不同内容
-                    if (clipboardState.type === 'image') {
-                        const image = nativeImage.createFromDataURL(clipboardState.content)
-                        clipboard.writeImage(image)
-                    } else {
-                        clipboard.writeText(clipboardState.content)
+                    switch (clipboardState.type) {
+                        case 'image':
+                            const image = nativeImage.createFromDataURL(clipboardState.content)
+                            clipboard.writeImage(image)
+                            break
+                        case 'rtf':
+                            const setting = ConfigManager.getInstance().getSetting()
+                            if (setting.rtfRenderType === 'rtf') {
+                                clipboard.writeRTF(clipboardState.content)
+                            } else if (setting.rtfRenderType === 'html') {
+                                clipboard.writeHTML(clipboardState.meta.rtf_html)
+                            } else {
+                                clipboard.writeText(clipboardState.meta.rtf_text)
+                            }
+                            break
+                        default:
+                            clipboard.writeText(clipboardState.content)
+                            break
                     }
+                    setTimeout(() => {
+                        // 模拟粘贴操作
+                        robot.mouseClick('left')
+                        robot.keyTap('v', process.platform === 'darwin' ? 'command' : 'control')
+                    }, 200);
 
-                    // 模拟粘贴操作
-                    robot.mouseClick('left')
-                    robot.keyTap('v', process.platform === 'darwin' ? 'command' : 'control')
 
                 } catch (error) {
                     Logger.error('Application', '粘贴内容失败', error)
+                }
+            })
+
+            /**
+             * 监听渲染进程通信-更新剪贴板数据
+             */
+            ipcMain.on('update-clipboard-item', (event, clipboardState: ClipboardState) => {
+                console.error(clipboardState);
+                try {
+                    if (clipboardState) {
+                        DBManager.getInstance().updateClipboardItem(clipboardState)
+                    }
+                } catch (error) {
+                    Logger.error('Application', '更新剪贴板数据失败', error)
                 }
             })
         }
@@ -240,7 +269,7 @@ export class ApplicationRegister {
 
                     // 监听主窗口失去焦点事件
                     mainWindow.on('blur', () => {
-                        mainWindow.hide()
+                        // mainWindow.hide()
                     })
 
                     // 监听主窗口打开外部链接事件

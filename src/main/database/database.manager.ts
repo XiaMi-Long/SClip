@@ -62,7 +62,8 @@ export class DBManager {
                     text TEXT,
                     content TEXT NOT NULL,
                     meta TEXT,
-                    last_file_name_text TEXT
+                    last_file_name_text TEXT,
+                    isSticky TEXT
                 )
             `)
 
@@ -105,9 +106,10 @@ export class DBManager {
                     content_hash,
                     content,
                     meta,
-                    last_file_name_text
+                    last_file_name_text,
+                    isSticky
                 )
-                VALUES (?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
             `)
 
             const result = stmt.run(
@@ -116,7 +118,8 @@ export class DBManager {
                 data.contentHash,
                 data.content,
                 JSON.stringify(data.meta),
-                data.last_file_name_text
+                data.last_file_name_text,
+                data.isSticky
             )
 
             return result.lastInsertRowid as number
@@ -133,12 +136,14 @@ export class DBManager {
         try {
             const stmt = this.db.prepare(`
                 SELECT
+                    id,
                     type,
                     timestamp,
                     content_hash as contentHash,
                     content,
                     meta,
-                    last_file_name_text
+                    last_file_name_text,
+                    isSticky
                 FROM clipboard_history
                 ORDER BY timestamp DESC
                 LIMIT ?
@@ -152,6 +157,64 @@ export class DBManager {
         } catch (error) {
             Logger.error('DBManager', 'getClipboardHistory failed', error)
             return []
+        }
+    }
+
+    /**
+     * 更新剪贴板数据
+     * @param {ClipboardState} data - 要更新的剪贴板数据对象
+     * @returns {boolean} 是否更新成功
+     */
+    public updateClipboardItem(data: ClipboardState): boolean {
+        try {
+            const stmt = this.db.prepare(`
+                UPDATE clipboard_history
+                SET
+                    type = ?,
+                    timestamp = ?,
+                    content_hash = ?,
+                    content = ?,
+                    meta = ?,
+                    last_file_name_text = ?,
+                    isSticky = ?
+                WHERE id = ?
+            `)
+
+            const result = stmt.run(
+                data.type,
+                data.timestamp,
+                data.contentHash,
+                data.content,
+                JSON.stringify(data.meta),
+                data.last_file_name_text,
+                data.isSticky,
+                data.id
+            )
+
+            return result.changes > 0
+        } catch (error) {
+            Logger.error('DBManager', 'updateClipboardItem failed', error)
+            throw error
+        }
+    }
+
+    /**
+     * 根据ID删除剪贴板数据
+     * @param {number} id - 要删除的剪贴板数据ID
+     * @returns {boolean} 是否删除成功
+     */
+    public deleteClipboardItem(id: number): boolean {
+        try {
+            const stmt = this.db.prepare(`
+                DELETE FROM clipboard_history
+                WHERE id = ?
+            `)
+
+            const result = stmt.run(id)
+            return result.changes > 0
+        } catch (error) {
+            Logger.error('DBManager', 'deleteClipboardItem failed', error)
+            throw error
         }
     }
 
@@ -286,4 +349,6 @@ export class DBManager {
             throw error
         }
     }
+
+
 }

@@ -28,6 +28,7 @@
     "better-sqlite3": "^11.7.2",
     "electron-updater": "^6.1.7",
     "gsap": "^3.12.5",
+    "lodash": "^4.17.21",
     "pinia": "^2.3.0",
     "robotjs": "^0.6.0",
     "sass-embedded": "^1.83.1",

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import VClipboardCard from "./card/index.vue"
+import StickyBadge from "./card/StickyBadge.vue"
 import { useSwiper } from './hooks'
 
 // 导入样式
@@ -24,6 +25,8 @@ console.log(paginatedClipboardList.value);
             <SwiperSlide v-for="(pageItems, pageIndex) in paginatedClipboardList" :key="`page-${pageIndex}`">
                 <div class="clipboard-list">
                     <div v-for="(card, cardIndex) in pageItems" :key="card.contentHash + 'key' + cardIndex" class="card-wrapper">
+                        <!-- {{ card.isSticky }} -->
+                        <StickyBadge :card="card" :card-id="card.id" />
                         <VClipboardCard :clipboardOptions="card" v-motion="cardMotion(cardIndex)" />
                     </div>
                 </div>
@@ -55,6 +58,7 @@ console.log(paginatedClipboardList.value);
 }
 
 .card-wrapper {
+    position: relative;
     will-change: transform, opacity;
 }
 

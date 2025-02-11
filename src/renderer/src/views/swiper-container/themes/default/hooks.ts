@@ -1,14 +1,18 @@
-import { ref, computed, watch, reactive, toRaw } from 'vue'
+import { ref, computed, watch, reactive, toRaw, ComputedRef, nextTick } from 'vue'
 import { Swiper as SwiperClass } from 'swiper/types'
-import { useConfigStore } from '@renderer/store/useConfigStore'
 import { Pagination, Keyboard } from 'swiper/modules'
 import { useClipboardStore } from '@renderer/store/useClipboardStore'
+import { debounce } from 'lodash'
+
 export function useSwiper() {
     const ITEMS_PER_PAGE = 3
     const clipboardStore = useClipboardStore()
 
 
-    const paginatedClipboardList = computed(() => {
+    /**
+     * 计算分页后的剪贴板数据
+     */
+    const paginatedClipboardList: ComputedRef<ClipboardState[][]> = computed(() => {
         const list = clipboardStore.getClipboard
         const pages: ClipboardState[][] = []
         for (let i = 0; i < list.length; i += ITEMS_PER_PAGE) {
@@ -16,6 +20,16 @@ export function useSwiper() {
         }
         return pages
     })
+
+    /**
+     * 计算当前选中的剪贴板数据（返回的响应式数据，并不能直接快速的体现在页面上，因为paginatedClipboardList真正的变更原因是clipboardStore.getClipboard）
+     */
+    const activeClipboardData = computed(() => {
+        if (swiperState.value.swiperInstance) {
+            return toRaw(paginatedClipboardList.value[swiperState.value.swiperInstance.activeIndex][swiperState.value.changeSwiperIndex]) || null
+        }
+        return null
+    }) as ComputedRef<ClipboardState | null>
 
 
     const cardMotion = (cardIndex: number) => {
@@ -66,34 +80,37 @@ export function useSwiper() {
          * 处理键盘事件
          */
         handleKeyPress: (_swiper: SwiperClass, keyCode: number) => {
+
+            console.log("keyCode", keyCode);
+
             switch (keyCode) {
                 case 39:
-                    console.log('Right key pressed')
+
                     break
                 case 37:
-                    console.log('Left key pressed')
+
                     break
                 case 38:
-                    console.log('Up key pressed')
+
                     swiperBallHandler.up()
                     break
                 case 40:
-                    console.log('Down key pressed')
+
                     swiperBallHandler.down()
                     break
                 case 87:
-                    console.log('W key pressed')
+
                     swiperBallHandler.up()
                     break
                 case 83:
-                    console.log('S key pressed')
+
                     swiperBallHandler.down()
                     break
                 case 65:
                     if (swiperState.value.swiperInstance) {
                         swiperState.value.swiperInstance.slidePrev(500)
                     }
-                    console.log('A key pressed')
+
                     break
                 case 68:
                     if (swiperState.value.swiperInstance) {
@@ -108,8 +125,7 @@ export function useSwiper() {
                     // 回车
                     // 根据目前选择的第几项，获取对应的剪贴板数据
                     if (swiperState.value.swiperInstance) {
-                        const activeIndex = swiperState.value.swiperInstance.activeIndex * swiperState.value.swiperItemsPerPage + swiperState.value.changeSwiperIndex
-                        const clipboardData = clipboardStore.getClipboard[activeIndex]
+                        const clipboardData = activeClipboardData.value
                         if (clipboardData) {
                             // 使用 toRaw 解包响应式对象
                             const rawClipboardData = toRaw(clipboardData)
@@ -117,6 +133,21 @@ export function useSwiper() {
                         }
                     }
 
+                    break
+                case 69:
+                    nextTick(() => {
+                        const currentIndex = swiperState.value.changeSwiperIndex;
+                        const activeIndex = (swiperState.value.swiperInstance!.activeIndex * ITEMS_PER_PAGE) + currentIndex;
+
+                        if (activeIndex >= clipboardStore.getClipboard.length) return;
+
+                        const clipboardData = clipboardStore.getClipboard[activeIndex];
+                        if (!clipboardData) return;
+
+
+                        clipboardData.isSticky = clipboardData.isSticky === 'true' ? 'false' : 'true';
+                        window.clipboard.updateClipboardItem(toRaw(clipboardData));
+                    });
                     break
             }
         },
@@ -126,7 +157,7 @@ export function useSwiper() {
          */
         left: () => {
 
-            console.log('Left key pressed')
+
         },
 
 
@@ -140,7 +171,7 @@ export function useSwiper() {
             if (!isHas) {
                 swiperState.value.changeSwiperIndex = 0
             }
-            console.log('Right key pressed')
+
         },
 
 
@@ -243,9 +274,9 @@ export function useSwiper() {
         ballHandler: swiperBallHandler
     })
 
-    watch(() => swiperState.value.changeSwiperIndex, () => {
+    watch(() => swiperState.value.changeSwiperIndex, debounce(() => {
         swiperBallHandler.getFloatingBallPosition()
-    })
+    }, 50))
 
     return {
         swiperServices,

@@ -93,9 +93,10 @@ export class ClipboardManager {
         // }
 
         const text = clipboard.readText()
-        // console.warn(clipboard.readHTML());
-        // console.log(clipboard.readRTF());
 
+        if (text.length === 0) {
+            return
+        }
 
         Logger.debug('Clipboard', '剪贴板文本', text)
 
@@ -216,7 +217,8 @@ export class ClipboardManager {
         content: string,
         timestamp: number,
         meta: object = {},
-        contentHash: string = ''
+        contentHash: string = '',
+        isSticky: string = 'false'
     ): void {
         this.lastState = {
             ...this.lastState,
@@ -224,7 +226,8 @@ export class ClipboardManager {
             content,
             timestamp,
             meta,
-            contentHash
+            contentHash,
+            isSticky
         }
         DBManager.getInstance().insertClipboardItem(this.lastState)
         sendRenderer.setClipboardToRenderer([this.lastState])

@@ -3,7 +3,7 @@ import { onMounted } from 'vue'
 import { RouterView } from 'vue-router'
 import { useClipboardStore } from './store/useClipboardStore'
 import { useConfigStore } from './store/useConfigStore';
-
+import { initSystemTheme } from './util/system.theme';
 
 try {
   window.clipboard.setClipboardToRenderer((clipboardState: ClipboardState[]) => {
@@ -12,6 +12,7 @@ try {
   window.setting.setSettingToRender((setting: Setting) => {
     useConfigStore().setSettingToRender(setting)
   })
+  initSystemTheme()
 } catch (error) {
   console.error('初始化数据加载失败:', error)
 }

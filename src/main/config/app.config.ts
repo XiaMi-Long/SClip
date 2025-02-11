@@ -12,6 +12,7 @@ export class ConfigManager {
             applicationTheme: 'light',
             clipboardTheme: 'default',
             rtfTextZoom: 0.3,
+            rtfRenderType: 'rtf'
         };
     }
 
