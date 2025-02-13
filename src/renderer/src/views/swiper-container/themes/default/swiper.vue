@@ -9,7 +9,7 @@ import 'swiper/css'
 import 'swiper/css/pagination'
 import 'swiper/css/keyboard'
 
-const { swiperServices, paginatedClipboardList, cardMotion } = useSwiper()
+const { swiperServices, paginatedClipboardList } = useSwiper()
 
 console.log(paginatedClipboardList.value);
 
@@ -20,16 +20,25 @@ console.log(paginatedClipboardList.value);
         <div v-if="paginatedClipboardList.length > 0" class="floating-ball" ref="floatingBall"
             :style="swiperServices.floatingBallStyle">
         </div>
-        <Swiper v-bind="swiperServices.params" @swiper="swiperServices.onSwiperInit" ref="swiperRef">
-
+        <!-- <Swiper v-bind="swiperServices.params" @swiper="swiperServices.onSwiperInit" ref="swiperRef">
             <SwiperSlide v-for="(pageItems, pageIndex) in paginatedClipboardList" :key="`page-${pageIndex}`">
-                <div class="clipboard-list">
+                <TransitionGroup name="card-list" tag="div" class="clipboard-list">
                     <div v-for="(card, cardIndex) in pageItems" :key="card.contentHash + 'key' + cardIndex" class="card-wrapper">
-                        <!-- {{ card.isSticky }} -->
                         <StickyBadge :card="card" :card-id="card.id" />
-                        <VClipboardCard :clipboardOptions="card" v-motion="cardMotion(cardIndex)" />
+                        <VClipboardCard :clipboardOptions="card" />
                     </div>
-                </div>
+                </TransitionGroup>
+
+            </SwiperSlide>
+        </Swiper> -->
+        <Swiper v-bind="swiperServices.params" @swiper="swiperServices.onSwiperInit" ref="swiperRef">
+            <SwiperSlide v-for="(pageItems, pageIndex) in paginatedClipboardList" :key="`page-${pageIndex}`">
+                <TransitionGroup name="card-list" tag="div" class="clipboard-list">
+                    <div v-for="(card, cardIndex) in pageItems" :key="card.contentHash + 'key' + cardIndex" class="card-wrapper">
+                        <StickyBadge :card="card" :card-id="card.id" />
+                        <VClipboardCard :clipboardOptions="card" />
+                    </div>
+                </TransitionGroup>
             </SwiperSlide>
         </Swiper>
     </div>
@@ -52,12 +61,20 @@ console.log(paginatedClipboardList.value);
         padding: 5px;
         display: flex;
         flex-direction: column;
+
         gap: 3px;
 
     }
 }
 
+.card-list-container {
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
 .card-wrapper {
+    // height: 136px; // 固定高度
     position: relative;
     will-change: transform, opacity;
 }
@@ -85,6 +102,28 @@ console.log(paginatedClipboardList.value);
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
 }
+
+// TransitionGroup 动画
+.card-list-move,
+.card-list-enter-active,
+.card-list-leave-active {
+    transition: all .3s ease;
+}
+
+.card-list-enter-from {
+    opacity: 0;
+    // transform: translateX(20px);
+}
+
+.card-list-leave-to {
+    opacity: 0;
+
+}
+
+.card-list-leave-active {
+    position: absolute;
+}
+
 
 /* 可选：添加悬浮效果 */
 @media (hover: hover) {

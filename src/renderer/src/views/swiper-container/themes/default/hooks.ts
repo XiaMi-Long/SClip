@@ -8,44 +8,34 @@ export function useSwiper() {
     const ITEMS_PER_PAGE = 3
     const clipboardStore = useClipboardStore()
 
-
     /**
-     * 计算分页后的剪贴板数据
+     * 计算分页后的剪贴板数据（优化版）
      */
-    const paginatedClipboardList: ComputedRef<ClipboardState[][]> = computed(() => {
+    const paginatedClipboardList = computed(() => {
         const list = clipboardStore.getClipboard
         const pages: ClipboardState[][] = []
-        for (let i = 0; i < list.length; i += ITEMS_PER_PAGE) {
-            pages.push(list.slice(i, i + ITEMS_PER_PAGE))
+
+        // 从后往前分页
+        for (let i = list.length; i > 0; i -= ITEMS_PER_PAGE) {
+            const start = Math.max(i - ITEMS_PER_PAGE, 0)
+            pages.unshift(list.slice(start, i).reverse()) // 反转保证最新在前
         }
+
+        console.log(pages);
+
+
         return pages
     })
 
     /**
-     * 计算当前选中的剪贴板数据（返回的响应式数据，并不能直接快速的体现在页面上，因为paginatedClipboardList真正的变更原因是clipboardStore.getClipboard）
+     * 计算当前选中的剪贴板数据
      */
     const activeClipboardData = computed(() => {
-        if (swiperState.value.swiperInstance) {
-            return toRaw(paginatedClipboardList.value[swiperState.value.swiperInstance.activeIndex][swiperState.value.changeSwiperIndex]) || null
-        }
-        return null
-    }) as ComputedRef<ClipboardState | null>
-
-
-    const cardMotion = (cardIndex: number) => {
-        return cardIndex === 0 ? {
-            initial: { opacity: 0, y: -100 },
-            enter: {
-                opacity: 1,
-                y: 0,
-                transition: {
-                    type: 'spring',
-                    stiffness: 300,
-                    damping: 15
-                }
-            }
-        } : {}
-    }
+        if (!swiperState.value.swiperInstance) return null
+        const pageIndex = swiperState.value.swiperInstance.activeIndex
+        const cardIndex = swiperState.value.changeSwiperIndex
+        return toRaw(paginatedClipboardList.value[pageIndex]?.[cardIndex]) || null
+    })
 
     // 分离状态和方法
     const swiperState = ref({
@@ -69,7 +59,8 @@ export function useSwiper() {
         },
         modules: [Pagination, Keyboard],
         initialSlide: 0,
-        speed: 500
+        speed: 500,
+
     })
 
     /**
@@ -80,37 +71,29 @@ export function useSwiper() {
          * 处理键盘事件
          */
         handleKeyPress: (_swiper: SwiperClass, keyCode: number) => {
-
             console.log("keyCode", keyCode);
 
             switch (keyCode) {
                 case 39:
-
                     break
                 case 37:
-
                     break
                 case 38:
-
                     swiperBallHandler.up()
                     break
                 case 40:
-
                     swiperBallHandler.down()
                     break
                 case 87:
-
                     swiperBallHandler.up()
                     break
                 case 83:
-
                     swiperBallHandler.down()
                     break
                 case 65:
                     if (swiperState.value.swiperInstance) {
                         swiperState.value.swiperInstance.slidePrev(500)
                     }
-
                     break
                 case 68:
                     if (swiperState.value.swiperInstance) {
@@ -119,7 +102,6 @@ export function useSwiper() {
                     swiperBallHandler.right()
                     break
                 case 32:
-
                     break
                 case 13:
                     // 回车
@@ -132,7 +114,6 @@ export function useSwiper() {
                             window.clipboard.changeClipboard(rawClipboardData)
                         }
                     }
-
                     break
                 case 69:
                     nextTick(() => {
@@ -144,9 +125,30 @@ export function useSwiper() {
                         const clipboardData = clipboardStore.getClipboard[activeIndex];
                         if (!clipboardData) return;
 
-
                         clipboardData.isSticky = clipboardData.isSticky === 'true' ? 'false' : 'true';
                         window.clipboard.updateClipboardItem(toRaw(clipboardData));
+                    });
+                    break
+                case 81: // q键的keyCode
+                    nextTick(() => {
+                        const currentIndex = swiperState.value.changeSwiperIndex;
+                        const activeIndex = (swiperState.value.swiperInstance!.activeIndex * ITEMS_PER_PAGE) + currentIndex;
+
+                        if (activeIndex >= clipboardStore.getClipboard.length) return;
+
+                        const clipboardData = clipboardStore.getClipboard[activeIndex];
+                        if (!clipboardData) return;
+
+                        // 检查是否为固定状态
+                        if (clipboardData.isSticky === 'true') {
+                            return;
+                        }
+
+                        const toRawClipboardData = toRaw(clipboardData)
+                        // 从store中删除该项
+                        clipboardStore.removeClipboardItem(activeIndex);
+                        // 向主进程发送删除请求
+                        window.clipboard.deleteClipboardItem(toRawClipboardData);
                     });
                     break
             }
@@ -281,7 +283,6 @@ export function useSwiper() {
     return {
         swiperServices,
         paginatedClipboardList,
-        cardMotion,
         totalPages: computed(() => paginatedClipboardList.value.length)
     }
 }

@@ -190,6 +190,19 @@ export class ApplicationRegister {
                     Logger.error('Application', '更新剪贴板数据失败', error)
                 }
             })
+
+            /**
+             * 监听渲染进程通信-删除剪贴板数据
+             */
+            ipcMain.on('delete-clipboard-item', (event, clipboardState: ClipboardState) => {
+                try {
+                    if (clipboardState && clipboardState.id) {
+                        DBManager.getInstance().deleteClipboardItem(clipboardState.id)
+                    }
+                } catch (error) {
+                    Logger.error('Application', '删除剪贴板数据失败', error)
+                }
+            })
         }
     }
 

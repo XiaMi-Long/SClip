@@ -5,7 +5,8 @@ declare global {
     clipboard: {
       setClipboardToRenderer: (callback: (clipboardState: ClipboardState[]) => void) => void,
       changeClipboard: (clipboardState: ClipboardState) => void,
-      updateClipboardItem: (clipboardState: ClipboardState) => void
+      updateClipboardItem: (clipboardState: ClipboardState) => void,
+      deleteClipboardItem: (clipboardData: ClipboardState) => void
     },
     setting: {
       setSettingToRender: (callback: (setting: Setting) => void) => void

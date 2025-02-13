@@ -40,12 +40,14 @@ export class ClipboardManager {
         this.intervalId = null
         this.isSystemPasting = false
         this.lastState = {
+            id: 0,
             type: 'text',
             timestamp: 0,
             contentHash: '',
             last_file_name_text: '',
             content: '',
             meta: {},
+            isSticky: 'false'
         }
         Logger.info('Clipboard', '正在监听剪贴板')
     }
@@ -93,10 +95,6 @@ export class ClipboardManager {
         // }
 
         const text = clipboard.readText()
-
-        if (text.length === 0) {
-            return
-        }
 
         Logger.debug('Clipboard', '剪贴板文本', text)
 

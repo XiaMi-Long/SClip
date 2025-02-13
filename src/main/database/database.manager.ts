@@ -214,7 +214,7 @@ export class DBManager {
             return result.changes > 0
         } catch (error) {
             Logger.error('DBManager', 'deleteClipboardItem failed', error)
-            throw error
+            return false
         }
     }
 
