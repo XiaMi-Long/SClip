@@ -1,158 +1,122 @@
+<!-- src/renderer/src/views/swiper-container/themes/default/swiper.vue -->
 <script setup lang="ts">
-import { Swiper, SwiperSlide } from 'swiper/vue'
+/**
+ * @module swiper.vue
+ * @description 自定义轮播视图组件，实现卡片的分页展示和导航
+ */
+
+import { computed, toRefs } from 'vue'
 import VClipboardCard from "./card/index.vue"
 import StickyBadge from "./card/StickyBadge.vue"
-import { useSwiper } from './hooks'
+import SelectBadge from "./card/selectBadge.vue"
+import { useCarousel } from './hooks'
 
-// 导入样式
-import 'swiper/css'
-import 'swiper/css/pagination'
-import 'swiper/css/keyboard'
+/** 每页的宽度（像素） */
+const PAGE_WIDTH = 300
 
-const { swiperServices, paginatedClipboardList } = useSwiper()
+const { state, getters, actions } = useCarousel()
 
-console.log(paginatedClipboardList.value);
+// 解构计算属性，使其在模板中自动解包
+const { allCards, activeAbsoluteIndex } = toRefs(getters)
+
+/**
+ * 计算轮播列表的样式
+ * @description 根据当前页码计算水平偏移，实现页面切换效果
+ */
+const listStyle = computed(() => ({
+    transform: `translateX(-${state.currentPage.value * PAGE_WIDTH}px)`,
+    transition: 'transform 0.3s ease',
+    width: `${getters.totalPages.value * PAGE_WIDTH}px`
+}))
+
+console.log(getters.allCards.value);
 
 </script>
 
 <template>
-    <div class="swiper-container">
-        <div v-if="paginatedClipboardList.length > 0" class="floating-ball" ref="floatingBall"
-            :style="swiperServices.floatingBallStyle">
-        </div>
-        <!-- <Swiper v-bind="swiperServices.params" @swiper="swiperServices.onSwiperInit" ref="swiperRef">
-            <SwiperSlide v-for="(pageItems, pageIndex) in paginatedClipboardList" :key="`page-${pageIndex}`">
-                <TransitionGroup name="card-list" tag="div" class="clipboard-list">
-                    <div v-for="(card, cardIndex) in pageItems" :key="card.contentHash + 'key' + cardIndex" class="card-wrapper">
-                        <StickyBadge :card="card" :card-id="card.id" />
-                        <VClipboardCard :clipboardOptions="card" />
-                    </div>
-                </TransitionGroup>
+    <div class="carousel-container">
+        <!-- 内层列表，将所有卡片渲染出来 -->
 
-            </SwiperSlide>
-        </Swiper> -->
-        <Swiper v-bind="swiperServices.params" @swiper="swiperServices.onSwiperInit" ref="swiperRef">
-            <SwiperSlide v-for="(pageItems, pageIndex) in paginatedClipboardList" :key="`page-${pageIndex}`">
-                <TransitionGroup name="card-list" tag="div" class="clipboard-list">
-                    <div v-for="(card, cardIndex) in pageItems" :key="card.contentHash + 'key' + cardIndex" class="card-wrapper">
-                        <StickyBadge :card="card" :card-id="card.id" />
-                        <VClipboardCard :clipboardOptions="card" />
-                    </div>
-                </TransitionGroup>
-            </SwiperSlide>
-        </Swiper>
+        <TransitionGroup name="all-cards" tag="div" class="all-cards" :style="listStyle">
+            <div v-for="(card, index) in allCards" :key="card.id"
+                :class="['card-wrapper', { active: index === activeAbsoluteIndex }]" :data-id="card.id">
+                <StickyBadge :card="card" :card-id="card.id" />
+                <!-- {{ card.id }} -->
+                <SelectBadge v-if="index === activeAbsoluteIndex" :card="card" :card-id="card.id" />
+                <VClipboardCard :clipboardOptions="card" />
+            </div>
+        </TransitionGroup>
     </div>
 </template>
 
 <style scoped lang="scss">
-.swiper-container {
-    width: 100%;
+/* 容器样式：设置溢出隐藏和全屏高度 */
+.carousel-container {
+    box-sizing: border-box;
+    overflow: hidden;
     height: 100vh;
-    position: relative;
 }
 
-.swiper {
+/* 内层列表：垂直排列所有卡片，设置间距和内边距 */
+.all-cards {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 3px 0px;
+    padding-top: 5.5px;
     height: 100%;
-
-    .clipboard-list {
-        height: 100%;
-        width: 100%;
-        box-sizing: border-box;
-        padding: 5px;
-        display: flex;
-        flex-direction: column;
-
-        gap: 3px;
-
-    }
 }
 
-.card-list-container {
-    position: relative;
-    height: 100%;
-    width: 100%;
-}
-
+/* 卡片样式：设置基础样式和过渡效果 */
 .card-wrapper {
-    // height: 136px; // 固定高度
+    width: 95vw;
     position: relative;
-    will-change: transform, opacity;
+    box-sizing: border-box;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgb(132 132 132 / 10%);
 }
 
-.floating-ball {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background-color: var(--swiper-pagination-color);
-    z-index: 10;
-    pointer-events: none;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-
-    /* 使用 CSS transform 进行位置移动 */
-    transform: translate3d(var(--ball-x, 275px), var(--ball-y, 5px), 0);
-
-    /* 添加平滑过渡 */
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-    /* 使用 will-change 提示浏览器优化 */
-    will-change: transform;
-
-    /* 强制开启硬件加速 */
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
+/* 选中卡片的高亮样式 */
+.card-wrapper.active {
+    // transform: scale(1.05);
+    // box-shadow: 0 4px 8px rgb(132 132 132 / 20%);
 }
 
-// TransitionGroup 动画
-.card-list-move,
-.card-list-enter-active,
-.card-list-leave-active {
+.all-cards-move,
+.all-cards-enter-active,
+.all-cards-leave-active {
     transition: all .3s ease;
 }
 
-.card-list-enter-from {
-    opacity: 0;
-    // transform: translateX(20px);
+.all-cards-enter-from {
+    transform: translateY(200px);
 }
 
-.card-list-leave-to {
-    opacity: 0;
-
+.all-cards-enter-to {
+    transform: translateY(0);
 }
 
-.card-list-leave-active {
+
+.all-cards-enter-from {
+    transform: translateY(-200px);
+}
+
+
+.all-cards-leave-form {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.all-cards-leave-to {
+    transform: scale(0.4);
+    opacity: 0;
+}
+
+.all-cards-leave-active {
     position: absolute;
-}
-
-
-/* 可选：添加悬浮效果 */
-@media (hover: hover) {
-    .floating-ball::after {
-        content: '';
-        position: absolute;
-        top: -2px;
-        left: -2px;
-        right: -2px;
-        bottom: -2px;
-        border-radius: 50%;
-        background: var(--swiper-pagination-color);
-        opacity: 0.2;
-        z-index: -1;
-        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    }
-}
-
-@keyframes pulse {
-
-    0%,
-    100% {
-        transform: scale(1);
-        opacity: 0.2;
-    }
-
-    50% {
-        transform: scale(1.5);
-        opacity: 0;
-    }
 }
 </style>

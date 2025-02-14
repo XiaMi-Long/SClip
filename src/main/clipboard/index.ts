@@ -209,6 +209,12 @@ export class ClipboardManager {
 
     /**
      * 更新最后的状态并发送到渲染进程
+     * @param {ClipboardType} type - 剪贴板的类型
+     * @param {string} content - 剪贴板内容
+     * @param {number} timestamp - 时间戳
+     * @param {object} meta - 附加元数据
+     * @param {string} contentHash - 内容哈希值
+     * @param {string} isSticky - 是否固定（'true'/'false'）
      */
     private updateLastState(
         type: ClipboardType,
@@ -226,9 +232,14 @@ export class ClipboardManager {
             meta,
             contentHash,
             isSticky
-        }
-        DBManager.getInstance().insertClipboardItem(this.lastState)
-        sendRenderer.setClipboardToRenderer([this.lastState])
+        };
+
+        // 在数据库中插入这条记录并获取新生成的 ID
+        const newId = DBManager.getInstance().insertClipboardItem(this.lastState);
+        // 将新生成的 ID 赋值回 lastState
+        this.lastState.id = newId;
+        // 发送数据到渲染进程
+        sendRenderer.setClipboardToRenderer([this.lastState]);
     }
 
     /**

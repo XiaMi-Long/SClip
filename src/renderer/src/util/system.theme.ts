@@ -12,6 +12,7 @@
  * @property {string} [swiperPaginationBulletWidth] - 轮播图进度条子弹宽度
  * @property {string} [swiperPaginationBulletHeight] - 轮播图进度条子弹高度
  * @property {string} [stickyBadgeBg] - 固定徽章背景颜色
+ * @property {string} [stickyBadgeErrorBg] - 固定徽章错误背景颜色
  */
 export interface SystemTheme {
     clipboardListBg?: string;
@@ -21,6 +22,7 @@ export interface SystemTheme {
     swiperPaginationBulletWidth?: string;
     swiperPaginationBulletHeight?: string;
     stickyBadgeBg?: string;
+    stickyBadgeErrorBg?: string;
 }
 
 /**
@@ -34,6 +36,7 @@ export const defaultTheme: SystemTheme = {
     swiperPaginationBulletWidth: '5px',
     swiperPaginationBulletHeight: '5px',
     stickyBadgeBg: '#86cfab',
+    stickyBadgeErrorBg: '#f67373',
 };
 
 /**
@@ -120,6 +123,9 @@ export function setSystemTheme(theme: SystemTheme): void {
     if (theme.stickyBadgeBg) {
         root.style.setProperty('--stickybadge-bg', theme.stickyBadgeBg);
     }
+    if (theme.stickyBadgeErrorBg) {
+        root.style.setProperty('--stickybadge-error-bg', theme.stickyBadgeErrorBg);
+    }
 }
 
 /**
@@ -158,6 +164,9 @@ export function updateThemeVariable(key: keyof SystemTheme, value: string): void
         case 'stickyBadgeBg':
             root.style.setProperty('--stickybadge-bg', value);
             break;
+        case 'stickyBadgeErrorBg':
+            root.style.setProperty('--stickybadge-error-bg', value);
+            break;
         default:
             console.warn('未知的主题变量:', key);
             break;
@@ -191,5 +200,6 @@ export function getCurrentTheme(): SystemTheme {
         swiperPaginationBulletWidth: rootStyles.getPropertyValue('--swiper-pagination-bullet-width').trim(),
         swiperPaginationBulletHeight: rootStyles.getPropertyValue('--swiper-pagination-bullet-height').trim(),
         stickyBadgeBg: rootStyles.getPropertyValue('--stickybadge-bg').trim(),
+        stickyBadgeErrorBg: rootStyles.getPropertyValue('--stickybadge-error-bg').trim(),
     };
 }

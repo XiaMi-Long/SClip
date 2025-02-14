@@ -3,7 +3,7 @@
  * @file StickyBadge 组件
  * @description 显示固定选项的标记组件，使用fadeInRight动画从右侧淡入
  */
-import stickyImage from '../../../../../assets/sticky_white.png'
+import stickyImage from '../../../../../assets/select_white.png'
 import { useMotions } from '@vueuse/motion'
 import { ref, computed } from 'vue'
 
@@ -22,7 +22,7 @@ const badgeMotion = {
         opacity: 1,
         scale: 1,
         transition: {
-            duration: 300,
+            duration: 500,
             ease: [0.215, 0.61, 0.355, 1]
         }
     },
@@ -35,10 +35,6 @@ const badgeMotion = {
     }
 }
 
-const shouldShow = computed(() => {
-    // 添加微任务延迟确保状态同步
-    return props.card.isSticky === 'true'
-})
 
 const getCardId = computed(() => {
     return props.cardId
@@ -47,10 +43,10 @@ const getCardId = computed(() => {
 
 <template>
 
-    <transition :css="false" @leave="(el, done) => motions[`stickyBadge${getCardId}`].leave(done)">
-        <div v-motion="'stickyBadge' + getCardId" v-if="shouldShow" :initial="badgeMotion.initial" :enter="badgeMotion.enter"
+    <transition :css="false" @leave="(el, done) => motions[`selectBadge${getCardId}`].leave(done)">
+        <div v-motion="'selectBadge' + getCardId" :initial="badgeMotion.initial" :enter="badgeMotion.enter"
             :leave="badgeMotion.leave" class="sticky-badge">
-            <img :src="stickyImage" alt="固定标记" />
+            <img :src="stickyImage" alt="选中标记" />
         </div>
     </transition>
 </template>
@@ -63,7 +59,7 @@ const getCardId = computed(() => {
     z-index: 2;
     position: absolute;
     box-sizing: border-box;
-    left: 10px;
+    right: 10px;
     /* 与card-wrapper左侧保持间隙 */
     bottom: 10px;
     /* 与card-wrapper底部保持间隙 */
@@ -78,49 +74,11 @@ const getCardId = computed(() => {
     justify-content: center;
 
     border-radius: 5px;
-
-    &.error {
-        animation-name: tada;
-        animation-duration: 1.5s;
-        animation-fill-mode: both;
-    }
-
 }
 
 .sticky-badge img {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
-}
-
-@keyframes tada {
-    0% {
-        transform: scale3d(1, 1, 1);
-
-    }
-
-    10%,
-    20% {
-        transform: scale3d(.9, .9, .9) rotate3d(0, 0, 1, -3deg)
-    }
-
-    30%,
-    50%,
-    70%,
-    90% {
-        transform: scale3d(1.2, 1.2, 1.2) rotate3d(0, 0, 1, 3deg);
-        background-color: var(--stickybadge-error-bg);
-    }
-
-    40%,
-    60%,
-    80% {
-        transform: scale3d(1.4, 1.4, 1.4) rotate3d(0, 0, 1, -3deg)
-    }
-
-    100% {
-        transform: scale3d(1, 1, 1)
-    }
-
 }
 </style>

@@ -40,7 +40,7 @@ const cardType = computed(() => {
 <style scoped lang="scss">
 .clipboard-card-container {
     // 计算高度：(362px - 15px margin) / 3 cards ≈ 115px
-    height: 136px;
+    height: 135px;
     box-sizing: border-box;
     box-shadow: 0 2px 4px rgb(132 132 132 / 10%);
 

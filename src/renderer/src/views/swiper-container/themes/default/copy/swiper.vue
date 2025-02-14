@@ -1,12 +1,7 @@
 <script setup lang="ts">
-import { onMounted, ref, useTemplateRef, watch, computed } from 'vue'
 import { Swiper, SwiperSlide } from 'swiper/vue'
-
 import VClipboardCard from "./card/index.vue"
-import { useConfigStore } from '@renderer/store/useConfigStore'
-import { useSwiperStore } from '@renderer/store/useSwiperStore'
-import { useClipboardStore } from '@renderer/store/useClipboardStore'
-import { Swiper as SwiperClass } from 'swiper/types'
+import StickyBadge from "./card/StickyBadge.vue"
 import { useSwiper } from './hooks'
 
 // 导入样式
@@ -14,63 +9,47 @@ import 'swiper/css'
 import 'swiper/css/pagination'
 import 'swiper/css/keyboard'
 
-const {
-    swiperInstance,
-    selectSwiper,
-    floatingBallXY,
-    floatingBallStyle,
-    swiperParams,
-    swiperShowCount,
-    handleKeyPress,
-    onSwiperInit,
-    getPageCards,
-    isFirstCard,
-    getCardKey,
-    getFloatingBallPosition
-} = useSwiper()
+const { swiperServices, paginatedClipboardList } = useSwiper()
 
-const floatingBall = useTemplateRef('floatingBall')
-// 使用组合式API优化store调用
-const configStore = useConfigStore()
-const swiperStore = useSwiperStore()
-const clipboardStore = useClipboardStore()
-
-watch(selectSwiper, () => {
-    getFloatingBallPosition()
-})
+console.log(paginatedClipboardList.value);
 
 </script>
 
 <template>
     <div class="swiper-container">
-        <Swiper v-bind="swiperParams" @swiper="onSwiperInit" ref="swiperRef">
-            <SwiperSlide v-for="swiperIndex in swiperStore.getSwiperLength" :key="`page-${swiperIndex}`">
-                <div class="clipboard-list">
-                    <div v-if="swiperIndex === 1" class="floating-ball" ref="floatingBall" :style="floatingBallStyle">
-                    </div>
-
-                    <div v-for="(card, cardIndex) in getPageCards(swiperIndex - 1)"
-                        :key="getCardKey(swiperIndex - 1, cardIndex, card.timestamp)" class="card-wrapper" v-motion="isFirstCard(swiperIndex - 1, cardIndex) ? {
-                            initial: { opacity: 0, y: -100 },
-                            enter: {
-                                opacity: 1,
-                                y: 0,
-                                transition: {
-                                    type: 'spring',
-                                    stiffness: 300,
-                                    damping: 15
-                                }
-                            }
-                        } : {}">
+        <div v-if="paginatedClipboardList.length > 0" class="floating-ball" ref="floatingBall"
+            :style="swiperServices.floatingBallStyle">
+        </div>
+        <!-- <Swiper v-bind="swiperServices.params" @swiper="swiperServices.onSwiperInit" ref="swiperRef">
+            <SwiperSlide v-for="(pageItems, pageIndex) in paginatedClipboardList" :key="`page-${pageIndex}`">
+                <TransitionGroup name="card-list" tag="div" class="clipboard-list">
+                    <div v-for="(card, cardIndex) in pageItems" :key="card.contentHash + 'key' + cardIndex" class="card-wrapper">
+                        <StickyBadge :card="card" :card-id="card.id" />
                         <VClipboardCard :clipboardOptions="card" />
                     </div>
-                </div>
+                </TransitionGroup>
+
+            </SwiperSlide>
+        </Swiper> -->
+        <Swiper v-bind="swiperServices.params" @swiper="swiperServices.onSwiperInit" ref="swiperRef">
+            <SwiperSlide v-for="(pageItems, pageIndex) in paginatedClipboardList" :key="`page-${pageIndex}`">
+                <TransitionGroup name="card-list" tag="div" class="clipboard-list">
+                    <div v-for="(card, cardIndex) in pageItems" :key="card.contentHash + 'key' + cardIndex" class="card-wrapper">
+                        <StickyBadge :card="card" :card-id="card.id" />
+                        <VClipboardCard :clipboardOptions="card" />
+                    </div>
+                </TransitionGroup>
             </SwiperSlide>
         </Swiper>
     </div>
 </template>
 
 <style scoped lang="scss">
+:deep(.swiper-wrapper) {
+    // display: flex;
+    // flex-direction: column-reverse;
+}
+
 .swiper-container {
     width: 100%;
     height: 100vh;
@@ -87,12 +66,21 @@ watch(selectSwiper, () => {
         padding: 5px;
         display: flex;
         flex-direction: column;
+
         gap: 3px;
 
     }
 }
 
+.card-list-container {
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
 .card-wrapper {
+    // height: 136px; // 固定高度
+    position: relative;
     will-change: transform, opacity;
 }
 
@@ -119,6 +107,28 @@ watch(selectSwiper, () => {
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
 }
+
+// TransitionGroup 动画
+.card-list-move,
+.card-list-enter-active,
+.card-list-leave-active {
+    transition: all .3s ease;
+}
+
+.card-list-enter-from {
+    opacity: 0;
+    // transform: translateX(20px);
+}
+
+.card-list-leave-to {
+    opacity: 0;
+
+}
+
+.card-list-leave-active {
+    position: absolute;
+}
+
 
 /* 可选：添加悬浮效果 */
 @media (hover: hover) {
