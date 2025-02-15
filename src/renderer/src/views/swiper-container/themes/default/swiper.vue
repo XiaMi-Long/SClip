@@ -9,6 +9,7 @@ import { computed, toRefs } from 'vue'
 import VClipboardCard from "./card/index.vue"
 import StickyBadge from "./card/StickyBadge.vue"
 import SelectBadge from "./card/selectBadge.vue"
+import PaginationIndicator from "./card/PaginationIndicator.vue"
 import { useCarousel } from './hooks'
 
 /** 每页的宽度（像素） */
@@ -46,6 +47,8 @@ console.log(getters.allCards.value);
                 <VClipboardCard :clipboardOptions="card" />
             </div>
         </TransitionGroup>
+        <!-- 分页状态展示组件（仅展示当前页码，不具备点击功能） -->
+        <PaginationIndicator :current="state.currentPage.value" :total="getters.totalPages.value" />
     </div>
 </template>
 
@@ -89,7 +92,7 @@ console.log(getters.allCards.value);
 .all-cards-move,
 .all-cards-enter-active,
 .all-cards-leave-active {
-    transition: all .3s ease;
+    transition: transform .3s ease;
 }
 
 .all-cards-enter-from {
@@ -117,6 +120,6 @@ console.log(getters.allCards.value);
 }
 
 .all-cards-leave-active {
-    position: absolute;
+    // position: absolute;
 }
 </style>
