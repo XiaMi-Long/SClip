@@ -90,14 +90,14 @@ console.log(getters.allCards.value);
 }
 
 .all-cards-move,
-.all-cards-enter-active,
-.all-cards-leave-active {
-    transition: transform .3s ease;
+.all-cards-enter-active {
+    transition: transform 1s ease;
 }
 
-.all-cards-enter-from {
-    transform: translateY(200px);
+.all-cards-leave-active {
+    transition: transform 1s ease;
 }
+
 
 .all-cards-enter-to {
     transform: translateY(0);
@@ -110,16 +110,18 @@ console.log(getters.allCards.value);
 
 
 .all-cards-leave-form {
-    transform: scale(1);
+    // transform: scale(1);
     opacity: 1;
+    // transform: translateY(0px);
 }
 
 .all-cards-leave-to {
-    transform: scale(0.4);
+    // transform: scale(0.4);
     opacity: 0;
+    // transform: translateY(200px);
 }
 
 .all-cards-leave-active {
-    // position: absolute;
+    position: absolute;
 }
 </style>
