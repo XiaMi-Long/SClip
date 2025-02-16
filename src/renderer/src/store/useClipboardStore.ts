@@ -26,6 +26,7 @@ export const useClipboardStore = defineStore('clipboard', {
             console.log(list);
             this.clipboardList.push(...list)
         },
+
         /**
          * 删除剪贴板列表
          * @param {number} index 剪贴板列表索引

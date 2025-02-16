@@ -3,7 +3,7 @@
  * @description 自定义轮播图逻辑钩子，整合状态与操作方法，并以聚合对象形式导出
  */
 
-import { ref, computed, onMounted, toRaw, type Ref, type ComputedRef } from 'vue'
+import { ref, computed, onMounted, watch, toRaw, type Ref, type ComputedRef } from 'vue'
 import { useClipboardStore } from '@renderer/store/useClipboardStore'
 import { debounce } from 'lodash'
 
@@ -88,6 +88,17 @@ export function useCarousel(): UseCarouselReturn {
         currentCardIndex: ref(0)
     }
 
+    // 当剪贴板数据的数量等于1时，重置页码和当前选中的索引
+    watch(
+        () => clipboardStore.getClipboard.length,
+        (newLength) => {
+            if (newLength === 1) {
+                state.currentPage.value = 0
+                state.currentCardIndex.value = 0
+            }
+        }
+    )
+
     // ===== 计算属性 =====
     const getters: CarouselGetters = {
         /** 获取所有卡片数据并倒序排列 */
@@ -102,7 +113,7 @@ export function useCarousel(): UseCarouselReturn {
             return Math.min(remaining, ITEMS_PER_PAGE)
         }),
 
-        /** 计算当前选中卡片的绝对索引 */
+        /** 计算当前选中卡片的绝对索引（相对于所有卡片） */
         activeAbsoluteIndex: computed(() =>
             state.currentPage.value * ITEMS_PER_PAGE + state.currentCardIndex.value
         )
@@ -115,14 +126,12 @@ export function useCarousel(): UseCarouselReturn {
             prevPage: () => {
                 if (state.currentPage.value > 0) {
                     state.currentPage.value--
-                    // state.currentCardIndex.value = 0
                 }
             },
             /** 切换到下一页 */
             nextPage: () => {
                 if (state.currentPage.value < getters.totalPages.value - 1) {
                     state.currentPage.value++
-                    // 如果当前卡片索引大于当前页的卡片数量，则将当前卡片索引设置为当前页的卡片数量减1
                     if (state.currentCardIndex.value >= getters.currentPageLength.value) {
                         state.currentCardIndex.value = getters.currentPageLength.value - 1
                     }

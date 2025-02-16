@@ -11,6 +11,7 @@ import StickyBadge from "./card/StickyBadge.vue"
 import SelectBadge from "./card/selectBadge.vue"
 import PaginationIndicator from "./card/PaginationIndicator.vue"
 import { useCarousel } from './hooks'
+import noDataImage from '../../../../assets/no-data.png'
 
 /** 每页的宽度（像素） */
 const PAGE_WIDTH = 300
@@ -32,17 +33,65 @@ const listStyle = computed(() => ({
 
 console.log(getters.allCards.value);
 
+/**
+ * 元素进入时的动画
+ * @param el - 进入的元素
+ * @param done - 动画完成的回调
+ */
+const onEnter = (el: Element, done: () => void) => {
+    const animation = el.animate([
+        {
+            opacity: 0,
+            transform: 'translateY(-30px)'
+        },
+        {
+            opacity: 1,
+            transform: 'translateY(0)'
+        }
+    ], {
+        duration: 300,
+        easing: 'ease-out'
+    });
+
+    animation.onfinish = done;
+    done();
+}
+
+/**
+ * 元素离开时的动画
+ * @param el - 离开的元素
+ * @param done - 动画完成的回调
+ */
+const onLeave = (el: Element, done: () => void) => {
+    const animation = el.animate([
+        {
+            transform: 'translateY(0)'
+        },
+        {
+            transform: 'translateY(-30px)'
+        }
+    ], {
+        duration: 300,
+        easing: 'ease-in'
+    });
+
+    animation.onfinish = done;
+    done();
+}
 </script>
 
 <template>
     <div class="carousel-container">
         <!-- 内层列表，将所有卡片渲染出来 -->
-
-        <TransitionGroup name="all-cards" tag="div" class="all-cards" :style="listStyle">
+        <transition name="no-data" appear>
+            <div class="no-data-container" v-if="allCards.length === 0">
+                <img :src="noDataImage" alt="no-data" />
+            </div>
+        </transition>
+        <TransitionGroup tag="div" class="all-cards" :style="listStyle" :css="false" @enter="onEnter" @leave="onLeave" appear>
             <div v-for="(card, index) in allCards" :key="card.id"
                 :class="['card-wrapper', { active: index === activeAbsoluteIndex }]" :data-id="card.id">
                 <StickyBadge :card="card" :card-id="card.id" />
-                <!-- {{ card.id }} -->
                 <SelectBadge v-if="index === activeAbsoluteIndex" :card="card" :card-id="card.id" />
                 <VClipboardCard :clipboardOptions="card" />
             </div>
@@ -81,47 +130,67 @@ console.log(getters.allCards.value);
     transition: transform 0.2s ease;
     background-color: #fff;
     box-shadow: 0 2px 4px rgb(132 132 132 / 10%);
+    /* 使用 will-change 提示浏览器优化 */
+    will-change: transform;
+
+    /* 强制开启硬件加速 */
+    backface-visibility: hidden;
 }
 
-/* 选中卡片的高亮样式 */
-.card-wrapper.active {
-    // transform: scale(1.05);
-    // box-shadow: 0 4px 8px rgb(132 132 132 / 20%);
+.no-data-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.all-cards-move,
-.all-cards-enter-active {
-    transition: transform 1s ease;
+.no-data-container img {
+    width: 200px;
+    height: 200px;
 }
 
-.all-cards-leave-active {
-    transition: transform 1s ease;
-}
-
-
-.all-cards-enter-to {
-    transform: translateY(0);
-}
-
-
-.all-cards-enter-from {
-    transform: translateY(-200px);
+.no-data-enter-active {
+    animation: bounceIn .5s ease;
 }
 
 
-.all-cards-leave-form {
-    // transform: scale(1);
-    opacity: 1;
-    // transform: translateY(0px);
-}
+@keyframes bounceIn {
 
-.all-cards-leave-to {
-    // transform: scale(0.4);
-    opacity: 0;
-    // transform: translateY(200px);
-}
+    0%,
+    100%,
+    20%,
+    40%,
+    60%,
+    80% {
+        transition-timing-function: cubic-bezier(0.215, .61, .355, 1)
+    }
 
-.all-cards-leave-active {
-    position: absolute;
+    0% {
+        opacity: 0;
+        transform: scale3d(.3, .3, .3)
+    }
+
+    20% {
+        transform: scale3d(1.1, 1.1, 1.1)
+    }
+
+    40% {
+        transform: scale3d(.9, .9, .9)
+    }
+
+    60% {
+        opacity: 1;
+        transform: scale3d(1.03, 1.03, 1.03)
+    }
+
+    80% {
+        transform: scale3d(.97, .97, .97)
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale3d(1, 1, 1)
+    }
 }
 </style>

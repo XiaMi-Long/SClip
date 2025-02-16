@@ -1,6 +1,7 @@
 import { join } from 'path'
-import icon from '../../../resources/icon.png?asset'
-import { app, shell, BrowserWindow, ipcMain, BrowserWindowConstructorOptions, powerMonitor } from 'electron'
+import { Menu, MenuItemConstructorOptions } from 'electron'
+import icon from '../../../resources/images/icons/icon.png?asset'
+import { app, shell, BrowserWindow, ipcMain, BrowserWindowConstructorOptions, powerMonitor, Tray } from 'electron'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { BrowserWindowManager } from "../window/window.manager";
 import { ClipboardManager } from '../clipboard';
@@ -35,6 +36,9 @@ interface WindowMethod extends registerEvent {
  */
 interface appRegisterEvent extends registerEvent {
     registerIPCEvent(): void
+    registerTray(): void
+    registerAppMenu(): void
+    registerPowerMonitorEvent(): void
 }
 
 /**
@@ -51,6 +55,8 @@ interface mainWindowMethod extends WindowMethod {
  * 负责管理应用的窗口创建、事件注册等
  */
 export class ApplicationRegister {
+
+    private static tray: Tray
     /**
      * 主窗口的配置参数
      */
@@ -59,6 +65,7 @@ export class ApplicationRegister {
         height: 450,
         show: false,
         autoHideMenuBar: true,
+        title: "SClip",
         // focusable: false,
         ...(process.platform === 'linux' ? { icon } : {}),
         webPreferences: {
@@ -81,7 +88,10 @@ export class ApplicationRegister {
         init() {
             this.registerEvent()
             this.registerIPCEvent()
-            electronApp.setAppUserModelId('com.electron')
+            this.registerTray()
+            this.registerAppMenu()
+            this.registerPowerMonitorEvent()
+            electronApp.setAppUserModelId('com.sclip')
         },
 
         /**
@@ -121,17 +131,7 @@ export class ApplicationRegister {
          * 注册应用IPC通信事件
          */
         registerIPCEvent() {
-            /**
-             * 监听应用恢复事件
-             */
-            powerMonitor.on('resume', () => {
-                try {
-                    const clipboardHistory = DBManager.getInstance().getClipboardHistory()
-                    sendRenderer.setClipboardToRenderer(clipboardHistory)
-                } catch (error) {
-                    Logger.error('Application', `恢复剪贴板记录失败`, error)
-                }
-            })
+
 
             /**
              * 监听渲染进程通信-渲染进程通知主进程准备复制剪贴板的内容到用户输入区域
@@ -203,6 +203,105 @@ export class ApplicationRegister {
                     Logger.error('Application', '删除剪贴板数据失败', error)
                 }
             })
+
+
+        },
+
+        /**
+         * 注册托盘事件
+         */
+        registerTray() {
+            console.log(__dirname);
+            console.log(icon);
+
+            // ApplicationRegister.tray = new Tray(icon)
+            // const contextMenu = Menu.buildFromTemplate([
+            //     { label: 'Item1', type: 'radio' },
+            //     { label: 'Item2', type: 'radio' },
+            //     { label: 'Item3', type: 'radio', checked: true },
+            //     { label: 'Item4', type: 'radio' }
+            // ])
+            // ApplicationRegister.tray.setToolTip('SClip')
+            // ApplicationRegister.tray.setContextMenu(contextMenu)
+        },
+
+        /**
+         * 注册应用菜单
+         */
+        registerAppMenu(): void {
+            const template: MenuItemConstructorOptions[] = [
+                {
+                    label: '设置',
+                    submenu: [
+                        { label: '关于SClip', id: 'about-sclip', click: () => { } },
+                        { type: 'separator' },
+                        { label: '主题设置', id: 'theme-setting', click: () => { } },
+                        { type: 'separator' },
+                        { label: '趣味数据', id: 'funny-data', click: () => { } },
+                        { type: 'separator' },
+                        { label: '操作日志', id: 'operation-log', click: () => { } },
+                        { type: 'separator' },
+                        { label: '快捷键设置', id: 'shortcut-setting', click: () => { } },
+                        { type: 'separator' },
+                        { label: '软件设置', id: 'software-setting', click: () => { } },
+                        { type: 'separator' },
+                    ]
+                },
+                {
+                    label: '窗口',
+                    submenu: [
+                        { role: 'minimize', label: '最小化', id: 'minimize', click: () => { } },
+                        { role: 'reload', label: '刷新', id: 'reload', click: () => { } },
+                        { role: 'quit', label: '退出', id: 'quit', click: () => { } },
+                    ]
+                }
+            ]
+            if (is.dev) {
+                (template[1].submenu as MenuItemConstructorOptions[]).unshift({
+                    role: 'toggleDevTools', label: '开发者工具', id: 'toggle-dev-tools'
+                })
+            }
+
+            const menu = Menu.buildFromTemplate(template)
+            Menu.setApplicationMenu(menu)
+        },
+
+        /**
+         * 注册电源监控事件
+         */
+        registerPowerMonitorEvent(): void {
+            /**
+            * 监听应用恢复事件
+            */
+            powerMonitor.on('resume', () => {
+                Logger.info('PowerMonitor', '系统恢复，恢复监听剪贴板');
+                ClipboardManager.getInstance().startListening();
+            })
+
+            /**
+             * 监听应用挂起事件
+             */
+            powerMonitor.on('suspend', () => {
+                Logger.info('PowerMonitor', '系统挂起，停止监听剪贴板');
+                ClipboardManager.getInstance().stopListening();
+            });
+
+            /**
+             * 监听屏幕锁定事件
+             */
+            powerMonitor.on('lock-screen', () => {
+                Logger.info('PowerMonitor', '屏幕锁定，停止监听剪贴板');
+                ClipboardManager.getInstance().stopListening();
+            });
+
+            /**
+             * 监听屏幕解锁事件
+             */
+            powerMonitor.on('unlock-screen', () => {
+                Logger.info('PowerMonitor', '屏幕解锁，恢复监听剪贴板');
+                ClipboardManager.getInstance().startListening();
+            });
+
         }
     }
 

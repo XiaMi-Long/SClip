@@ -7,7 +7,7 @@
  *   - 后退：当前区域宽度过渡连接
  */
 
-import { computed, defineProps, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 const props = defineProps<{
     current: number,
@@ -54,14 +54,15 @@ const transformX = computed(() => {
     if (props.current === 0) {
         // 第一页：不偏移
         return 0
-    } else if (props.current === props.total - 1) {
+    }
+    else if (props.current === props.total - 1) {
         // 最后一页：向左偏移使最后一个条形区域位于最右侧
         return -((props.total - 3) * (BAR_WIDTH + BAR_GAP))
     } else {
-        BAR_GAP
         // 中间页：保持当前页的条形区域在中间
         return -((props.current - 1) * (BAR_WIDTH + BAR_GAP))
     }
+
 })
 
 /**
@@ -87,7 +88,7 @@ const getBarClass = (index: number) => ({
 
 <template>
     <div class="pagination-container">
-        <div class="pagination-wrapper">
+        <div class="pagination-wrapper" :class="{ flex: props.total <= 3 }">
             <div class="pagination-bars" :style="{ transform: `translateX(${transformX}px)` }">
                 <div v-for="index in bars" :key="index" :class="getBarClass(index)">
                 </div>
@@ -102,7 +103,7 @@ const getBarClass = (index: number) => ({
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    width: 64px;
+    width: 65px;
 
     /* (15px * 3) + (8px * 2) = 65px，刚好容纳3个条形区域 */
     overflow: hidden;
@@ -112,7 +113,13 @@ const getBarClass = (index: number) => ({
     position: relative;
     width: 100%;
     height: 4px;
+
     /* 条形区域高度 */
+    &.flex {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 }
 
 .pagination-bars {
