@@ -64,9 +64,12 @@ export class ApplicationRegister {
         width: 300,
         height: 450,
         show: false,
+        frame: false,
+        transparent: true,
+        titleBarStyle: 'hidden',
+        trafficLightPosition: { x: 12, y: 10 },
         autoHideMenuBar: true,
         title: "SClip",
-        // focusable: false,
         ...(process.platform === 'linux' ? { icon } : {}),
         webPreferences: {
             preload: join(__dirname, '../preload/index.js'),
@@ -204,7 +207,38 @@ export class ApplicationRegister {
                 }
             })
 
+            /**
+             * 监听渲染进程通信-打开设置窗口
+             */
+            ipcMain.on('open-setting', () => {
+                const window = BrowserWindowManager.createBrowserWindow({
+                    key: 'setting',
+                    browserWindow: {
+                        ...ApplicationRegister.mainWindowParams,
+                        width: 400,
+                        height: 600,
+                        show: true,
+                        title: 'SClip - 设置',
+                        webPreferences: {
+                            preload: join(__dirname, '../preload/index.js'),
+                            sandbox: false,
+                            scrollBounce: true
+                        }
+                    }
+                })
+                if (window) {
+                    window.show()
 
+                    // 根据开发环境或生产环境加载不同的URL
+                    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+                        window.loadURL(`${process.env['ELECTRON_RENDERER_URL']}?page=setting`)
+                    } else {
+                        window.loadFile(join(__dirname, '../../renderer/index.html'), {
+                            search: 'page=setting'
+                        })
+                    }
+                }
+            })
         },
 
         /**
@@ -359,7 +393,7 @@ export class ApplicationRegister {
 
                             try {
                                 const setting = ConfigManager.getInstance().getSetting()
-                                sendRenderer.setSettingToRender(setting)
+                                sendRenderer.setSetting(setting)
                             } catch (error) {
                                 Logger.error('Application', `初始化应用恢复设置失败`, error)
                             }

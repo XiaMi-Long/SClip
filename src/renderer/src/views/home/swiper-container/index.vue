@@ -58,6 +58,6 @@ watch(
 
 <style scoped lang="scss">
 .swiper-container {
-    height: 100vh;
+    height: calc(100vh - 32px);
 }
 </style>

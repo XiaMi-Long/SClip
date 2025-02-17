@@ -1,3 +1,5 @@
+import { app } from 'electron';
+
 /**
  * 应用配置管理类
  * @class ConfigManager
@@ -12,7 +14,18 @@ export class ConfigManager {
             applicationTheme: 'light',
             clipboardTheme: 'default',
             rtfTextZoom: 0.3,
-            rtfRenderType: 'rtf'
+            rtfRenderType: 'rtf',
+            system: {
+                platform: process.platform,
+                isMac: process.platform === 'darwin',
+                // isMac: false,
+                isWindows: process.platform === 'win32',
+                // isWindows: true,
+                isLinux: process.platform === 'linux',
+                appName: 'SClip',
+                version: app.getVersion()
+            },
+            stickyBadgeTheme: 'default'
         };
     }
 

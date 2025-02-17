@@ -24,7 +24,7 @@ declare global {
      */
     interface Setting {
         /**
-         * 应用主题
+         * 系统主题
          */
         applicationTheme: 'light' | 'dark'
         /**
@@ -35,12 +35,49 @@ declare global {
          * rtf 文本缩放
          */
         rtfTextZoom: number
-
         /**
          * rtf 文本内容
          */
         rtfRenderType: 'rtf' | 'html' | 'text'
+
+        /**
+         * 粘贴徽章
+         */
+        stickyBadgeTheme: 'default' | 'red'
+
+        /**
+         * 系统信息
+         */
+        system: {
+            /**
+             * 平台
+             */
+            platform: string
+            /**
+             * 是否是mac
+             */
+            isMac: boolean
+            /**
+             * 是否是windows
+             */
+            isWindows: boolean
+            /**
+             * 是否是linux
+             */
+            isLinux: boolean
+            /**
+             * 应用名称
+             */
+            appName: string
+            /**
+             * 应用版本
+             */
+            version: string
+        }
     }
+
+
 }
+
 
 export { }

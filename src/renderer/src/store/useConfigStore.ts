@@ -2,16 +2,12 @@ import { defineStore } from 'pinia'
 
 export const useConfigStore = defineStore('config', {
     state: () => ({
-        setting: {
-            applicationTheme: 'light',
-            clipboardTheme: 'default',
-            rtfTextZoom: 1
-        } as Setting
+        setting: {} as Setting
     }),
     getters: {
         /**
-         * 获取设置
-         * @returns {Setting} 设置
+         * 获取应用配置
+         * @returns {AppConfig} 应用配置
          */
         getSetting(): Setting {
             return this.setting
@@ -19,10 +15,10 @@ export const useConfigStore = defineStore('config', {
     },
     actions: {
         /**
-         * 设置设置
-         * @param {Setting} setting 设置
+         * 设置应用配置
+         * @param {AppConfig} appConfig 应用配置
          */
-        setSettingToRender(setting: Setting) {
+        setSetting(setting: Setting) {
             this.setting = setting
         }
     }

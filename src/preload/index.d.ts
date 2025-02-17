@@ -8,8 +8,16 @@ declare global {
       updateClipboardItem: (clipboardState: ClipboardState) => void,
       deleteClipboardItem: (clipboardData: ClipboardState) => void
     },
-    setting: {
-      setSettingToRender: (callback: (setting: Setting) => void) => void
+    titleBar: {
+      minimize: () => void
+      maximize: () => void
+      close: () => void
+    },
+    appConfig: {
+      getAppSetting: (callback: (setting: Setting) => void) => void
+    },
+    browserWindow: {
+      openSetting: () => void
     }
   }
 

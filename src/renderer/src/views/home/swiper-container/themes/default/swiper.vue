@@ -106,7 +106,7 @@ const onLeave = (el: Element, done: () => void) => {
 .carousel-container {
     box-sizing: border-box;
     overflow: hidden;
-    height: 100vh;
+    height: 100%;
 }
 
 /* 内层列表：垂直排列所有卡片，设置间距和内边距 */
@@ -116,7 +116,7 @@ const onLeave = (el: Element, done: () => void) => {
     align-items: center;
     flex-wrap: wrap;
     gap: 3px 0px;
-    padding-top: 5.5px;
+    padding-top: 2.5px;
     height: 100%;
 }
 
