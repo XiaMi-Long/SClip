@@ -1,20 +1,19 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useConfigStore } from '@renderer/store/useConfigStore';
+import { useConfigStore } from '@renderer/store/useConfigStore'
 
 const props = defineProps<{
-    clipboardOptions: ClipboardState
+  clipboardOptions: ClipboardState
 }>()
 
 const containerRef = ref<HTMLElement | null>(null)
 
 onMounted(() => {
+  if (containerRef.value) {
+    const shadow = containerRef.value.attachShadow({ mode: 'open' })
 
-    if (containerRef.value) {
-        const shadow = containerRef.value.attachShadow({ mode: 'open' })
-
-        const style = document.createElement('style')
-        style.textContent = `
+    const style = document.createElement('style')
+    style.textContent = `
             :host {
                 display: block;
                 height: 100%;
@@ -53,25 +52,25 @@ onMounted(() => {
             }
         `
 
-        const content = document.createElement('div')
-        content.className = 'rtf-content'
-        content.innerHTML = props.clipboardOptions.meta.rtf_html
+    const content = document.createElement('div')
+    content.className = 'rtf-content'
+    content.innerHTML = props.clipboardOptions.meta.rtf_html
 
-        shadow.appendChild(style)
-        shadow.appendChild(content)
-    }
+    shadow.appendChild(style)
+    shadow.appendChild(content)
+  }
 })
 </script>
 
 <template>
-    <div class="clipboard-card-text-container">
-        <div ref="containerRef"></div>
-    </div>
+  <div class="clipboard-card-text-container">
+    <div ref="containerRef"></div>
+  </div>
 </template>
 
 <style scoped lang="scss">
 .clipboard-card-text-container {
-    height: 90%;
-    overflow: hidden;
+  height: 90%;
+  overflow: hidden;
 }
 </style>

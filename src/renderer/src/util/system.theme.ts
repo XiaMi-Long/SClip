@@ -1,4 +1,4 @@
-import { useConfigStore } from '@renderer/store/useConfigStore';
+import { useConfigStore } from '@renderer/store/useConfigStore'
 
 /**
  * @file system.theme.ts
@@ -14,11 +14,11 @@ import { useConfigStore } from '@renderer/store/useConfigStore';
  * @property {string} [systemTheme] - 系统主题 light/dark
  */
 export interface SystemTheme {
-    clipboardListBg?: string;
-    clipboardCardBg?: string;
-    stickyBadgeBg?: string;
-    stickyBadgeErrorBg?: string;
-    systemTheme?: string;
+  clipboardListBg?: string
+  clipboardCardBg?: string
+  stickyBadgeBg?: string
+  stickyBadgeErrorBg?: string
+  systemTheme?: string
 }
 
 /**
@@ -30,52 +30,51 @@ export type PresetThemeKey = 'default'
  * @description 预设的主题配置集合，可供选择的主题（5-6种）
  */
 export const presetThemes: Record<PresetThemeKey, SystemTheme> = {
-    default: {
-        stickyBadgeBg: '#86cfab',
-    },
-};
+  default: {
+    stickyBadgeBg: '#86cfab'
+  }
+}
 
 /**
  * @description 默认的系统主题设置，与 theme.css 中一致喵～
  */
 export const defaultTheme: SystemTheme = {
-    clipboardListBg: '#f3f3f3',
-    clipboardCardBg: '#ffffff',
-    stickyBadgeBg: presetThemes.default.stickyBadgeBg,
-    stickyBadgeErrorBg: '#f67373',
-    systemTheme: 'light',
-};
-
+  clipboardListBg: '#f3f3f3',
+  clipboardCardBg: '#ffffff',
+  stickyBadgeBg: presetThemes.default.stickyBadgeBg,
+  stickyBadgeErrorBg: '#f67373',
+  systemTheme: 'light'
+}
 
 /**
  * @description 将传入的主题配置写入到全局 :root CSS 变量中，实现主题颜色的动态切换
  * @param {SystemTheme} theme - 主题配置对象，用于更新全局变量
  */
 export function setSystemTheme(theme: SystemTheme): void {
-    const root = document.documentElement;
-    if (theme.clipboardListBg) {
-        root.style.setProperty('--clipboard-list-bg', theme.clipboardListBg);
-    }
-    if (theme.clipboardCardBg) {
-        root.style.setProperty('--clipboard-card-bg', theme.clipboardCardBg);
-    }
-    if (theme.stickyBadgeBg) {
-        root.style.setProperty('--stickybadge-bg', theme.stickyBadgeBg);
-    }
-    if (theme.stickyBadgeErrorBg) {
-        root.style.setProperty('--stickybadge-error-bg', theme.stickyBadgeErrorBg);
-    }
-    if (theme.systemTheme) {
-        root.style.setProperty('--system-theme', theme.systemTheme === 'light' ? 'white' : 'black');
-    }
+  const root = document.documentElement
+  if (theme.clipboardListBg) {
+    root.style.setProperty('--clipboard-list-bg', theme.clipboardListBg)
+  }
+  if (theme.clipboardCardBg) {
+    root.style.setProperty('--clipboard-card-bg', theme.clipboardCardBg)
+  }
+  if (theme.stickyBadgeBg) {
+    root.style.setProperty('--stickybadge-bg', theme.stickyBadgeBg)
+  }
+  if (theme.stickyBadgeErrorBg) {
+    root.style.setProperty('--stickybadge-error-bg', theme.stickyBadgeErrorBg)
+  }
+  if (theme.systemTheme) {
+    root.style.setProperty('--system-theme', theme.systemTheme === 'light' ? '#e3e3e3' : 'black')
+  }
 }
 
 /**
  * @description 初始化系统主题，默认使用 defaultTheme；此函数应在应用初始化时调用喵～
  */
 export function initSystemTheme(): void {
-    console.log('initSystemTheme', defaultTheme);
-    setSystemTheme(defaultTheme);
+  console.log('initSystemTheme', defaultTheme)
+  setSystemTheme(defaultTheme)
 }
 
 /**
@@ -84,24 +83,24 @@ export function initSystemTheme(): void {
  * @param {string} value - 主题变量对应的新值
  */
 export function updateThemeVariable(key: keyof SystemTheme, value: string): void {
-    const root = document.documentElement;
-    switch (key) {
-        case 'clipboardListBg':
-            root.style.setProperty('--clipboard-list-bg', value);
-            break;
-        case 'clipboardCardBg':
-            root.style.setProperty('--clipboard-card-bg', value);
-            break;
-        case 'stickyBadgeBg':
-            root.style.setProperty('--stickybadge-bg', value);
-            break;
-        case 'stickyBadgeErrorBg':
-            root.style.setProperty('--stickybadge-error-bg', value);
-            break;
-        default:
-            console.warn('未知的主题变量:', key);
-            break;
-    }
+  const root = document.documentElement
+  switch (key) {
+    case 'clipboardListBg':
+      root.style.setProperty('--clipboard-list-bg', value)
+      break
+    case 'clipboardCardBg':
+      root.style.setProperty('--clipboard-card-bg', value)
+      break
+    case 'stickyBadgeBg':
+      root.style.setProperty('--stickybadge-bg', value)
+      break
+    case 'stickyBadgeErrorBg':
+      root.style.setProperty('--stickybadge-error-bg', value)
+      break
+    default:
+      console.warn('未知的主题变量:', key)
+      break
+  }
 }
 
 /**
@@ -109,12 +108,12 @@ export function updateThemeVariable(key: keyof SystemTheme, value: string): void
  * @param {PresetThemeKey} themeKey - 预设主题的 key（比如 'yellow', 'red' 等）
  */
 export function setPresetTheme(themeKey: PresetThemeKey): void {
-    const preset = presetThemes[themeKey];
-    if (preset) {
-        setSystemTheme(preset);
-    } else {
-        console.warn('未找到对应的预设主题:', themeKey);
-    }
+  const preset = presetThemes[themeKey]
+  if (preset) {
+    setSystemTheme(preset)
+  } else {
+    console.warn('未找到对应的预设主题:', themeKey)
+  }
 }
 
 /**
@@ -122,11 +121,11 @@ export function setPresetTheme(themeKey: PresetThemeKey): void {
  * @returns {SystemTheme} 当前主题配置对象
  */
 export function getCurrentTheme(): SystemTheme {
-    const rootStyles = getComputedStyle(document.documentElement);
-    return {
-        clipboardListBg: rootStyles.getPropertyValue('--clipboard-list-bg').trim(),
-        clipboardCardBg: rootStyles.getPropertyValue('--clipboard-card-bg').trim(),
-        stickyBadgeBg: rootStyles.getPropertyValue('--stickybadge-bg').trim(),
-        stickyBadgeErrorBg: rootStyles.getPropertyValue('--stickybadge-error-bg').trim(),
-    };
+  const rootStyles = getComputedStyle(document.documentElement)
+  return {
+    clipboardListBg: rootStyles.getPropertyValue('--clipboard-list-bg').trim(),
+    clipboardCardBg: rootStyles.getPropertyValue('--clipboard-card-bg').trim(),
+    stickyBadgeBg: rootStyles.getPropertyValue('--stickybadge-bg').trim(),
+    stickyBadgeErrorBg: rootStyles.getPropertyValue('--stickybadge-error-bg').trim()
+  }
 }

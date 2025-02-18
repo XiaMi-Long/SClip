@@ -1,29 +1,28 @@
 <script setup lang="ts">
-
 import { computed, onMounted, shallowRef, defineAsyncComponent, watch, ref } from 'vue'
 
 const props = defineProps<{
-    setting: Setting
+  setting: Setting
 }>()
 
 /**
  * 动态导入组件映射
  */
 const asyncComponents = {
-    default: defineAsyncComponent({
-        loader: () => import('./themes/default/swiper.vue'),
-        loadingComponent: () => import('../../../components/VDefaultLoading/index.vue'),
-        errorComponent: () => import('../../../components/VErrorLoding/index.vue'),
-        delay: 200,
-        timeout: 3000
-    }),
-    card: defineAsyncComponent({
-        loader: () => import('./themes/card/CardSwiper.vue'),
-        loadingComponent: () => import('../../../components/VDefaultLoading/index.vue'),
-        errorComponent: () => import('../../../components/VErrorLoding/index.vue'),
-        delay: 200,
-        timeout: 3000
-    })
+  default: defineAsyncComponent({
+    loader: () => import('./themes/default/swiper.vue'),
+    loadingComponent: () => import('../../../components/VDefaultLoading/index.vue'),
+    errorComponent: () => import('../../../components/VErrorLoding/index.vue'),
+    delay: 200,
+    timeout: 3000
+  }),
+  card: defineAsyncComponent({
+    loader: () => import('./themes/card/CardSwiper.vue'),
+    loadingComponent: () => import('../../../components/VDefaultLoading/index.vue'),
+    errorComponent: () => import('../../../components/VErrorLoding/index.vue'),
+    delay: 200,
+    timeout: 3000
+  })
 }
 
 /**
@@ -36,28 +35,27 @@ const currentComponent = shallowRef()
  * @param theme - 轮播图主题类型
  */
 const loadComponent = (theme: string) => {
-    currentComponent.value = asyncComponents[theme]
+  currentComponent.value = asyncComponents[theme]
 }
 
 // 监听主题变化，立即执行一次以加载初始组件
 watch(
-    () => props.setting.clipboardTheme,
-    (newTheme) => {
-        loadComponent(newTheme)
-    },
-    { immediate: true }
+  () => props.setting.clipboardTheme,
+  (newTheme) => {
+    loadComponent(newTheme)
+  },
+  { immediate: true }
 )
 </script>
 
 <template>
-    <div class="swiper-container">
-        <component v-if="currentComponent" :is="currentComponent" v-bind="{ ...props, }" />
-    </div>
-
+  <div class="swiper-container">
+    <component v-if="currentComponent" :is="currentComponent" v-bind="{ ...props }" />
+  </div>
 </template>
 
 <style scoped lang="scss">
 .swiper-container {
-    height: calc(100vh - 32px);
+  height: 100%;
 }
 </style>

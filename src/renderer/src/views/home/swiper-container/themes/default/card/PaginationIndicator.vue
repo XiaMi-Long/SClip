@@ -10,8 +10,8 @@
 import { computed, ref, watch } from 'vue'
 
 const props = defineProps<{
-    current: number,
-    total: number
+  current: number
+  total: number
 }>()
 
 /**
@@ -30,202 +30,199 @@ const isForward = ref(false)
 const animatingIndex = ref(-1)
 
 // 监听页码变化
-watch(() => props.current, (newVal, oldVal) => {
+watch(
+  () => props.current,
+  (newVal, oldVal) => {
     if (oldVal !== undefined && newVal !== oldVal) {
-        isForward.value = newVal > oldVal
-        animatingIndex.value = isForward.value ? oldVal : newVal
-        isAnimating.value = true
+      isForward.value = newVal > oldVal
+      animatingIndex.value = isForward.value ? oldVal : newVal
+      isAnimating.value = true
 
-        // 动画结束后重置状态
-        setTimeout(() => {
-            isAnimating.value = false
-            animatingIndex.value = -1
-        }, 500) // 与动画时长保持一致
+      // 动画结束后重置状态
+      setTimeout(() => {
+        isAnimating.value = false
+        animatingIndex.value = -1
+      }, 500) // 与动画时长保持一致
     }
-})
+  }
+)
 
 /**
  * @function getTransformX
  * @description 计算条形区域容器的横向偏移量
  */
 const transformX = computed(() => {
-    if (props.total <= 3) return 0
+  if (props.total <= 3) return 0
 
-    if (props.current === 0) {
-        // 第一页：不偏移
-        return 0
-    }
-    else if (props.current === props.total - 1) {
-        // 最后一页：向左偏移使最后一个条形区域位于最右侧
-        return -((props.total - 3) * (BAR_WIDTH + BAR_GAP))
-    } else {
-        // 中间页：保持当前页的条形区域在中间
-        return -((props.current - 1) * (BAR_WIDTH + BAR_GAP))
-    }
-
+  if (props.current === 0) {
+    // 第一页：不偏移
+    return 0
+  } else if (props.current === props.total - 1) {
+    // 最后一页：向左偏移使最后一个条形区域位于最右侧
+    return -((props.total - 3) * (BAR_WIDTH + BAR_GAP))
+  } else {
+    // 中间页：保持当前页的条形区域在中间
+    return -((props.current - 1) * (BAR_WIDTH + BAR_GAP))
+  }
 })
 
 /**
  * @function bars
  * @description 生成所有条形区域的数组
  */
-const bars = computed(() =>
-    Array.from({ length: props.total }, (_, index) => index)
-)
+const bars = computed(() => Array.from({ length: props.total }, (_, index) => index))
 
 /**
  * @function getBarClass
  * @description 获取条形区域的类名
  */
 const getBarClass = (index: number) => ({
-    'pagination-bar': true,
-    'active': index === props.current,
-    'animating': isAnimating.value && index === animatingIndex.value,
-    'forward': isAnimating.value && isForward.value,
-    'backward': isAnimating.value && !isForward.value
+  'pagination-bar': true,
+  active: index === props.current,
+  animating: isAnimating.value && index === animatingIndex.value,
+  forward: isAnimating.value && isForward.value,
+  backward: isAnimating.value && !isForward.value
 })
 </script>
 
 <template>
-    <div class="pagination-container">
-        <div class="pagination-wrapper" :class="{ flex: props.total <= 3 }">
-            <div class="pagination-bars" :style="{ transform: `translateX(${transformX}px)` }">
-                <div v-for="index in bars" :key="index" :class="getBarClass(index)">
-                </div>
-            </div>
-        </div>
+  <div class="pagination-container">
+    <div class="pagination-wrapper" :class="{ flex: props.total <= 3 }">
+      <div class="pagination-bars" :style="{ transform: `translateX(${transformX}px)` }">
+        <div v-for="index in bars" :key="index" :class="getBarClass(index)"></div>
+      </div>
     </div>
+  </div>
 </template>
 
 <style scoped lang="scss">
 .pagination-container {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 65px;
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 65px;
 
-    /* (15px * 3) + (8px * 2) = 65px，刚好容纳3个条形区域 */
-    overflow: hidden;
+  /* (15px * 3) + (8px * 2) = 65px，刚好容纳3个条形区域 */
+  overflow: hidden;
 }
 
 .pagination-wrapper {
-    position: relative;
-    width: 100%;
-    height: 4px;
+  position: relative;
+  width: 100%;
+  height: 4px;
 
-    /* 条形区域高度 */
-    &.flex {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+  /* 条形区域高度 */
+  &.flex {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 .pagination-bars {
-    position: absolute;
-    display: flex;
-    gap: 8px;
-    /* 条形区域间隔 */
-    transition: transform 0.3s ease;
+  position: absolute;
+  display: flex;
+  gap: 8px;
+  /* 条形区域间隔 */
+  transition: transform 0.3s ease;
 }
 
 .pagination-bar {
-    width: 15px;
-    /* 条形区域宽度 */
-    height: 4px;
-    border-radius: 2px;
-    background-color: rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s ease;
+  width: 15px;
+  /* 条形区域宽度 */
+  height: 4px;
+  border-radius: 2px;
+  background-color: rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
 
-    &.active {
-        background-color: var(--stickybadge-bg);
-    }
+  &.active {
+    background-color: var(--stickybadge-bg);
+  }
 }
 
 /* 前进动画 */
 @keyframes expandForward {
-    0% {
-        transform: translateX(0)
-    }
+  0% {
+    transform: translateX(0);
+  }
 
-    20% {
-        transform: translateX(6px)
-    }
+  20% {
+    transform: translateX(6px);
+  }
 
-    40% {
-        transform: translateX(12px)
-    }
+  40% {
+    transform: translateX(12px);
+  }
 
-    60% {
-        transform: translateX(12px)
-    }
+  60% {
+    transform: translateX(12px);
+  }
 
-    100% {
-        transform: translateX(23px)
-    }
+  100% {
+    transform: translateX(23px);
+  }
 }
 
 /* 后退动画 */
 @keyframes expandBackward {
-    0% {
-        transform: translateX(23px)
-    }
+  0% {
+    transform: translateX(23px);
+  }
 
-    40% {
-        transform: translateX(12px)
-    }
+  40% {
+    transform: translateX(12px);
+  }
 
-    60% {
-        transform: translateX(12px)
-    }
+  60% {
+    transform: translateX(12px);
+  }
 
-    80% {
-        transform: translateX(6px)
-    }
+  80% {
+    transform: translateX(6px);
+  }
 
-    100% {
-        transform: translateX(0px)
-    }
-
+  100% {
+    transform: translateX(0px);
+  }
 }
 
 /* 应用动画 */
 .pagination-bar.animating {
-    position: absolute;
+  position: absolute;
 
-    &.forward {
-        position: relative;
+  &.forward {
+    position: relative;
 
-        &::before {
-            content: '';
-            position: absolute;
-            transform-origin: left center;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 2px;
-            background-color: var(--stickybadge-bg);
-            animation: expandForward .5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
+    &::before {
+      content: '';
+      position: absolute;
+      transform-origin: left center;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 2px;
+      background-color: var(--stickybadge-bg);
+      animation: expandForward 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     }
+  }
 
-    &.backward {
-        position: relative;
+  &.backward {
+    position: relative;
 
-        &::before {
-            content: '';
-            position: absolute;
-            transform-origin: left center;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 2px;
-            background-color: var(--stickybadge-bg);
-            animation: expandBackward .5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
+    &::before {
+      content: '';
+      position: absolute;
+      transform-origin: left center;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 2px;
+      background-color: var(--stickybadge-bg);
+      animation: expandBackward 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     }
+  }
 }
 </style>

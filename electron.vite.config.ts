@@ -22,12 +22,11 @@ export default defineConfig({
           api: 'modern-compiler', // 或 "modern"，"legacy"
           importers: [
             // ...
-          ],
-        },
+          ]
+        }
       }
     },
 
     plugins: [vue()]
-  },
-
+  }
 })

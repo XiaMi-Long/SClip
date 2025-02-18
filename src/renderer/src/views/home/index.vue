@@ -6,9 +6,14 @@ const configStore = useConfigStore()
 </script>
 
 <template>
-    <div>
-        <SwiperContainer :setting="configStore.getSetting" />
-    </div>
+  <div class="home-container">
+    <SwiperContainer :setting="configStore.getSetting" />
+  </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.home-container {
+  width: 100%;
+  height: calc(100% - 40px);
+}
+</style>
