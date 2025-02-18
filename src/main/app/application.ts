@@ -22,15 +22,6 @@ interface registerEvent {
 }
 
 /**
- * 主窗口方法接口
- * 扩展自 registerEvent
- */
-interface WindowMethod extends registerEvent {
-    getMainWindow(): BrowserWindow | undefined
-    createMainWindow(): void
-}
-
-/**
  * 应用注册事件接口
  * 扩展自 registerEvent
  */
@@ -45,9 +36,17 @@ interface appRegisterEvent extends registerEvent {
  * 主窗口方法接口
  * 扩展自 WindowMethod
  */
-interface mainWindowMethod extends WindowMethod {
+interface mainWindowMethod extends registerEvent {
     startClipboardListening(): void
     startGlobalShortcut(): void
+    getMainWindow(): BrowserWindow | undefined
+    createMainWindow(): void
+}
+
+interface settingWindowMethod extends registerEvent {
+    createSettingWindow(): void
+    getSettingWindow(): BrowserWindow | undefined
+
 }
 
 /**
@@ -73,8 +72,26 @@ export class ApplicationRegister {
         ...(process.platform === 'linux' ? { icon } : {}),
         webPreferences: {
             preload: join(__dirname, '../preload/index.js'),
-            sandbox: false,
+            sandbox: true,
             scrollBounce: true
+        }
+    }
+
+    private static settingWindowParams: BrowserWindowConstructorOptions = {
+        width: 1000,
+        height: 600,
+        show: false,
+        title: 'SClip - 设置',
+        frame: false,
+        titleBarStyle: 'hidden',
+        autoHideMenuBar: true,
+        trafficLightPosition: { x: 12, y: 10 },
+        transparent: false,
+        webPreferences: {
+            preload: join(__dirname, '../preload/index.js'),
+            sandbox: true,
+            scrollBounce: true,
+            devTools: true
         }
     }
 
@@ -211,33 +228,7 @@ export class ApplicationRegister {
              * 监听渲染进程通信-打开设置窗口
              */
             ipcMain.on('open-setting', () => {
-                const window = BrowserWindowManager.createBrowserWindow({
-                    key: 'setting',
-                    browserWindow: {
-                        ...ApplicationRegister.mainWindowParams,
-                        width: 400,
-                        height: 600,
-                        show: true,
-                        title: 'SClip - 设置',
-                        webPreferences: {
-                            preload: join(__dirname, '../preload/index.js'),
-                            sandbox: false,
-                            scrollBounce: true
-                        }
-                    }
-                })
-                if (window) {
-                    window.show()
-
-                    // 根据开发环境或生产环境加载不同的URL
-                    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-                        window.loadURL(`${process.env['ELECTRON_RENDERER_URL']}?page=setting`)
-                    } else {
-                        window.loadFile(join(__dirname, '../../renderer/index.html'), {
-                            search: 'page=setting'
-                        })
-                    }
-                }
+                ApplicationRegister.getSettingWindowMethod().init()
             })
         },
 
@@ -393,14 +384,16 @@ export class ApplicationRegister {
 
                             try {
                                 const setting = ConfigManager.getInstance().getSetting()
-                                sendRenderer.setSetting(setting)
+                                sendRenderer.setSettingMainWindow(setting)
+                                sendRenderer.setWindowId('main', 'main')
                             } catch (error) {
                                 Logger.error('Application', `初始化应用恢复设置失败`, error)
                             }
 
-
-                            // 打开开发者工具
-                            mainWindow.webContents.openDevTools()
+                            // 在开发环境下打开 DevTools
+                            if (is.dev) {
+                                mainWindow.webContents.openDevTools({ mode: 'detach' })
+                            }
                             // mainWindow.setAlwaysOnTop(true, 'screen-saver')
                         }
                     })
@@ -459,6 +452,105 @@ export class ApplicationRegister {
                         }
                     }
                 })
+            }
+        }
+    }
+
+    /**
+     * 获取设置窗口相关方法
+     * @returns SettingWindowMethod 设置窗口方法对象
+     */
+    public static getSettingWindowMethod(): settingWindowMethod {
+        return {
+            /**
+             * 初始化设置窗口
+             */
+            init() {
+                if (BrowserWindowManager.getBrowserWindow('setting')) {
+                    BrowserWindowManager.getBrowserWindow('setting')?.show()
+                    return
+                }
+
+                this.createSettingWindow()
+                this.registerEvent()
+            },
+
+            /**
+             * 创建设置窗口
+             */
+            createSettingWindow() {
+                BrowserWindowManager.createBrowserWindow({
+                    key: 'setting',
+                    browserWindow: {
+                        ...ApplicationRegister.settingWindowParams,
+
+                    }
+                })
+
+            },
+
+            /**
+             * 获取设置窗口
+             */
+            getSettingWindow() {
+                return BrowserWindowManager.getBrowserWindow('setting')
+            },
+
+            /**
+             * 注册设置窗口事件
+             */
+            registerEvent() {
+                const settingWindow = this.getSettingWindow()
+                if (settingWindow) {
+                    settingWindow.on('ready-to-show', () => {
+                        if (settingWindow) {
+                            settingWindow.show()
+
+                            try {
+                                const setting = ConfigManager.getInstance().getSetting()
+                                sendRenderer.setSettingSettingWindow(setting)
+                                sendRenderer.setWindowId('setting', 'setting')
+                            } catch (error) {
+                                Logger.error('settingWindow', `初始化应用恢复设置失败`, error)
+                            }
+
+                            // 在开发环境下打开 DevTools
+                            if (is.dev) {
+                                settingWindow.webContents.openDevTools({ mode: 'detach' })
+                            }
+                        }
+                    })
+
+                    // // 监听主窗口关闭事件
+                    // mainWindow.on('close', (event) => {
+                    //     if (process.platform === 'darwin') {
+                    //         event.preventDefault()
+                    //         mainWindow.hide()
+                    //     }
+                    // })
+
+                    // 监听主窗口打开外部链接事件
+                    settingWindow.webContents.setWindowOpenHandler((details) => {
+                        shell.openExternal(details.url)
+                        return { action: 'deny' }
+                    })
+
+
+
+                    // 根据开发环境或生产环境加载不同的URL
+                    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+                        settingWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/#/setting`)
+                    } else {
+                        settingWindow.loadFile(join(__dirname, '../../renderer/index.html'), {
+                            hash: '/setting'
+                        })
+                    }
+
+
+
+                } else {
+                    console.error('主窗口未创建')
+                }
             }
         }
     }

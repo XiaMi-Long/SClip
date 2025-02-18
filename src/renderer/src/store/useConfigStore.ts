@@ -2,7 +2,8 @@ import { defineStore } from 'pinia'
 
 export const useConfigStore = defineStore('config', {
     state: () => ({
-        setting: {} as Setting
+        setting: {} as Setting,
+        windowId: ''
     }),
     getters: {
         /**
@@ -11,6 +12,14 @@ export const useConfigStore = defineStore('config', {
          */
         getSetting(): Setting {
             return this.setting
+        },
+
+        /**
+         * 获取窗口ID
+         * @returns {string} 窗口ID
+         */
+        getWindowId(): string {
+            return this.windowId
         }
     },
     actions: {
@@ -20,6 +29,14 @@ export const useConfigStore = defineStore('config', {
          */
         setSetting(setting: Setting) {
             this.setting = setting
+        },
+
+        /**
+         * 设置窗口ID
+         * @param {string} windowId 窗口ID
+         */
+        setWindowId(windowId: string) {
+            this.windowId = windowId
         }
     }
 })

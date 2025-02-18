@@ -5,7 +5,7 @@ import settingImage from '@renderer/assets/image/setting.png'
 
 const configStore = useConfigStore()
 const isMac = computed(() => configStore.getSetting.system.platform === 'darwin')
-
+const isMainWindow = computed(() => configStore.getWindowId === 'main')
 const handleMinimize = () => window.titleBar.minimize()
 const handleMaximize = () => window.titleBar.maximize()
 const handleClose = () => window.titleBar.close()
@@ -27,7 +27,7 @@ const handleSetting = () => {
 
         <!-- 工具区域 -->
         <div class="tools-area" :class="{ 'tools-area-mac': isMac, 'tools-area-windows': !isMac }">
-            <button class="tool-button" @click="handleSetting">
+            <button class="tool-button" @click="handleSetting" :class="isMainWindow ? 'button-show' : 'button-hidden'">
                 <img :src="settingImage" alt="设置" class="tool-icon">
             </button>
         </div>

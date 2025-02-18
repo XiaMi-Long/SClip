@@ -14,7 +14,8 @@ declare global {
       close: () => void
     },
     appConfig: {
-      getAppSetting: (callback: (setting: Setting) => void) => void
+      getAppSetting: (callback: (setting: Setting) => void) => void,
+      setWindowId: (callback: (windowId: string) => void) => void
     },
     browserWindow: {
       openSetting: () => void

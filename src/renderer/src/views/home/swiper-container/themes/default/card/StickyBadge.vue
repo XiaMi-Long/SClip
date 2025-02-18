@@ -3,7 +3,7 @@
  * @file StickyBadge 组件
  * @description 显示固定选项的标记组件，使用fadeInRight动画从右侧淡入
  */
-import stickyImage from '../../../../../assets/sticky_white.png'
+import stickyImage from '../../../../../../assets/sticky_white.png'
 import { useMotions } from '@vueuse/motion'
 import { ref, computed } from 'vue'
 

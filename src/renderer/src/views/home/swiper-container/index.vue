@@ -12,15 +12,15 @@ const props = defineProps<{
 const asyncComponents = {
     default: defineAsyncComponent({
         loader: () => import('./themes/default/swiper.vue'),
-        loadingComponent: () => import('../../components/VDefaultLoading/index.vue'),
-        errorComponent: () => import('../../components/VErrorLoding/index.vue'),
+        loadingComponent: () => import('../../../components/VDefaultLoading/index.vue'),
+        errorComponent: () => import('../../../components/VErrorLoding/index.vue'),
         delay: 200,
         timeout: 3000
     }),
     card: defineAsyncComponent({
         loader: () => import('./themes/card/CardSwiper.vue'),
-        loadingComponent: () => import('../../components/VDefaultLoading/index.vue'),
-        errorComponent: () => import('../../components/VErrorLoding/index.vue'),
+        loadingComponent: () => import('../../../components/VDefaultLoading/index.vue'),
+        errorComponent: () => import('../../../components/VErrorLoding/index.vue'),
         delay: 200,
         timeout: 3000
     })

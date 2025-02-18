@@ -37,7 +37,13 @@ if (process.contextIsolated) {
        * 获取应用配置
        * @param {function} callback - 回调函数
        */
-      getAppSetting: (callback) => ipcRenderer.on('get-app-setting', (event, setting: Setting) => callback(setting))
+      getAppSetting: (callback) => ipcRenderer.on('get-app-setting', (event, setting: Setting) => callback(setting)),
+
+      /**
+       * 设置窗口ID
+       * @param {function} callback - 回调函数
+       */
+      setWindowId: (callback) => ipcRenderer.on('set-window-id', (event, windowId: string) => callback(windowId))
     })
 
     contextBridge.exposeInMainWorld('browserWindow', {
@@ -64,14 +70,6 @@ if (process.contextIsolated) {
       close: () => ipcRenderer.send('window-close')
     })
 
-    contextBridge.exposeInMainWorld('ipc', {
-      /**
-       * 向主进程发送消息
-       * @param {string} channel - 通信频道名称
-       * @param {any} data - 要发送的数据
-       */
-      send: (channel: string, data: any) => ipcRenderer.send(channel, data)
-    })
   } catch (error) {
     console.error(error)
   }

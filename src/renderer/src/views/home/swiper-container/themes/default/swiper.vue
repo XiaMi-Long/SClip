@@ -11,7 +11,7 @@ import StickyBadge from "./card/StickyBadge.vue"
 import SelectBadge from "./card/selectBadge.vue"
 import PaginationIndicator from "./card/PaginationIndicator.vue"
 import { useCarousel } from './hooks'
-import noDataImage from '../../../../assets/no-data.png'
+import noDataImage from '../../../../../assets/no-data.png'
 
 /** 每页的宽度（像素） */
 const PAGE_WIDTH = 300

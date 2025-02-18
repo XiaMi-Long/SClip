@@ -22,10 +22,10 @@ const sendRenderer = {
 
 
     /**
-     * 发送应用配置数据
+     * 发送应用配置数据-主窗口
      * @param data 应用配置数据
      */
-    setSetting: (data: Setting) => {
+    setSettingMainWindow: (data: Setting) => {
         try {
             Logger.info('SendRenderer', '发送应用配置数据', data)
             const mainWindow = BrowserWindowManager.getBrowserWindow("main")
@@ -34,6 +34,37 @@ const sendRenderer = {
             }
         } catch (error) {
             Logger.error('SendRenderer', '发送应用配置数据失败', error)
+        }
+    },
+
+    /**
+     * 发送应用配置数据-设置窗口
+     * @param data 应用配置数据
+     */
+    setSettingSettingWindow: (data: Setting) => {
+        try {
+            Logger.info('SendRenderer', '发送应用配置数据', data)
+            const settingWindow = BrowserWindowManager.getBrowserWindow("setting")
+            if (settingWindow) {
+                settingWindow.webContents.send('get-app-setting', data);
+            }
+        } catch (error) {
+            Logger.error('SendRenderer', '发送应用配置数据失败', error)
+        }
+    },
+
+    /**
+     * 发送窗口ID
+     * @param data 窗口ID
+     */
+    setWindowId: (windowId: string, browserWindowKey: string) => {
+        try {
+            const browserWindow = BrowserWindowManager.getBrowserWindow(browserWindowKey)
+            if (browserWindow) {
+                browserWindow.webContents.send('set-window-id', windowId)
+            }
+        } catch (error) {
+            Logger.error('SendRenderer', '发送窗口ID失败', error)
         }
     }
 }
