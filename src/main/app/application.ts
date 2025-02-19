@@ -75,7 +75,6 @@ export class ApplicationRegister {
       show: false,
       frame: false,
       transparent: true,
-      skipTaskbar: true,
       titleBarStyle: 'hidden',
       trafficLightPosition: { x: 12, y: 10 },
       autoHideMenuBar: true,
@@ -472,7 +471,7 @@ export class ApplicationRegister {
 
               try {
                 const setting = ConfigManager.getInstance().getSetting()
-                sendRenderer.setSettingMainWindow(setting)
+                sendRenderer.setSettingWindow(setting, 'main')
                 sendRenderer.setWindowId('main', 'main')
               } catch (error) {
                 Logger.error('Application', `初始化应用恢复设置失败`, error)
@@ -590,7 +589,7 @@ export class ApplicationRegister {
             sendRenderer.setWindowId('setting', 'setting')
             // 发送设置到渲染进程
             const setting = ConfigManager.getInstance().getSetting()
-            sendRenderer.setSettingMainWindow(setting)
+            sendRenderer.setSettingWindow(setting, 'setting')
 
             if (is.dev) {
               settingWindow.webContents.openDevTools()

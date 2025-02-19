@@ -127,7 +127,6 @@ const onLeave = (el: Element, done: () => void) => {
   align-items: center;
   flex-wrap: wrap;
   gap: 3px 0px;
-  padding-top: 2.5px;
   height: 100%;
 }
 

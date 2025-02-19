@@ -14,6 +14,6 @@ const configStore = useConfigStore()
 <style scoped lang="scss">
 .home-container {
   width: 100%;
-  height: calc(100% - 40px);
+  height: calc(100% - var(--title-bar-height));
 }
 </style>

@@ -84,12 +84,13 @@ $border-radius: 6px;
 
 // 主容器样式
 .title-bar {
-  height: 40px;
+  height: var(--title-bar-height);
   backdrop-filter: blur(8px);
   @include flex-center;
   -webkit-app-region: drag;
   user-select: none;
   position: relative;
+  border-bottom: 1px solid #d5d5d5;
   background-color: var(--system-theme);
   border-top-left-radius: $border-radius;
   border-top-right-radius: $border-radius;
