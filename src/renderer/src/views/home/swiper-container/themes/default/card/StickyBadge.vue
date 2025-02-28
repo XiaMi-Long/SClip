@@ -1,12 +1,17 @@
 <script setup lang="ts">
 /**
  * @file StickyBadge 组件
- * @description 显示固定选项的标记组件，使用fadeInRight动画从右侧淡入
+ * @description 显示固定选项的标记组件，使用动画效果显示固定标记
  */
 import stickyImage from '../../../../../../assets/sticky_white.png'
 import { useMotions } from '@vueuse/motion'
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 
+/**
+ * @typedef {Object} Props
+ * @property {ClipboardState} card - 剪贴板状态对象
+ * @property {number} cardId - 卡片ID，用于动画标识
+ */
 const props = defineProps<{
   card: ClipboardState
   cardId: number
@@ -15,7 +20,9 @@ const props = defineProps<{
 // 获取 motions 实例
 const motions = useMotions()
 
-// 定义动画配置
+/**
+ * @description 定义标记的动画配置
+ */
 const badgeMotion = {
   initial: { opacity: 0, scale: 0.3 },
   enter: {
@@ -35,20 +42,42 @@ const badgeMotion = {
   }
 }
 
+/**
+ * @description 计算是否应该显示标记
+ * @returns {boolean} 是否显示标记
+ */
 const shouldShow = computed(() => {
-  // 添加微任务延迟确保状态同步
   return props.card.isSticky === 'true'
 })
 
+/**
+ * @description 获取卡片ID，用于动画标识
+ * @returns {number} 卡片ID
+ */
 const getCardId = computed(() => {
   return props.cardId
 })
+
+/**
+ * @description 处理元素离开时的动画
+ * @param {Element} _ - 动画元素（未使用）
+ * @param {Function} done - 动画完成回调
+ */
+const handleLeave = (_: Element, done: () => void) => {
+  motions[`stickyBadge${getCardId.value}`].leave(done)
+}
 </script>
 
 <template>
-  <transition :css="false" @leave="(el, done) => motions[`stickyBadge${getCardId}`].leave(done)">
-    <div v-if="shouldShow" v-motion="'stickyBadge' + getCardId" :initial="badgeMotion.initial" :enter="badgeMotion.enter"
-      :leave="badgeMotion.leave" class="sticky-badge">
+  <transition :css="false" @leave="handleLeave">
+    <div
+      v-if="shouldShow"
+      v-motion="'stickyBadge' + getCardId"
+      :initial="badgeMotion.initial"
+      :enter="badgeMotion.enter"
+      :leave="badgeMotion.leave"
+      class="sticky-badge"
+    >
       <img :src="stickyImage" alt="固定标记" />
     </div>
   </transition>
@@ -63,15 +92,10 @@ const getCardId = computed(() => {
   position: absolute;
   box-sizing: border-box;
   left: 5%;
-  /* 改用百分比 */
   bottom: 5%;
-  /* 改用百分比 */
   width: 1.5em;
-  /* 使用 em 单位，相对于字体大小 */
   height: 1.5em;
-  /* 使用 em 单位 */
   padding: 0.3em;
-  /* 使用 em 单位 */
   background-color: var(--stickybadge-bg);
   display: flex;
   align-items: center;

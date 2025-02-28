@@ -1,12 +1,17 @@
 <script setup lang="ts">
 /**
- * @file StickyBadge 组件
- * @description 显示固定选项的标记组件，使用fadeInRight动画从右侧淡入
+ * @file SelectBadge 组件
+ * @description 显示选中状态的标记组件，使用动画效果显示选中标记
  */
-import stickyImage from '../../../../../../assets/select_white.png'
+import selectImage from '../../../../../../assets/select_white.png'
 import { useMotions } from '@vueuse/motion'
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 
+/**
+ * @typedef {Object} Props
+ * @property {ClipboardState} card - 剪贴板状态对象
+ * @property {number} cardId - 卡片ID，用于动画标识
+ */
 const props = defineProps<{
   card: ClipboardState
   cardId: number
@@ -15,7 +20,9 @@ const props = defineProps<{
 // 获取 motions 实例
 const motions = useMotions()
 
-// 定义动画配置
+/**
+ * @description 定义标记的动画配置
+ */
 const badgeMotion = {
   initial: { opacity: 0, scale: 0.3 },
   enter: {
@@ -35,47 +42,64 @@ const badgeMotion = {
   }
 }
 
+const rotateMotion = {
+  initial: { rotate: 0 },
+  enter: { rotate: 180, transition: { duration: 500, ease: [0.215, 0.61, 0.355, 1] } }
+}
+
+/**
+ * @description 获取卡片ID，用于动画标识
+ * @returns {number} 卡片ID
+ */
 const getCardId = computed(() => {
   return props.cardId
 })
+
+/**
+ * @description 处理元素离开时的动画
+ * @param {Element} _ - 动画元素（未使用）
+ * @param {Function} done - 动画完成回调
+ */
+const handleLeave = (_: Element, done: () => void) => {
+  motions[`selectBadge${getCardId.value}`].leave(done)
+}
 </script>
 
 <template>
-  <transition :css="false" @leave="(el, done) => motions[`selectBadge${getCardId}`].leave(done)">
-    <div v-motion="'selectBadge' + getCardId" :initial="badgeMotion.initial" :enter="badgeMotion.enter" :leave="badgeMotion.leave"
-      class="sticky-badge">
-      <img :src="stickyImage" alt="选中标记" />
+  <transition :css="false" @leave="handleLeave">
+    <div
+      v-motion="'selectBadge' + getCardId"
+      :initial="badgeMotion.initial"
+      :enter="badgeMotion.enter"
+      :leave="badgeMotion.leave"
+      class="select-badge"
+    >
+      <img v-motion="rotateMotion" :src="selectImage" alt="选中标记" />
     </div>
   </transition>
 </template>
 
 <style scoped lang="scss">
 /**
- * @description StickyBadge 样式定义
+ * @description SelectBadge 样式定义
  */
-.sticky-badge {
+.select-badge {
   z-index: 2;
   position: absolute;
   box-sizing: border-box;
   right: 5%;
-  /* 改用百分比 */
   bottom: 5%;
-  /* 改用百分比 */
   width: 1.5em;
-  /* 使用 em 单位，相对于字体大小 */
-  padding: 0.3em;
-  /* 使用 em 单位 */
   height: 1.5em;
-  /* 使用 em 单位 */
+  padding: 0.3em;
   background-color: var(--stickybadge-bg);
   display: flex;
   align-items: center;
   justify-content: center;
-
   border-radius: 5px;
 }
 
-.sticky-badge img {
+.select-badge img {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;

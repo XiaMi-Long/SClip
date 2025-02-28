@@ -102,16 +102,34 @@ const getBarClass = (index: number) => ({
   left: 50%;
   transform: translateX(-50%);
   width: 65px;
-
   /* (15px * 3) + (8px * 2) = 65px，刚好容纳3个条形区域 */
-  overflow: hidden;
+  overflow: visible; /* 修改为visible以显示伪元素溢出部分 */
+  height: 4px; /* 明确设置高度 */
+  z-index: 5; /* 确保分页指示器在磨砂背景上方 */
+
+  /* 添加磨砂质感伪元素 */
+  &::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -3px; /* 位于区域下方 */
+    transform: translateX(-50%);
+    width: calc(100% + 20px); /* 比容器宽20px */
+    height: 12px; /* 比容器高 */
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: -1; /* 确保在分页指示器下方 */
+    background: rgb(237 237 237);
+    -webkit-backdrop-filter: blur(50px);
+    backdrop-filter: blur(50px);
+  }
 }
 
 .pagination-wrapper {
   position: relative;
   width: 100%;
   height: 4px;
-
+  overflow: hidden;
   /* 条形区域高度 */
   &.flex {
     display: flex;

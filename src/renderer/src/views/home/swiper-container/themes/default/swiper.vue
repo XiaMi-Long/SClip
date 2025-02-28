@@ -13,13 +13,10 @@ import PaginationIndicator from './card/PaginationIndicator.vue'
 import { useCarousel } from './hooks'
 import noDataImage from '../../../../../assets/no-data.png'
 
-
-
 const { state, getters, actions } = useCarousel()
 
 // 解构计算属性，使其在模板中自动解包
 const { allCards, activeAbsoluteIndex } = toRefs(getters)
-
 
 /** 每页的宽度（像素） */
 const PAGE_WIDTH = computed(() => {
@@ -95,18 +92,23 @@ const onLeave = (el: Element, done: () => void) => {
   <div class="carousel-container">
     <!-- 内层列表，将所有卡片渲染出来 -->
     <transition name="no-data" appear>
-      <div class="no-data-container" v-if="allCards.length === 0">
+      <div v-if="allCards.length === 0" class="no-data-container">
         <img :src="noDataImage" alt="no-data" />
       </div>
     </transition>
-    <TransitionGroup tag="div" class="all-cards" :style="listStyle" :css="false" @enter="onEnter" @leave="onLeave" appear>
-      <div v-for="(card, index) in allCards" :key="card.id" :class="['card-wrapper', { active: index === activeAbsoluteIndex }]"
-        :style="{ width: PAGE_WIDTH + 'px' }" :data-id="card.id">
+    <div class="all-cards" :style="listStyle">
+      <div
+        v-for="(card, index) in allCards"
+        :key="card.id"
+        :class="['card-wrapper', { active: index === activeAbsoluteIndex }]"
+        :style="{ width: PAGE_WIDTH + 'px' }"
+        :data-id="card.id"
+      >
         <StickyBadge :card="card" :card-id="card.id" />
         <SelectBadge v-if="index === activeAbsoluteIndex" :card="card" :card-id="card.id" />
-        <VClipboardCard :clipboardOptions="card" />
+        <VClipboardCard :clipboard-options="card" />
       </div>
-    </TransitionGroup>
+    </div>
     <!-- 分页状态展示组件（仅展示当前页码，不具备点击功能） -->
     <PaginationIndicator :current="state.currentPage.value" :total="getters.totalPages.value" />
   </div>
@@ -126,14 +128,14 @@ const onLeave = (el: Element, done: () => void) => {
   flex-direction: column;
   align-items: center;
   flex-wrap: wrap;
-  gap: 3px 0px;
+  gap: 2px 0px;
   height: 100%;
 }
 
 /* 卡片样式：设置基础样式和过渡效果 */
 .card-wrapper {
   box-sizing: border-box;
-  padding: 15px;
+  // padding: 15px;
   height: calc((100% - 6px - 2.5px) / 3);
   position: relative;
   border-radius: 5px;
@@ -166,7 +168,6 @@ const onLeave = (el: Element, done: () => void) => {
 }
 
 @keyframes bounceIn {
-
   0%,
   100%,
   20%,
