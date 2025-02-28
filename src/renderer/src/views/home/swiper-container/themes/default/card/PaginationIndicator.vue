@@ -144,6 +144,11 @@ const getBarClass = (index: number) => ({
   gap: 8px;
   /* 条形区域间隔 */
   transition: transform 0.3s ease;
+  /* 使用 will-change 提示浏览器优化 */
+  will-change: transform;
+
+  /* 强制开启硬件加速 */
+  backface-visibility: hidden;
 }
 
 .pagination-bar {

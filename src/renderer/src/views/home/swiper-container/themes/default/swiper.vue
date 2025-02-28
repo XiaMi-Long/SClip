@@ -34,58 +34,6 @@ const listStyle = computed(() => ({
 }))
 
 console.log(getters.allCards.value)
-
-/**
- * 元素进入时的动画
- * @param el - 进入的元素
- * @param done - 动画完成的回调
- */
-const onEnter = (el: Element, done: () => void) => {
-  const animation = el.animate(
-    [
-      {
-        opacity: 0,
-        transform: 'translateY(-30px)'
-      },
-      {
-        opacity: 1,
-        transform: 'translateY(0)'
-      }
-    ],
-    {
-      duration: 300,
-      easing: 'ease-out'
-    }
-  )
-
-  animation.onfinish = done
-  done()
-}
-
-/**
- * 元素离开时的动画
- * @param el - 离开的元素
- * @param done - 动画完成的回调
- */
-const onLeave = (el: Element, done: () => void) => {
-  const animation = el.animate(
-    [
-      {
-        transform: 'translateY(0)'
-      },
-      {
-        transform: 'translateY(-30px)'
-      }
-    ],
-    {
-      duration: 300,
-      easing: 'ease-in'
-    }
-  )
-
-  animation.onfinish = done
-  done()
-}
 </script>
 
 <template>

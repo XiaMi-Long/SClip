@@ -13,7 +13,6 @@ import { computed } from 'vue'
  * @property {number} cardId - 卡片ID，用于动画标识
  */
 const props = defineProps<{
-  card: ClipboardState
   cardId: number
 }>()
 
