@@ -192,11 +192,12 @@ export class ApplicationRegister {
         try {
           // 根据类型处理不同内容
           switch (clipboardState.type) {
-            case 'image':
+            case 'image': {
               const image = nativeImage.createFromDataURL(clipboardState.content)
               clipboard.writeImage(image)
               break
-            case 'rtf':
+            }
+            case 'rtf': {
               const setting = ConfigManager.getInstance().getSetting()
               if (setting.rtfRenderType === 'rtf') {
                 clipboard.writeRTF(clipboardState.content)
@@ -206,6 +207,7 @@ export class ApplicationRegister {
                 clipboard.writeText(clipboardState.meta.rtf_text)
               }
               break
+            }
             default:
               clipboard.writeText(clipboardState.content)
               break

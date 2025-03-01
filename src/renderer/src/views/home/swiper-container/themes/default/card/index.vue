@@ -38,7 +38,6 @@ const cardType = computed(() => {
   // 计算高度：(362px - 15px margin) / 3 cards ≈ 115px
   height: 100%;
   box-sizing: border-box;
-  box-shadow: 0 2px 4px rgb(132 132 132 / 10%);
 
   // 内容布局
   display: flex;
@@ -54,17 +53,26 @@ const cardType = computed(() => {
   font-size: 12px;
 
   border-radius: 5px;
+
+  justify-content: center;
+  align-items: center;
 }
 
 // 卡片样式
 .clipboard-card {
-  height: 100%;
+  height: 95%;
+  width: 95%;
+  background-color: #ffffff6e;
+  backdrop-filter: blur(10px);
+  border-radius: 5px;
   padding: 10px;
+  box-sizing: border-box;
+  // padding: 10px;
 }
 
 // 图片类型卡片
 .image-type-card {
-  padding: 2px 0px;
-  height: 100%;
+  // padding: 2px 0px;
+  // height: 100%;
 }
 </style>

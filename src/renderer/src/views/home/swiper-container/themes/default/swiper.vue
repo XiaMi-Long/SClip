@@ -78,6 +78,7 @@ console.log(getters.allCards.value)
   flex-wrap: wrap;
   gap: 2px 0px;
   height: 100%;
+  background-color: var(--system-theme, #121212);
 }
 
 /* 卡片样式：设置基础样式和过渡效果 */
@@ -89,8 +90,8 @@ console.log(getters.allCards.value)
   border-radius: 5px;
   cursor: pointer;
   transition: transform 0.2s ease;
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgb(132 132 132 / 10%);
+  // box-shadow: 0 2px 4px rgb(132 132 132 / 10%);
+
   /* 使用 will-change 提示浏览器优化 */
   will-change: transform;
 

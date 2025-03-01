@@ -1,5 +1,10 @@
 <script setup>
 /**
+ * 当前选中的卡片索引
+ */
+import { ref } from 'vue'
+
+/**
  * 导航到指定的设置页面
  * @param {string} route - 目标路由名称
  */
@@ -8,10 +13,6 @@ const navigateTo = (route) => {
   console.log(`导航到: ${route}`)
 }
 
-/**
- * 当前选中的卡片索引
- */
-import { ref } from 'vue'
 const activeCardIndex = ref(null)
 
 /**
@@ -27,9 +28,9 @@ const setActiveCard = (index) => {
   <div class="setting-container">
     <!-- 背景装饰元素 -->
     <div class="background-elements">
-      <div class="floating-circle circle-1"></div>
+      <!-- <div class="floating-circle circle-1"></div> -->
       <div class="floating-circle circle-2"></div>
-      <div class="floating-circle circle-3"></div>
+      <!-- <div class="floating-circle circle-3"></div> -->
       <div class="grid-overlay"></div>
     </div>
 
@@ -189,6 +190,12 @@ const setActiveCard = (index) => {
         <div class="card-background preferences"></div>
       </div>
     </div>
+
+    <div class="setting-content">
+      <div class="setting-item">
+        <div class="setting-item-title"></div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -231,12 +238,13 @@ const setActiveCard = (index) => {
     }
 
     &.circle-2 {
-      width: 250px;
-      height: 250px;
+      width: 300px;
+      height: 300px;
       background: linear-gradient(135deg, #3b82f6, #60a5fa);
-      bottom: -40px;
-      right: -40px;
-      animation: float 15s ease-in-out infinite alternate-reverse;
+      bottom: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      animation: float-center 15s ease-in-out infinite alternate-reverse;
     }
 
     &.circle-3 {
@@ -275,25 +283,25 @@ const setActiveCard = (index) => {
 
 .setting-card {
   position: relative;
-  background: rgba(33, 32, 35, 0.9);
+  background: #ffffff6e;
   backdrop-filter: blur(8px);
   border-radius: 12px;
   height: 180px;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  // border: 1px solid rgba(255, 255, 255, 0.1);
   box-sizing: border-box;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  // box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 
   &:hover,
   &.active {
-    transform: translateY(-5px) scale(1.02);
-    background: rgba(38, 37, 40, 0.95);
-    box-shadow:
-      0 10px 25px rgba(0, 0, 0, 0.3),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.25);
+    // transform: translateY(-5px) scale(1.02);
+    background: rgba(15, 15, 15, 0.95);
+    // box-shadow:
+    //   0 10px 25px rgba(0, 0, 0, 0.3),
+    //   inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+    // border-color: rgba(255, 255, 255, 0.25);
 
     .card-action {
       opacity: 1;
@@ -321,16 +329,16 @@ const setActiveCard = (index) => {
     .stats-visual {
       .bar {
         &:nth-child(1) {
-          height: 70%;
+          height: 70% !important;
         }
         &:nth-child(2) {
-          height: 90%;
+          height: 90% !important;
         }
         &:nth-child(3) {
-          height: 60%;
+          height: 60% !important;
         }
         &:nth-child(4) {
-          height: 80%;
+          height: 80% !important;
         }
       }
     }
@@ -339,13 +347,13 @@ const setActiveCard = (index) => {
       .log-line {
         width: 100%;
         &:nth-child(1) {
-          width: 90%;
+          width: 90% !important;
         }
         &:nth-child(2) {
-          width: 70%;
+          width: 70% !important;
         }
         &:nth-child(3) {
-          width: 85%;
+          width: 85% !important;
         }
       }
     }
@@ -360,10 +368,10 @@ const setActiveCard = (index) => {
     .preferences-visual {
       .toggle {
         &:first-child .toggle-circle {
-          transform: translateX(0);
+          transform: translateX(16px) scale(1.1) !important;
         }
         &:last-child .toggle-circle.active {
-          transform: translateX(16px) scale(1.1);
+          transform: translateX(0px) scale(1.1) !important;
         }
       }
     }
@@ -373,13 +381,17 @@ const setActiveCard = (index) => {
       transform: scale(1.05) rotate(3deg);
     }
 
-    .title {
-      color: rgba(255, 255, 255, 1);
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    .top {
+      .title {
+        color: rgba(255, 255, 255, 1);
+        // color: #524f4ff2;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      }
     }
 
     .bottom p {
-      color: rgba(255, 255, 255, 0.85);
+      color: rgba(255, 255, 255, 1);
+      // color: #524f4ff2;
     }
 
     .card-action {
@@ -405,8 +417,8 @@ const setActiveCard = (index) => {
     position: absolute;
     top: 0;
     right: 0;
-    width: 150px;
-    height: 150px;
+    width: 200px;
+    height: 200px;
     opacity: 0.05;
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     transform: scale(1) rotate(0deg);
@@ -587,7 +599,7 @@ const setActiveCard = (index) => {
           color: white;
           font-size: 10px;
           font-weight: bold;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+          // box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
           transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -647,7 +659,8 @@ const setActiveCard = (index) => {
     .title {
       font-size: 1.2rem;
       font-weight: 600;
-      color: rgba(255, 255, 255, 0.95);
+      // color: rgba(255, 255, 255, 0.95);
+      color: #524f4ff2;
       letter-spacing: -0.5px;
       text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
     }
@@ -657,7 +670,8 @@ const setActiveCard = (index) => {
     p {
       font-size: 0.85rem;
       line-height: 1.4;
-      color: rgba(255, 255, 255, 0.75);
+      // color: rgba(255, 255, 255, 0.75);
+      color: #524f4ff2;
       margin: 0.5rem 0;
       text-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
     }
@@ -695,6 +709,18 @@ const setActiveCard = (index) => {
   }
   100% {
     transform: translateY(15px) rotate(-5deg);
+  }
+}
+
+@keyframes float-center {
+  0% {
+    transform: translateX(-50%) translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-15px) rotate(5deg);
+  }
+  100% {
+    transform: translateX(-50%) translateY(15px) rotate(-5deg);
   }
 }
 
