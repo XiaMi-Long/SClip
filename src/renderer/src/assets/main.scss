@@ -1,5 +1,5 @@
-@import './base.scss';
-@import './theme.scss';
+@use './base.scss';
+@use './theme.scss';
 
 :root {
   /** 标题栏高度 */

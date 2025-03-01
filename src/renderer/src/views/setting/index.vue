@@ -3,15 +3,9 @@
  * 当前选中的卡片索引
  */
 import { ref } from 'vue'
+import { useSetting } from './hook'
 
-/**
- * 导航到指定的设置页面
- * @param {string} route - 目标路由名称
- */
-const navigateTo = (route) => {
-  // 实现导航逻辑
-  console.log(`导航到: ${route}`)
-}
+const { handleCardClick } = useSetting()
 
 const activeCardIndex = ref(null)
 
@@ -37,9 +31,9 @@ const setActiveCard = (index) => {
     <div class="settings-grid">
       <!-- 主题设置卡片 -->
       <div
-        class="setting-card"
+        class="setting-card theme-card"
         :class="{ active: activeCardIndex === 0 }"
-        @click="(navigateTo('theme'), setActiveCard(0))"
+        @click="handleCardClick('theme-card', 0, $event)"
         @mouseenter="setActiveCard(0)"
         @mouseleave="activeCardIndex = null"
       >
@@ -68,9 +62,9 @@ const setActiveCard = (index) => {
 
       <!-- 趣味数据卡片 -->
       <div
-        class="setting-card"
+        class="setting-card stats-card"
         :class="{ active: activeCardIndex === 1 }"
-        @click="(navigateTo('stats'), setActiveCard(1))"
+        @click="handleCardClick('stats-card', 1, $event)"
         @mouseenter="setActiveCard(1)"
         @mouseleave="activeCardIndex = null"
       >
@@ -99,9 +93,9 @@ const setActiveCard = (index) => {
 
       <!-- 操作日志卡片 -->
       <div
-        class="setting-card"
+        class="setting-card logs-card"
         :class="{ active: activeCardIndex === 2 }"
-        @click="(navigateTo('logs'), setActiveCard(2))"
+        @click="handleCardClick('logs-card', 2, $event)"
         @mouseenter="setActiveCard(2)"
         @mouseleave="activeCardIndex = null"
       >
@@ -129,9 +123,9 @@ const setActiveCard = (index) => {
 
       <!-- 快捷键设置卡片 -->
       <div
-        class="setting-card"
+        class="setting-card shortcuts-card"
         :class="{ active: activeCardIndex === 3 }"
-        @click="(navigateTo('shortcuts'), setActiveCard(3))"
+        @click="handleCardClick('shortcuts-card', 3, $event)"
         @mouseenter="setActiveCard(3)"
         @mouseleave="activeCardIndex = null"
       >
@@ -159,9 +153,9 @@ const setActiveCard = (index) => {
 
       <!-- 软件设置卡片 -->
       <div
-        class="setting-card"
+        class="setting-card preferences-card"
         :class="{ active: activeCardIndex === 4 }"
-        @click="(navigateTo('preferences'), setActiveCard(4))"
+        @click="handleCardClick('preferences-card', 4, $event)"
         @mouseenter="setActiveCard(4)"
         @mouseleave="activeCardIndex = null"
       >
@@ -191,11 +185,7 @@ const setActiveCard = (index) => {
       </div>
     </div>
 
-    <div class="setting-content">
-      <div class="setting-item">
-        <div class="setting-item-title"></div>
-      </div>
-    </div>
+    <!-- 后续可以添加其他设置页面组件 -->
   </div>
 </template>
 
@@ -241,7 +231,7 @@ const setActiveCard = (index) => {
       width: 300px;
       height: 300px;
       background: linear-gradient(135deg, #3b82f6, #60a5fa);
-      bottom: -100px;
+      bottom: -200px;
       left: 50%;
       transform: translateX(-50%);
       animation: float-center 15s ease-in-out infinite alternate-reverse;
@@ -297,7 +287,7 @@ const setActiveCard = (index) => {
   &:hover,
   &.active {
     // transform: translateY(-5px) scale(1.02);
-    background: rgba(15, 15, 15, 0.95);
+    background: #a1a1a1;
     // box-shadow:
     //   0 10px 25px rgba(0, 0, 0, 0.3),
     //   inset 0 0 0 1px rgba(255, 255, 255, 0.2);
@@ -411,6 +401,7 @@ const setActiveCard = (index) => {
     flex-direction: column;
     justify-content: space-between;
     will-change: transform;
+    box-sizing: border-box;
   }
 
   .card-background {
