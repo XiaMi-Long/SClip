@@ -21,13 +21,13 @@ const cardType = computed(() => {
   <div class="clipboard-card-container">
     <div v-if="props?.clipboardOptions?.type" :class="cardType">
       <template v-if="props?.clipboardOptions?.type === 'text'">
-        <TextCard :clipboardOptions="props.clipboardOptions" />
+        <TextCard :clipboard-options="props.clipboardOptions" />
       </template>
       <template v-if="props?.clipboardOptions?.type === 'image'">
-        <ImageCard :clipboardOptions="props.clipboardOptions" />
+        <ImageCard :clipboard-options="props.clipboardOptions" />
       </template>
       <template v-if="props?.clipboardOptions?.type === 'rtf'">
-        <RtfCard :clipboardOptions="props.clipboardOptions" />
+        <RtfCard :clipboard-options="props.clipboardOptions" />
       </template>
     </div>
   </div>
@@ -62,11 +62,15 @@ const cardType = computed(() => {
 .clipboard-card {
   height: 95%;
   width: 95%;
-  background-color: #ffffff6e;
+  background-color: var(--title-bar-bg);
   backdrop-filter: blur(10px);
   border-radius: 5px;
   padding: 10px;
   box-sizing: border-box;
+  color: var(--text-color);
+  transition:
+    color 0.5s ease,
+    background-color 0.5s ease;
   // padding: 10px;
 }
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, shallowRef, defineAsyncComponent, watch, ref } from 'vue'
+import { shallowRef, defineAsyncComponent, watch } from 'vue'
 
 const props = defineProps<{
   setting: Setting
@@ -39,13 +39,15 @@ const loadComponent = (theme: string) => {
 }
 
 // 监听主题变化，立即执行一次以加载初始组件
-watch(
-  () => props.setting.clipboardTheme,
-  (newTheme) => {
-    loadComponent(newTheme)
-  },
-  { immediate: true }
-)
+// watch(
+//   () => props.setting.applicationTheme,
+//   (newTheme) => {
+//     loadComponent(newTheme)
+//   },
+//   { immediate: true }
+// )
+
+loadComponent('default')
 </script>
 
 <template>

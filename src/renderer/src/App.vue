@@ -11,11 +11,16 @@ try {
     useClipboardStore().pushClipboard(clipboardState)
   })
 
-  window.appConfig.getAppSetting((setting: Setting) => {
+  window.appConfig.getAppSetting(async (setting: Setting) => {
     console.log('setting', setting)
 
     useConfigStore().setSetting(setting)
-    switchThemeMode(setting.applicationTheme)
+    if (setting.applicationTheme === 'system') {
+      const isDark = await window.systemTheme.getNativeThemeShouldUseDarkColors()
+      switchThemeMode(isDark ? 'dark' : 'light')
+    } else {
+      switchThemeMode(setting.applicationTheme)
+    }
   })
 
   window.appConfig.setWindowId((windowId: string) => {
@@ -23,6 +28,8 @@ try {
   })
 
   window.systemTheme.sendNativeThemeUpdated((isDarkMode: boolean) => {
+    console.log(useConfigStore().getSetting)
+
     if (useConfigStore().getSetting.applicationTheme === 'system') {
       switchThemeMode(isDarkMode ? 'dark' : 'light')
     }

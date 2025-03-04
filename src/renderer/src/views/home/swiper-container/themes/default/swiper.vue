@@ -78,7 +78,8 @@ console.log(getters.allCards.value)
   flex-wrap: wrap;
   gap: 2px 0px;
   height: 100%;
-  background-color: var(--system-theme, #121212);
+  background-color: var(--container-bg);
+  transition: background-color 0.5s ease;
 }
 
 /* 卡片样式：设置基础样式和过渡效果 */

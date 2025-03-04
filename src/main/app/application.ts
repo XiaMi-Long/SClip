@@ -312,6 +312,15 @@ export class ApplicationRegister {
        */
       ipcMain.on('update-config-setting', (event, setting: Setting) => {
         ConfigManager.getInstance().updateSetting(setting)
+        // 获取所有窗口
+        const allWindows = BrowserWindowManager.getBrowserWindows()
+        // 遍历所有窗口，向非 setting 窗口发送更新配置事件
+        allWindows.forEach((_, key) => {
+          // 跳过 setting 窗口，只向其他窗口发送更新
+          if (key !== 'setting') {
+            sendRenderer.setSettingWindow(setting, key)
+          }
+        })
       })
     },
 
@@ -436,17 +445,30 @@ export class ApplicationRegister {
 
     /**
      * 监听系统主题变化事件
+     *
+     * @description 该方法实现了对系统主题变化的监听和处理
+     *
+     * 实现逻辑：
+     * 1. 初始化一个变量 isDarkMode 存储当前系统主题状态
+     * 2. 监听 nativeTheme 的 'updated' 事件
+     * 3. 当事件触发时，检查系统主题是否发生变化
+     * 4. 如果主题发生变化，更新 isDarkMode 变量
+     * 5. 获取主窗口实例，如果存在则发送 'native-theme-updated' 事件通知渲染进程
+     * 6. 获取设置窗口实例，如果存在则发送 'native-theme-updated' 事件通知渲染进程
+     *
+     * 注意：
+     * - 只有当主题实际发生变化时才会通知渲染进程
      */
     registerNativeThemeEvent(): void {
-      let isDarkMode = ConfigManager.getInstance().getSetting().applicationTheme === 'dark'
+      let isDarkMode = nativeTheme.shouldUseDarkColors
       nativeTheme.on('updated', () => {
         if (isDarkMode !== nativeTheme.shouldUseDarkColors) {
           isDarkMode = !isDarkMode
-          // 这里isDarkMode是boolean类型，但是发送到renderer里面会变成string类型
           const mainWindow = ApplicationRegister.getMainWindowMethod().getMainWindow()
           if (mainWindow) {
             mainWindow.webContents.send('native-theme-updated', isDarkMode)
           }
+
           const settingWindow = ApplicationRegister.getSettingWindowMethod().getSettingWindow()
           if (settingWindow) {
             settingWindow.webContents.send('native-theme-updated', isDarkMode)
