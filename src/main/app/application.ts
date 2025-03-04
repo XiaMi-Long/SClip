@@ -1,5 +1,5 @@
 import { join } from 'path'
-import { screen } from 'electron'
+import { screen, nativeTheme } from 'electron'
 import { Menu, MenuItemConstructorOptions } from 'electron'
 import icon from '../../../resources/images/icons/icon.png?asset'
 import {
@@ -39,6 +39,7 @@ interface appRegisterEvent extends registerEvent {
   registerTray(): void
   registerAppMenu(): void
   registerPowerMonitorEvent(): void
+  registerNativeThemeEvent(): void
 }
 
 /**
@@ -134,6 +135,7 @@ export class ApplicationRegister {
       this.registerTray()
       this.registerAppMenu()
       this.registerPowerMonitorEvent()
+      this.registerNativeThemeEvent()
       electronApp.setAppUserModelId('com.sclip')
     },
 
@@ -297,6 +299,20 @@ export class ApplicationRegister {
           win.close()
         }
       })
+
+      /**
+       * 监听渲染进程通信-获取当前系统主题
+       */
+      ipcMain.handle('get-native-theme-shouldUseDarkColors', () => {
+        return nativeTheme.shouldUseDarkColors
+      })
+
+      /**
+       * 监听渲染进程通信-更新应用配置
+       */
+      ipcMain.on('update-config-setting', (event, setting: Setting) => {
+        ConfigManager.getInstance().updateSetting(setting)
+      })
     },
 
     /**
@@ -415,6 +431,27 @@ export class ApplicationRegister {
       powerMonitor.on('unlock-screen', () => {
         Logger.info('PowerMonitor', '屏幕解锁，恢复监听剪贴板')
         ClipboardManager.getInstance().startListening()
+      })
+    },
+
+    /**
+     * 监听系统主题变化事件
+     */
+    registerNativeThemeEvent(): void {
+      let isDarkMode = ConfigManager.getInstance().getSetting().applicationTheme === 'dark'
+      nativeTheme.on('updated', () => {
+        if (isDarkMode !== nativeTheme.shouldUseDarkColors) {
+          isDarkMode = !isDarkMode
+          // 这里isDarkMode是boolean类型，但是发送到renderer里面会变成string类型
+          const mainWindow = ApplicationRegister.getMainWindowMethod().getMainWindow()
+          if (mainWindow) {
+            mainWindow.webContents.send('native-theme-updated', isDarkMode)
+          }
+          const settingWindow = ApplicationRegister.getSettingWindowMethod().getSettingWindow()
+          if (settingWindow) {
+            settingWindow.webContents.send('native-theme-updated', isDarkMode)
+          }
+        }
       })
     }
   }

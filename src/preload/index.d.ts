@@ -20,5 +20,10 @@ declare global {
     browserWindow: {
       openSetting: () => void
     }
+    systemTheme: {
+      getNativeThemeShouldUseDarkColors: () => Promise<boolean>
+      sendNativeThemeUpdated: (callback: (isDarkMode: boolean) => void) => void
+      updateConfigSetting: (setting: Setting) => void
+    }
   }
 }

@@ -79,6 +79,15 @@ export class DBManager {
                 )
             `)
 
+      // 创建应用配置表
+      this.db.exec(`
+                CREATE TABLE IF NOT EXISTS app_settings (
+                    id INTEGER PRIMARY KEY CHECK (id = 1),
+                    config_data TEXT NOT NULL,
+                    updated_at INTEGER NOT NULL
+                )
+            `)
+
       // 创建索引
       this.db.exec(`
                 CREATE INDEX IF NOT EXISTS idx_clipboard_hash ON clipboard_history(content_hash);
@@ -148,12 +157,21 @@ export class DBManager {
                 ORDER BY timestamp DESC
                 LIMIT ?
             `)
-      const results = stmt.all(limit) as any[]
+      const results = stmt.all(limit) as Array<{
+        id: number
+        type: ClipboardType
+        timestamp: number
+        contentHash?: string
+        content: string
+        meta: string
+        last_file_name_text: string
+        isSticky: string
+      }>
 
       return results.map((row) => ({
         ...row,
         meta: JSON.parse(row.meta || '{}')
-      }))
+      })) as ClipboardState[]
     } catch (error) {
       Logger.error('DBManager', 'getClipboardHistory failed', error)
       return []
@@ -248,7 +266,7 @@ export class DBManager {
   }): LogData[] {
     try {
       let query = 'SELECT * FROM app_logs WHERE 1=1'
-      const params: any[] = []
+      const params: Array<string | number> = []
 
       if (options.level) {
         query += ' AND level = ?'
@@ -341,6 +359,51 @@ export class DBManager {
     } catch (error) {
       Logger.error('DBManager', '清空剪贴板记录表失败', error)
       throw error
+    }
+  }
+
+  /**
+   * 保存应用配置
+   * @param {Setting} setting - 应用配置对象
+   * @returns {boolean} 是否保存成功
+   */
+  public saveAppSettings(setting: Setting): boolean {
+    try {
+      const now = Date.now()
+      const configData = JSON.stringify(setting)
+
+      // 使用REPLACE语法确保只有一条记录(id=1)
+      const stmt = this.db.prepare(`
+                REPLACE INTO app_settings (id, config_data, updated_at)
+                VALUES (1, ?, ?)
+            `)
+
+      const result = stmt.run(configData, now)
+      Logger.info('DBManager', '应用配置保存成功')
+      return result.changes > 0
+    } catch (error) {
+      Logger.error('DBManager', '保存应用配置失败', error)
+      return false
+    }
+  }
+
+  /**
+   * 获取应用配置
+   * @returns {Setting | null} 应用配置对象，如果不存在则返回null
+   */
+  public getAppSettings(): Setting | null {
+    try {
+      const stmt = this.db.prepare('SELECT config_data FROM app_settings WHERE id = 1')
+      const result = stmt.get() as { config_data: string } | undefined
+
+      if (result && result.config_data) {
+        return JSON.parse(result.config_data) as Setting
+      }
+
+      return null
+    } catch (error) {
+      Logger.error('DBManager', '获取应用配置失败', error)
+      return null
     }
   }
 }

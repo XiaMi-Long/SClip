@@ -112,7 +112,6 @@ export class ClipboardManager {
     // }
 
     const clipboardTypes = clipboard.availableFormats()
-    console.log(clipboardTypes)
 
     if (clipboardTypes.includes('text/uri-list')) {
       await this.handleUriList(text)
@@ -125,8 +124,6 @@ export class ClipboardManager {
     } else if (clipboardTypes.includes('text/plain') || clipboardTypes.includes('text/html')) {
       await this.handleText(text)
     }
-
-    Logger.debug('Clipboard', '分割线', '--------------------------------')
   }
 
   /**

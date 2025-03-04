@@ -13,6 +13,7 @@ module.exports = {
   rules: {
     'vue/require-default-prop': 'off',
     'vue/multi-word-component-names': 'off',
-    'vue/require-toggle-inside-transition': 'off'
+    'vue/require-toggle-inside-transition': 'off',
+    'vue/no-v-html': 'off'
   }
 }

@@ -76,6 +76,27 @@ if (process.contextIsolated) {
        */
       close: () => ipcRenderer.send('window-close')
     })
+
+    contextBridge.exposeInMainWorld('systemTheme', {
+      /**
+       * 获取当前系统主题
+       */
+      getNativeThemeShouldUseDarkColors: () =>
+        ipcRenderer.invoke('get-native-theme-shouldUseDarkColors'),
+
+      /**
+       * 发送系统主题变化事件
+       */
+      sendNativeThemeUpdated: (callback) =>
+        ipcRenderer.on('native-theme-updated', (event, isDarkMode: boolean) =>
+          callback(isDarkMode)
+        ),
+
+      /**
+       * 更新应用配置
+       */
+      updateConfigSetting: (setting: Setting) => ipcRenderer.send('update-config-setting', setting)
+    })
   } catch (error) {
     console.error(error)
   }

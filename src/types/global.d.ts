@@ -4,6 +4,11 @@ declare global {
   type ClipboardType = 'text' | 'html' | 'image' | 'file' | 'url' | 'rtf'
 
   /**
+   * 系统主题
+   */
+  type ThemeMode = 'light' | 'dark' | 'system'
+
+  /**
    * 剪贴板状态对象类型
    */
   interface ClipboardState {
@@ -24,11 +29,7 @@ declare global {
     /**
      * 系统主题
      */
-    applicationTheme: 'light' | 'dark'
-    /**
-     * 剪贴板主题
-     */
-    clipboardTheme: 'default' | 'card'
+    applicationTheme: ThemeMode
     /**
      * rtf 文本缩放
      */
@@ -37,11 +38,6 @@ declare global {
      * rtf 文本内容
      */
     rtfRenderType: 'rtf' | 'html' | 'text'
-
-    /**
-     * 粘贴徽章
-     */
-    stickyBadgeTheme: 'default' | 'red'
 
     /**
      * 系统信息

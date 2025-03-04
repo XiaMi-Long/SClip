@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { RouterView } from 'vue-router'
 import TitleBar from './components/TitleBar/index.vue'
 import { useClipboardStore } from './store/useClipboardStore'
 import { useConfigStore } from './store/useConfigStore'
-import { initSystemTheme } from './util/system.theme'
+import { switchThemeMode } from './util/system.theme'
 
 try {
   window.clipboard.setClipboardToRenderer((clipboardState: ClipboardState[]) => {
@@ -12,19 +12,26 @@ try {
   })
 
   window.appConfig.getAppSetting((setting: Setting) => {
+    console.log('setting', setting)
+
     useConfigStore().setSetting(setting)
-    initSystemTheme()
+    switchThemeMode(setting.applicationTheme)
   })
 
   window.appConfig.setWindowId((windowId: string) => {
     useConfigStore().setWindowId(windowId)
+  })
+
+  window.systemTheme.sendNativeThemeUpdated((isDarkMode: boolean) => {
+    if (useConfigStore().getSetting.applicationTheme === 'system') {
+      switchThemeMode(isDarkMode ? 'dark' : 'light')
+    }
   })
 } catch (error) {
   console.error('初始化数据加载失败:', error)
 }
 
 const isShowTitleBar = computed(() => useConfigStore().getSetting.system)
-
 </script>
 
 <template>
@@ -49,8 +56,7 @@ const isShowTitleBar = computed(() => useConfigStore().getSetting.system)
 }
 
 /* Windows下特殊处理 */
-@media screen and (-ms-high-contrast: active),
-(-ms-high-contrast: none) {
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
   #app {
     border: 1px solid transparent;
     /* 防止Windows下边缘锯齿 */
