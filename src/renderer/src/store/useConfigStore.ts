@@ -53,7 +53,21 @@ export const useConfigStore = defineStore('config', {
       } else {
         switchThemeMode(theme)
       }
-      window.systemTheme.updateConfigSetting(toRaw(this.setting))
+      window.systemTheme.updateConfigSetting(toRaw(this.setting), this.windowId)
+    },
+
+    /**
+     * 设置是否覆盖Windows系统快捷键
+     * @param {boolean} isWindowShortcutOverridden 是否覆盖Windows系统快捷键
+     * @description 设置是否覆盖Windows系统快捷键，并更新应用配置
+     */
+    setShortcut(keys: string) {
+      if (this.setting.system.isMac) {
+        this.setting.shortcut.appVisibleShortcut.mac = keys
+      } else {
+        this.setting.shortcut.appVisibleShortcut.windows = keys
+      }
+      window.systemTheme.updateConfigSetting(toRaw(this.setting), this.windowId)
     },
 
     /**

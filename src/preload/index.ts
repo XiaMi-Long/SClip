@@ -95,7 +95,8 @@ if (process.contextIsolated) {
       /**
        * 更新应用配置
        */
-      updateConfigSetting: (setting: Setting) => ipcRenderer.send('update-config-setting', setting)
+      updateConfigSetting: (setting: Setting, windowId: string) =>
+        ipcRenderer.send('update-config-setting', setting, windowId)
     })
   } catch (error) {
     console.error(error)

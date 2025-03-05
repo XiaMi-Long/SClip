@@ -15,10 +15,10 @@ interface Theme {
 }
 
 // 颜色类型
-interface Color {
-  id: string
-  hex: string
-}
+// interface Color {
+//   id: string
+//   hex: string
+// }
 
 // 主题选项
 const themes: Theme[] = [
@@ -40,13 +40,13 @@ const themes: Theme[] = [
 ]
 
 // 强调色选项
-const accentColors: Color[] = [
-  { id: 'blue', hex: '#4285F4' },
-  { id: 'red', hex: '#EA4335' },
-  { id: 'green', hex: '#34A853' },
-  { id: 'yellow', hex: '#FBBC05' },
-  { id: 'purple', hex: '#9C27B0' }
-]
+// const accentColors: Color[] = [
+//   { id: 'blue', hex: '#4285F4' },
+//   { id: 'red', hex: '#EA4335' },
+//   { id: 'green', hex: '#34A853' },
+//   { id: 'yellow', hex: '#FBBC05' },
+//   { id: 'purple', hex: '#9C27B0' }
+// ]
 
 const checkIconMotion = {
   initial: { opacity: 0, scale: 0.6 },
@@ -62,10 +62,10 @@ const checkIconMotion = {
 
 // 当前选中的主题和强调色
 const selectedTheme = ref(useConfigStore().getSetting.applicationTheme)
-const selectedAccentColor = ref('blue')
-const customColorInput = ref('')
+// const selectedAccentColor = ref('blue')
+// const customColorInput = ref('')
 // 动画开启状态
-const showAnimations = ref(true)
+// const showAnimations = ref(true)
 
 /**
  * 选择主题
@@ -78,20 +78,20 @@ const selectTheme = async (themeId: ThemeMode): Promise<void> => {
   useConfigStore().setApplicationTheme(themeId)
 }
 
-/**
- * 选择强调色
- * @param {string} colorId - 颜色ID
- */
-const selectAccentColor = (colorId: string): void => {
-  selectedAccentColor.value = colorId
-}
+// /**
+//  * 选择强调色
+//  * @param {string} colorId - 颜色ID
+//  */
+// const selectAccentColor = (colorId: string): void => {
+//   selectedAccentColor.value = colorId
+// }
 
-/**
- * 切换动画开关
- */
-const toggleAnimations = (): void => {
-  showAnimations.value = !showAnimations.value
-}
+// /**
+//  * 切换动画开关
+//  */
+// const toggleAnimations = (): void => {
+//   showAnimations.value = !showAnimations.value
+// }
 </script>
 
 <template>
@@ -155,16 +155,13 @@ const toggleAnimations = (): void => {
     <div class="divider"></div>
 
     <!-- 强调色选择区域 - 左右整体布局 -->
-    <div class="accent-section">
-      <!-- 左侧：标题和说明 -->
+    <!-- <div class="accent-section">
       <div class="section-title">
         <h3>强调色</h3>
         <p class="subtitle">使用系统或自定义强调色</p>
       </div>
 
-      <!-- 右侧：颜色选择区域（垂直排列） -->
       <div class="color-selection">
-        <!-- 预设颜色选项 -->
         <div class="preset-colors">
           <div
             v-for="color in accentColors"
@@ -178,7 +175,6 @@ const toggleAnimations = (): void => {
           </div>
         </div>
 
-        <!-- 自定义颜色输入 -->
         <div class="custom-color">
           <div class="color-input-container">
             <div class="color-label">自定义颜色</div>
@@ -195,13 +191,13 @@ const toggleAnimations = (): void => {
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- 分隔线 -->
-    <div class="divider"></div>
+    <!-- <div class="divider"></div> -->
 
     <!-- 动画设置区域 - 左右布局 -->
-    <div class="animation-section">
+    <!-- <div class="animation-section">
       <div class="animation-info">
         <h3>显示动画</h3>
         <p class="subtitle">启用或禁用界面动画</p>
@@ -214,7 +210,7 @@ const toggleAnimations = (): void => {
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 

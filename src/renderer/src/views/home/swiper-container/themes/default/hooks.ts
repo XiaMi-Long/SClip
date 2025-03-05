@@ -5,7 +5,6 @@
 
 import { ref, computed, onMounted, watch, toRaw, type Ref, type ComputedRef } from 'vue'
 import { useClipboardStore } from '@renderer/store/useClipboardStore'
-import { debounce } from 'lodash'
 
 /** 每页显示的卡片数量 */
 const ITEMS_PER_PAGE = 3
@@ -155,7 +154,6 @@ export function useCarousel(): UseCarouselReturn {
         const item = getters.allCards.value[getters.activeAbsoluteIndex.value]
         if (item) {
           item.isSticky = item.isSticky === 'true' ? 'false' : 'true'
-          console.log(item)
           window.clipboard.updateClipboardItem(toRaw(item))
         }
       },
@@ -163,7 +161,7 @@ export function useCarousel(): UseCarouselReturn {
       deleteCurrent: () => {
         const indexInStore =
           clipboardStore.getClipboard.length - 1 - getters.activeAbsoluteIndex.value
-        if (indexInStore >= 0) {
+        if (indexInStore >= 0 && clipboardStore.getClipboard.length > 0) {
           const item = clipboardStore.getClipboard[indexInStore]
 
           // 如果卡片处于置顶状态，则触发动画效果
@@ -179,9 +177,9 @@ export function useCarousel(): UseCarouselReturn {
             if (activeCardEl && !activeCardEl.classList.contains('error')) {
               activeCardEl.classList.add('error')
               /**
-               * @param {AnimationEvent} event - 动画结束事件对象
+               * 处理动画结束事件
                */
-              const handleAnimationEnd = (event: AnimationEvent) => {
+              const handleAnimationEnd = () => {
                 activeCardEl.classList.remove('error')
                 activeCardEl.removeEventListener('animationend', handleAnimationEnd)
               }

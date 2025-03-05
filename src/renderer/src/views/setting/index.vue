@@ -6,6 +6,7 @@
 import { ref, shallowRef } from 'vue'
 import ThemeSettings from './theme/ThemeSettings.vue'
 import LanguageSettings from './language/index.vue'
+import KeyboardSettings from './keyboard/index.vue'
 
 // 子菜单项类型
 interface SubmenuItem {
@@ -32,8 +33,9 @@ const menuItems: MenuItem[] = [
     children: [
       { id: 'appearance', label: '外观设置', component: ThemeSettings },
       { id: 'language', label: '语言设置', component: LanguageSettings },
-      { id: 'keyboard', label: '快捷键设置', component: null },
-      { id: 'date', label: '趣味数据', component: null },
+      { id: 'keyboard', label: '快捷键设置', component: KeyboardSettings },
+      // { id: 'date', label: '趣味数据', component: null },
+      { id: 'log', label: '日志', component: null },
       { id: 'sclip', label: 'SClip设置', component: null }
     ]
   }
@@ -93,7 +95,7 @@ selectMenu('general', 'appearance')
             :class="{ active: selectedMenu === item.id }"
             @click="selectMenu(item.id)"
           >
-            <span v-html="item.icon" class="menu-icon"></span>
+            <span class="menu-icon" v-html="item.icon"></span>
             <span class="menu-label">{{ item.label }}</span>
             <!-- <span v-if="item.children && item.children.length" class="menu-arrow">&#9662;</span> -->
           </div>
@@ -120,7 +122,7 @@ selectMenu('general', 'appearance')
     <!-- 右侧内容区域 -->
     <div class="settings-content">
       <transition name="fade" mode="out-in">
-        <keep-alive>
+        <keep-alive :max="10">
           <component :is="currentComponent" />
         </keep-alive>
       </transition>

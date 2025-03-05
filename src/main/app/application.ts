@@ -310,14 +310,14 @@ export class ApplicationRegister {
       /**
        * 监听渲染进程通信-更新应用配置
        */
-      ipcMain.on('update-config-setting', (event, setting: Setting) => {
+      ipcMain.on('update-config-setting', (event, setting: Setting, windowId: string) => {
         ConfigManager.getInstance().updateSetting(setting)
         // 获取所有窗口
         const allWindows = BrowserWindowManager.getBrowserWindows()
-        // 遍历所有窗口，向非 setting 窗口发送更新配置事件
+        // 遍历所有窗口，向非 windowId 窗口发送更新配置事件
         allWindows.forEach((_, key) => {
-          // 跳过 setting 窗口，只向其他窗口发送更新
-          if (key !== 'setting') {
+          // 跳过 windowId 窗口，只向其他窗口发送更新
+          if (key !== windowId) {
             sendRenderer.setSettingWindow(setting, key)
           }
         })
@@ -595,9 +595,22 @@ export class ApplicationRegister {
 
       /**
        * 注册全局显示窗口快捷键
+       * @description 根据系统类型注册不同的快捷键
+       * 1. 如果系统是mac，则注册mac的快捷键
+       * 2. 如果系统是windows，则注册windows的快捷键
+       * 3. 如果系统是linux，则注册window的快捷键
+       * 4. 如果系统是windows，并且设置了覆盖window系统快捷键，则注册window系统的默认快捷键
        */
       startGlobalShortcut() {
-        GlobalShortcut.registerShortcut('Alt+V', () => {
+        let keyMap = ''
+        const setting = ConfigManager.getInstance().getSetting()
+        if (setting.system.isMac) {
+          keyMap = setting.shortcut.appVisibleShortcut.mac
+        } else {
+          keyMap = setting.shortcut.appVisibleShortcut.windows
+        }
+
+        GlobalShortcut.registerShortcut(keyMap, () => {
           const window = BrowserWindowManager.getBrowserWindow('main')
           if (window) {
             if (window.isVisible()) {

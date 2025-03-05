@@ -17,6 +17,7 @@ interface SystemTheme {
   containerBg: string
   textColor: string
   settingMenuActiveBg: string
+  stickyBadgeBg: string
 }
 
 /**
@@ -31,7 +32,8 @@ const lightTheme: SystemTheme = {
   titleBarBg: '#ecedef',
   containerBg: '#fdfcfb',
   textColor: '#333',
-  settingMenuActiveBg: '#d9d9d9'
+  settingMenuActiveBg: '#d9d9d9',
+  stickyBadgeBg: '#d7d7d7'
 }
 
 /**
@@ -41,7 +43,8 @@ const darkTheme: SystemTheme = {
   titleBarBg: '#2a2c2d',
   containerBg: '#323232',
   textColor: '#fff',
-  settingMenuActiveBg: '#676767'
+  settingMenuActiveBg: '#676767',
+  stickyBadgeBg: '#464646'
 }
 
 /**
@@ -54,6 +57,7 @@ export function setSystemTheme(theme: SystemTheme): void {
   root.style.setProperty('--container-bg', theme.containerBg)
   root.style.setProperty('--text-color', theme.textColor)
   root.style.setProperty('--setting-menu-active-bg', theme.settingMenuActiveBg)
+  root.style.setProperty('--sticky-badge-bg', theme.stickyBadgeBg)
 }
 
 /**

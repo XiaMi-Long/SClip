@@ -96,7 +96,8 @@ const handleLeave = (_: Element, done: () => void) => {
   width: 1.5em;
   height: 1.5em;
   padding: 0.3em;
-  background-color: var(--stickybadge-bg);
+  background-color: var(--sticky-badge-bg);
+  transition: background-color 0.5s ease;
   display: flex;
   align-items: center;
   justify-content: center;

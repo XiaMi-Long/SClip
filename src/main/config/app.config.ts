@@ -19,12 +19,20 @@ export class ConfigManager {
       applicationTheme: 'light',
       rtfTextZoom: 0.3,
       rtfRenderType: 'rtf',
+      appLanguage: 'zh-CN',
+      shortcut: {
+        appVisibleShortcut: {
+          mac: 'Alt+V',
+          windows: 'Alt+V',
+          windowsDefaultShortcuts: 'Alt+V',
+          windowSystemDefaultShortcuts: 'Super+V',
+          macDefaultShortcuts: 'Alt+V'
+        }
+      },
       system: {
         platform: process.platform,
         isMac: process.platform === 'darwin',
-        // isMac: false,
         isWindows: process.platform === 'win32',
-        // isWindows: true,
         isLinux: process.platform === 'linux',
         appName: 'SClip',
         version: app.getVersion()

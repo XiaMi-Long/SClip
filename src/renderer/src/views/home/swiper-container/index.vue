@@ -28,7 +28,7 @@ const asyncComponents = {
 /**
  * 使用 shallowRef 优化性能
  */
-const currentComponent = shallowRef()
+const currentComponent = shallowRef(asyncComponents.default)
 
 /**
  * 加载对应主题的组件
@@ -46,13 +46,11 @@ const loadComponent = (theme: string) => {
 //   },
 //   { immediate: true }
 // )
-
-loadComponent('default')
 </script>
 
 <template>
   <div class="swiper-container">
-    <component v-if="currentComponent" :is="currentComponent" v-bind="{ ...props }" />
+    <component :is="currentComponent" v-if="currentComponent" v-bind="{ ...props }" />
   </div>
 </template>
 

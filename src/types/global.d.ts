@@ -30,6 +30,7 @@ declare global {
      * 系统主题
      */
     applicationTheme: ThemeMode
+
     /**
      * rtf 文本缩放
      */
@@ -40,6 +41,28 @@ declare global {
     rtfRenderType: 'rtf' | 'html' | 'text'
 
     /**
+     *
+     * 应用语言
+     */
+    appLanguage: 'zh-CN' | 'en-US'
+
+    /**
+     * 快捷键
+     */
+    shortcut: {
+      /**
+       * 应用显示
+       */
+      appVisibleShortcut: {
+        mac: string
+        windows: string
+        windowsDefaultShortcuts: string
+        windowSystemDefaultShortcuts: string
+        macDefaultShortcuts: string
+      }
+    }
+
+    /**
      * 系统信息
      */
     system: {
@@ -47,22 +70,27 @@ declare global {
        * 平台
        */
       platform: string
+
       /**
        * 是否是mac
        */
       isMac: boolean
+
       /**
        * 是否是windows
        */
       isWindows: boolean
+
       /**
        * 是否是linux
        */
       isLinux: boolean
+
       /**
        * 应用名称
        */
       appName: string
+
       /**
        * 应用版本
        */

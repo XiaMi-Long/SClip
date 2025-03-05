@@ -23,7 +23,7 @@ declare global {
     systemTheme: {
       getNativeThemeShouldUseDarkColors: () => Promise<boolean>
       sendNativeThemeUpdated: (callback: (isDarkMode: boolean) => void) => void
-      updateConfigSetting: (setting: Setting) => void
+      updateConfigSetting: (setting: Setting, windowId: string) => void
     }
   }
 }
