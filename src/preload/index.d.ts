@@ -4,7 +4,7 @@ declare global {
   interface Window {
     clipboard: {
       setClipboardToRenderer: (callback: (clipboardState: ClipboardState[]) => void) => void
-      changeClipboard: (clipboardState: ClipboardState) => void
+      writeClipboard: (clipboardState: ClipboardState) => void
       updateClipboardItem: (clipboardState: ClipboardState) => void
       deleteClipboardItem: (clipboardData: ClipboardState) => void
     }

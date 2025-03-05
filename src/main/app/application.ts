@@ -183,7 +183,7 @@ export class ApplicationRegister {
       /**
        * 监听渲染进程通信-渲染进程通知主进程准备复制剪贴板的内容到用户输入区域
        */
-      ipcMain.on('change-clipboard', (event, clipboardState: ClipboardState) => {
+      ipcMain.on('write-clipboard', (event, clipboardState: ClipboardState) => {
         console.warn(clipboardState)
 
         Logger.info('Application', `主进程通信-获取到渲染进程剪贴板记录`)

@@ -58,12 +58,13 @@ const isShowTitleBar = computed(() => useConfigStore().getSetting.system)
   border-radius: 8px;
   overflow: hidden;
   height: 100vh;
-  background: var(--system-theme);
+  background: var(--container-bg);
   /* 使用你的主题背景色 */
 }
 
 /* Windows下特殊处理 */
-@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+@media screen and (-ms-high-contrast: active),
+(-ms-high-contrast: none) {
   #app {
     border: 1px solid transparent;
     /* 防止Windows下边缘锯齿 */

@@ -13,13 +13,11 @@ if (process.contextIsolated) {
         ),
 
       /**
-       * 获取剪贴板文本
-       * @param {function} callback - 回调函数
+       * 获取剪贴板文本-渲染进程通知主进程准备复制剪贴板的内容到用户输入区域
+       * @param {ClipboardState} clipboardState - 剪贴板数据
        */
-      getClipboard: (callback) =>
-        ipcRenderer.on('get-clipboard', (_event, clipboardState: ClipboardState[]) =>
-          callback(clipboardState)
-        ),
+      writeClipboard: (clipboardState: ClipboardState) =>
+        ipcRenderer.send('write-clipboard', clipboardState),
 
       /**
        * 更新剪贴板数据

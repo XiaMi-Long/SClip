@@ -22,11 +22,7 @@ const handleSetting = () => window.browserWindow.openSetting()
 
     <!-- 工具区域 -->
     <div class="tools-area" :class="{ 'mac-tools-area': isMac, 'win-tools-area': !isMac }">
-      <button
-        class="tool-button"
-        @click="handleSetting"
-        :class="isMainWindow ? 'setting-button-show' : 'setting-button-hidden'"
-      >
+      <button class="tool-button" @click="handleSetting" :class="isMainWindow ? 'setting-button-show' : 'setting-button-hidden'">
         <img :src="settingImage" alt="设置" class="tool-icon" />
       </button>
     </div>
@@ -42,16 +38,14 @@ const handleSetting = () => window.browserWindow.openSetting()
         <svg width="8" height="8" viewBox="0 0 1024 1024">
           <path
             d="M936.8 87.2V936H87.2V87.2h849.6m4.8-79.2H81.6C40.8 8 8 40.8 8 81.6v860c0 40.8 32.8 73.6 73.6 73.6h860c40.8 0 73.6-32.8 73.6-73.6V82.4c0.8-41.6-32-74.4-73.6-74.4z"
-            fill="#666666"
-          />
+            fill="#666666" />
         </svg>
       </button>
       <button class="win-control-button win-close" @click="handleClose">
         <svg width="8" height="8" viewBox="0 0 11 11">
           <path
             d="M6.279 5.5L11 10.221l-.779.779L5.5 6.279.779 11 0 10.221 4.721 5.5 0 .779.779 0 5.5 4.721 10.221 0 11 .779 6.279 5.5z"
-            fill="currentColor"
-          />
+            fill="currentColor" />
         </svg>
       </button>
     </div>
@@ -169,6 +163,8 @@ $border-radius: 6px;
     height: 100%; // 占满高度
     -webkit-app-region: no-drag;
     gap: 0; // 移除间隙
+    color: var(--text-color);
+    transition: color 0.5s;
   }
 
   &-control-button {
@@ -178,6 +174,7 @@ $border-radius: 6px;
     height: 100%; // 占满父容器高度
     border-radius: 0; // 移除圆角
     flex: 0 0 auto;
+    color: inherit;
 
     svg {
       opacity: 0.7;
@@ -254,8 +251,7 @@ $border-radius: 6px;
 
 // 设置按钮显示/隐藏
 .setting-button {
-  &-show {
-  }
+  &-show {}
 
   &-hidden {
     display: none;

@@ -208,7 +208,9 @@ export function useCarousel(): UseCarouselReturn {
       /** 将当前卡片内容写入系统剪贴板 */
       writeToClipboard: () => {
         const item = getters.allCards.value[getters.activeAbsoluteIndex.value]
-        item && window.clipboard.changeClipboard(toRaw(item))
+        console.log(item)
+
+        item && window.clipboard.writeClipboard(toRaw(item))
       }
     }
   }

@@ -125,6 +125,7 @@ const startEditing = (id: string): void => {
  */
 const recordKeyPress = (event: KeyboardEvent): void => {
   event.preventDefault()
+  console.log(event.key);
 
   const key = getKeyName(event)
   if (!key) return
@@ -167,8 +168,8 @@ const stopEditing = (): void => {
  * 应用-快捷键设置
  */
 const applyShortcutSettings = (): void => {
-  useConfigStore().setShortcut(editableShortcuts.value[0].keys)
-
+  let keys = editableShortcuts.value[0].keys
+  useConfigStore().setShortcut(keys)
   // 显示成功消息通知
   Message.success({
     title: '设置已保存',
@@ -201,7 +202,10 @@ const getKeyName = (event: KeyboardEvent): string => {
   // 特殊键映射
   if (event.key === ' ') return 'Space'
   if (event.key === 'Control') return 'Ctrl'
+  // 确保在 Windows 上 Meta 键（Windows 键）显示为 Win，在 Mac 上显示为 Cmd
   if (event.key === 'Meta') return isMac.value ? 'Cmd' : 'Win'
+  // 另外特别处理 Windows 键
+  if (event.key === 'OS' || event.key === 'Win') return 'Win'
   if (event.key === 'ArrowUp') return '↑'
   if (event.key === 'ArrowDown') return '↓'
   if (event.key === 'ArrowLeft') return '←'
@@ -294,7 +298,7 @@ const clearShortcut = (): void => {
       <p class="section-description">点击快捷键进行自定义设置</p>
 
       <div class="shortcuts-container">
-        <div v-for="shortcut in editableShortcuts" :key="shortcut.id" class="shortcut-item">
+        <div v-for="shortcut in editableShortcuts" :key="shortcut.id" class="shortcut-item custom-shortcut-item">
           <div class="shortcut-info">
             <div class="shortcut-name">{{ shortcut.name }}</div>
             <div class="shortcut-description">{{ shortcut.description }}</div>
@@ -332,20 +336,7 @@ const clearShortcut = (): void => {
 
         <!-- 提示信息 Alert -->
         <div v-if="!isMac" class="shortcut-alerts">
-          <VAlert
-            :show-icon="true"
-            type="warning"
-            title="注意事项"
-            message="设置应用显示/隐藏快捷键为Windows+V时，将使用SClip的剪贴板功能代替Windows系统的剪贴板历史功能。"
-            class="clipboard-alert"
-          />
-
-          <VAlert
-            :show-icon="true"
-            type="info"
-            message="SClip提供了更为强大的剪贴板管理功能，可以代替大部分系统自带的剪贴板功能。"
-            class="clipboard-alert"
-          />
+          <VAlert :show-icon="true" type="warning" title="注意事项" message="设置更改，下次启动时生效。" class="clipboard-alert" />
         </div>
       </div>
     </div>
@@ -418,8 +409,8 @@ $animation-color: rgba(66, 133, 244, 0.8);
 
 .shortcut-item {
   display: flex;
-  align-items: flex-start;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
   gap: 10px;
   padding: 12px 15px;
   border-radius: 8px;
@@ -429,6 +420,11 @@ $animation-color: rgba(66, 133, 244, 0.8);
   &:hover {
     background-color: rgba(128, 128, 128, 0.05);
   }
+}
+
+.custom-shortcut-item {
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 // 快捷键动画区域
@@ -513,61 +509,73 @@ $animation-color: rgba(66, 133, 244, 0.8);
 }
 
 @keyframes moveUpAnimation {
+
   0%,
   100% {
     transform: translate(-50%, -50%);
   }
+
   50% {
     transform: translate(-50%, -120%);
   }
 }
 
 @keyframes moveDownAnimation {
+
   0%,
   100% {
     transform: translate(-50%, -50%);
   }
+
   50% {
     transform: translate(-50%, 50%);
   }
 }
 
 @keyframes moveLeftAnimation {
+
   0%,
   100% {
     transform: translate(-50%, -50%);
   }
+
   50% {
     transform: translate(-120%, -50%);
   }
 }
 
 @keyframes moveRightAnimation {
+
   0%,
   100% {
     transform: translate(-50%, -50%);
   }
+
   50% {
     transform: translate(50%, -50%);
   }
 }
 
 @keyframes pinAnimation {
+
   0%,
   100% {
     transform: translate(-50%, -50%) scale(1);
   }
+
   50% {
     transform: translate(-50%, -50%) scale(1.3);
   }
 }
 
 @keyframes deleteAnimation {
+
   0%,
   100% {
     transform: translate(-50%, -50%) scale(1);
     opacity: 1;
   }
+
   50% {
     transform: translate(-50%, -50%) scale(1.5);
     opacity: 0.3;
@@ -698,6 +706,7 @@ $animation-color: rgba(66, 133, 244, 0.8);
       cursor: pointer;
       border: none;
       transition: background-color 0.2s;
+      color: var(--text-color);
     }
 
     .cancel-button {
