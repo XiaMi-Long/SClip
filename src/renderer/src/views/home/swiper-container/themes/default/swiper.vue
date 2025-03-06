@@ -44,11 +44,27 @@ console.log(getters.allCards.value)
         <div class="no-data-content">
           <div class="no-data-icon">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M19.5 3.5L18 2L16.5 3.5L15 2L13.5 3.5L12 2L10.5 3.5L9 2L7.5 3.5L6 2L4.5 3.5L3 2V13.5H21V2L19.5 3.5Z"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-              <path d="M3 13.5H21V22H3V13.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                stroke-linejoin="round" />
-              <path d="M9 17H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <path
+                d="M19.5 3.5L18 2L16.5 3.5L15 2L13.5 3.5L12 2L10.5 3.5L9 2L7.5 3.5L6 2L4.5 3.5L3 2V13.5H21V2L19.5 3.5Z"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M3 13.5H21V22H3V13.5Z"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M9 17H15"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
             </svg>
           </div>
           <h3>暂无剪贴板记录</h3>
@@ -57,16 +73,24 @@ console.log(getters.allCards.value)
       </div>
     </transition>
     <div class="all-cards" :style="listStyle">
-      <div v-for="(card, index) in allCards" :key="card.id" :class="['card-wrapper', { active: index === activeAbsoluteIndex }]"
-        :style="{ width: PAGE_WIDTH + 'px' }" :data-id="card.id">
+      <div
+        v-for="(card, index) in allCards"
+        :key="card.id"
+        :class="['card-wrapper', { active: index === activeAbsoluteIndex }]"
+        :style="{ width: PAGE_WIDTH + 'px' }"
+        :data-id="card.id"
+      >
         <StickyBadge :card="card" :card-id="card.id" />
         <SelectBadge v-if="index === activeAbsoluteIndex" :card="card" :card-id="card.id" />
         <VClipboardCard :clipboard-options="card" />
       </div>
     </div>
     <!-- 分页状态展示组件（仅展示当前页码，不具备点击功能） -->
-    <PaginationIndicator v-if="allCards && allCards.length > 0" :current="state.currentPage.value"
-      :total="getters.totalPages.value" />
+    <PaginationIndicator
+      v-if="allCards && allCards.length > 0"
+      :current="state.currentPage.value"
+      :total="getters.totalPages.value"
+    />
   </div>
 </template>
 
@@ -124,7 +148,6 @@ console.log(getters.allCards.value)
     align-items: center;
     gap: 16px;
     animation: fadeIn 0.5s ease-in-out;
-
   }
 
   .no-data-icon {
@@ -159,7 +182,6 @@ console.log(getters.allCards.value)
 }
 
 @keyframes bounceIn {
-
   0%,
   100%,
   20%,
@@ -208,7 +230,6 @@ console.log(getters.allCards.value)
 }
 
 @keyframes floatAnimation {
-
   0%,
   100% {
     transform: translateY(0);

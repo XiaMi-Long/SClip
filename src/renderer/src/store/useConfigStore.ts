@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import { switchThemeMode } from '../util/system.theme'
 import { toRaw } from 'vue'
+import { invokeMain, sendToMain } from '../util/ipc.renderer.service'
+
 export const useConfigStore = defineStore('config', {
   state: () => ({
     setting: {} as Setting,
@@ -39,7 +41,7 @@ export const useConfigStore = defineStore('config', {
      * @implementation
      * 1. 更新 setting.applicationTheme 为当前选择的主题模式
      * 2. 如果选择的是系统主题（'system'）：
-     *    - 调用 window.systemTheme.getNativeThemeShouldUseDarkColors() 获取系统当前主题
+     *    - 调用 getNativeThemeShouldUseDarkColors 获取系统当前主题
      *    - 根据系统主题是否为深色调用 switchThemeMode 切换到对应主题（'dark'或'light'）
      * 3. 如果选择的是明确的主题（'dark'或'light'）：
      *    - 直接调用 switchThemeMode 应用选择的主题
@@ -48,12 +50,12 @@ export const useConfigStore = defineStore('config', {
     async setApplicationTheme(theme: ThemeMode) {
       this.setting.applicationTheme = theme
       if (theme === 'system') {
-        const isDark = await window.systemTheme.getNativeThemeShouldUseDarkColors()
+        const isDark = await invokeMain.getNativeThemeShouldUseDarkColors()
         switchThemeMode(isDark ? 'dark' : 'light')
       } else {
         switchThemeMode(theme)
       }
-      window.systemTheme.updateConfigSetting(toRaw(this.setting), this.windowId)
+      sendToMain.updateConfigSetting(toRaw(this.setting), this.windowId)
     },
 
     /**
@@ -67,7 +69,29 @@ export const useConfigStore = defineStore('config', {
       } else {
         this.setting.shortcut.appVisibleShortcut.windows = keys
       }
-      window.systemTheme.updateConfigSetting(toRaw(this.setting), this.windowId)
+      sendToMain.updateConfigSetting(toRaw(this.setting), this.windowId)
+    },
+
+    /**
+     * 设置图片显示模式
+     * @param {string} mode 图片显示模式，可选值为 'auto'、'contain' 或 'cover'
+     * @description 设置图片显示模式，并更新应用配置
+     */
+    setImageSettings({
+      displayMode,
+      enableAnimation
+    }: {
+      displayMode?: 'auto' | 'contain' | 'cover'
+      enableAnimation?: boolean
+    }) {
+      if (displayMode) {
+        this.setting.imageSettings.displayMode = displayMode
+      }
+      if (enableAnimation) {
+        this.setting.imageSettings.enableAnimation = enableAnimation
+      }
+
+      sendToMain.updateConfigSetting(toRaw(this.setting), this.windowId)
     },
 
     /**

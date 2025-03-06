@@ -125,7 +125,7 @@ const startEditing = (id: string): void => {
  */
 const recordKeyPress = (event: KeyboardEvent): void => {
   event.preventDefault()
-  console.log(event.key);
+  console.log(event.key)
 
   const key = getKeyName(event)
   if (!key) return
@@ -168,7 +168,7 @@ const stopEditing = (): void => {
  * 应用-快捷键设置
  */
 const applyShortcutSettings = (): void => {
-  let keys = editableShortcuts.value[0].keys
+  const keys = editableShortcuts.value[0].keys
   useConfigStore().setShortcut(keys)
   // 显示成功消息通知
   Message.success({
@@ -298,7 +298,11 @@ const clearShortcut = (): void => {
       <p class="section-description">点击快捷键进行自定义设置</p>
 
       <div class="shortcuts-container">
-        <div v-for="shortcut in editableShortcuts" :key="shortcut.id" class="shortcut-item custom-shortcut-item">
+        <div
+          v-for="shortcut in editableShortcuts"
+          :key="shortcut.id"
+          class="shortcut-item custom-shortcut-item"
+        >
           <div class="shortcut-info">
             <div class="shortcut-name">{{ shortcut.name }}</div>
             <div class="shortcut-description">{{ shortcut.description }}</div>
@@ -336,7 +340,13 @@ const clearShortcut = (): void => {
 
         <!-- 提示信息 Alert -->
         <div v-if="!isMac" class="shortcut-alerts">
-          <VAlert :show-icon="true" type="warning" title="注意事项" message="设置更改，下次启动时生效。" class="clipboard-alert" />
+          <VAlert
+            :show-icon="true"
+            type="warning"
+            title="注意事项"
+            message="设置更改，下次启动时生效。"
+            class="clipboard-alert"
+          />
         </div>
       </div>
     </div>
@@ -509,7 +519,6 @@ $animation-color: rgba(66, 133, 244, 0.8);
 }
 
 @keyframes moveUpAnimation {
-
   0%,
   100% {
     transform: translate(-50%, -50%);
@@ -521,7 +530,6 @@ $animation-color: rgba(66, 133, 244, 0.8);
 }
 
 @keyframes moveDownAnimation {
-
   0%,
   100% {
     transform: translate(-50%, -50%);
@@ -533,7 +541,6 @@ $animation-color: rgba(66, 133, 244, 0.8);
 }
 
 @keyframes moveLeftAnimation {
-
   0%,
   100% {
     transform: translate(-50%, -50%);
@@ -545,7 +552,6 @@ $animation-color: rgba(66, 133, 244, 0.8);
 }
 
 @keyframes moveRightAnimation {
-
   0%,
   100% {
     transform: translate(-50%, -50%);
@@ -557,7 +563,6 @@ $animation-color: rgba(66, 133, 244, 0.8);
 }
 
 @keyframes pinAnimation {
-
   0%,
   100% {
     transform: translate(-50%, -50%) scale(1);
@@ -569,7 +574,6 @@ $animation-color: rgba(66, 133, 244, 0.8);
 }
 
 @keyframes deleteAnimation {
-
   0%,
   100% {
     transform: translate(-50%, -50%) scale(1);

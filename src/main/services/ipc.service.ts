@@ -1,10 +1,18 @@
 import { Logger } from './logger.service'
 import { BrowserWindowManager } from '../window/window.manager'
 
+/**
+ * @deprecated 此文件已废弃，请使用 MainIPCService 替代
+ * 相关功能已经被集成到 MainIPCService 类的 sendToRenderer 对象中
+ * 请修改你的代码以使用 MainIPCService.sendToRenderer
+ *
+ * 例如:
+ * - 旧: sendRenderer.setClipboardToRenderer(data)
+ * - 新: MainIPCService.sendToRenderer.setClipboardToRenderer(data)
+ */
 const sendRenderer = {
   /**
-   * 发送剪贴板数据
-   * @param data 剪贴板数据
+   * @deprecated 请使用 MainIPCService.sendToRenderer.setClipboardToRenderer
    */
   setClipboardToRenderer: (data: ClipboardState[]) => {
     try {
@@ -19,8 +27,7 @@ const sendRenderer = {
   },
 
   /**
-   * 发送应用配置数据-主窗口
-   * @param data 应用配置数据
+   * @deprecated 请使用 MainIPCService.sendToRenderer.setSettingWindow
    */
   setSettingWindow: (data: Setting, browserWindowKey: string) => {
     try {
@@ -35,8 +42,7 @@ const sendRenderer = {
   },
 
   /**
-   * 发送窗口ID
-   * @param data 窗口ID
+   * @deprecated 请使用 MainIPCService.sendToRenderer.setWindowId
    */
   setWindowId: (windowId: string, browserWindowKey: string) => {
     try {

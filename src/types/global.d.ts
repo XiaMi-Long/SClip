@@ -96,6 +96,31 @@ declare global {
        */
       version: string
     }
+
+    /**
+     * 图片显示设置
+     */
+    imageSettings: {
+      /**
+       * 图片显示模式
+       */
+      displayMode: 'auto' | 'contain' | 'cover'
+
+      /**
+       * 是否启用图片微动画
+       */
+      enableAnimation: boolean
+    }
+
+    /**
+     * 应用操作逻辑设置
+     */
+    appBehavior: {
+      /**
+       * 每次打开默认回到第一页
+       */
+      jumpToFirstPage: boolean
+    }
   }
 }
 

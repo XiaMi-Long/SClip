@@ -96,6 +96,22 @@ if (process.contextIsolated) {
       updateConfigSetting: (setting: Setting, windowId: string) =>
         ipcRenderer.send('update-config-setting', setting, windowId)
     })
+
+    // 添加数据库操作接口
+    contextBridge.exposeInMainWorld('database', {
+      /**
+       * 获取日志记录
+       * @param options 查询选项
+       * @returns 日志数据和总数
+       */
+      getLogs: (options) => ipcRenderer.invoke('get-logs', options),
+
+      /**
+       * 清空所有日志
+       * @returns 删除的记录数
+       */
+      clearAllLogs: () => ipcRenderer.invoke('clear-all-logs')
+    })
   } catch (error) {
     console.error(error)
   }

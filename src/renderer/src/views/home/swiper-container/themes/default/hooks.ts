@@ -5,6 +5,7 @@
 
 import { ref, computed, onMounted, watch, toRaw, type Ref, type ComputedRef } from 'vue'
 import { useClipboardStore } from '@renderer/store/useClipboardStore'
+import { sendToMain } from '@renderer/util/ipc.renderer.service'
 
 /** 每页显示的卡片数量 */
 const ITEMS_PER_PAGE = 3
@@ -154,7 +155,7 @@ export function useCarousel(): UseCarouselReturn {
         const item = getters.allCards.value[getters.activeAbsoluteIndex.value]
         if (item) {
           item.isSticky = item.isSticky === 'true' ? 'false' : 'true'
-          window.clipboard.updateClipboardItem(toRaw(item))
+          sendToMain.updateClipboardItem(toRaw(item))
         }
       },
       /** 删除当前选中的卡片 */
@@ -189,7 +190,7 @@ export function useCarousel(): UseCarouselReturn {
           }
 
           clipboardStore.removeClipboardItem(indexInStore)
-          window.clipboard.deleteClipboardItem(toRaw(item))
+          sendToMain.deleteClipboardItem(toRaw(item))
 
           // 处理删除后的页面和选中状态
           if (
@@ -210,7 +211,7 @@ export function useCarousel(): UseCarouselReturn {
         const item = getters.allCards.value[getters.activeAbsoluteIndex.value]
         console.log(item)
 
-        item && window.clipboard.writeClipboard(toRaw(item))
+        item && sendToMain.writeClipboard(toRaw(item))
       }
     }
   }

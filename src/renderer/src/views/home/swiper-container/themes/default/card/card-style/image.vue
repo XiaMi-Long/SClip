@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted, useTemplateRef, ref } from 'vue'
+import { onMounted, useTemplateRef, ref, computed } from 'vue'
+import { useConfigStore } from '@renderer/store/useConfigStore'
 
 const props = defineProps<{
   clipboardOptions: ClipboardState
@@ -67,17 +68,37 @@ const handleImageLoad = () => {
   }
 }
 
+const enableAnimation = computed(() => {
+  return useConfigStore().getSetting.imageSettings.enableAnimation ? imgMotion : null
+})
+const imageDisplayMode = computed(() => {
+  return useConfigStore().getSetting.imageSettings.displayMode
+})
+
 onMounted(() => {
   const img = clipboardCardImage.value
   if (img) {
     if (img.complete) {
       handleImageLoad()
     }
-    img.addEventListener('load', handleImageLoad)
+    // 如果图片显示模式为自动，则监听图片加载完成事件
+    img.addEventListener(
+      'load',
+      imageDisplayMode.value === 'auto'
+        ? handleImageLoad
+        : () => {
+            console.log('图片加载完成')
+          }
+    )
 
     // 动态更新 x 和 y 的值
     imgMotion.value.visible.x = getRandomPosition()
     imgMotion.value.visible.y = getRandomPosition()
+  }
+
+  // 如果图片显示模式为自动，则监听图片加载完成事件
+  if (imageDisplayMode.value !== 'auto') {
+    objectFit.value = imageDisplayMode.value
   }
 })
 </script>
@@ -86,12 +107,12 @@ onMounted(() => {
   <div class="clipboard-card-image-container">
     <!-- {{ props.clipboardOptions.content }} -->
     <img
+      ref="clipboardCardImage"
+      v-motion="enableAnimation"
       :src="props.clipboardOptions.content"
       alt=""
       class="clipboard-card-image"
-      ref="clipboardCardImage"
       :style="{ objectFit }"
-      v-motion="imgMotion"
     />
   </div>
 </template>

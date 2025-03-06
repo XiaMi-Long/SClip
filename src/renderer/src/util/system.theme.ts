@@ -2,7 +2,7 @@
  * @file system.theme.ts
  * @description 系统主题配置工具文件，专注于提供主题和强调色更新功能
  */
-
+import { ref } from 'vue'
 /**
  * @typedef {Object} SystemTheme
  * @property {string} [clipboardListBg] - 剪贴板列表背景颜色
@@ -48,6 +48,11 @@ const darkTheme: SystemTheme = {
 }
 
 /**
+ * @description 是否是暗黑模式
+ */
+export const isDarkMode = ref(false)
+
+/**
  * @description 将传入的主题配置写入到全局 :root CSS 变量中，实现主题颜色的动态切换
  * @param {SystemTheme} theme - 主题配置对象，用于更新全局变量
  */
@@ -74,6 +79,7 @@ export function initSystemTheme(): void {
 export function switchThemeMode(mode: ThemeMode): void {
   const theme = mode === 'dark' ? darkTheme : lightTheme
   setSystemTheme(theme)
+  isDarkMode.value = mode === 'dark'
 }
 
 /**

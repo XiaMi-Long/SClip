@@ -4,8 +4,8 @@ import { Logger } from '../services/logger.service'
 import { exec } from 'child_process'
 import { promisify } from 'util'
 import fs from 'fs'
-import sendRenderer from '../services/ipc.service'
 import { DBManager } from '../database/database.manager'
+import { MainIPCService } from '../services/ipc.main.service'
 
 const readFileAsync = promisify(fs.readFile)
 
@@ -223,7 +223,7 @@ export class ClipboardManager {
     // 将新生成的 ID 赋值回 lastState
     this.lastState.id = newId
     // 发送数据到渲染进程
-    sendRenderer.setClipboardToRenderer([this.lastState])
+    MainIPCService.sendToRenderer.setClipboardToRenderer([this.lastState])
   }
 
   /**
@@ -289,7 +289,7 @@ export class ClipboardManager {
   private async getImageBase64(path: string): Promise<string> {
     const ext = path.split('.').pop()?.toLowerCase()
 
-    if (ext && mimeTypes.hasOwnProperty(ext)) {
+    if (ext && mimeTypes[ext]) {
       try {
         const buffer = await readFileAsync(path)
         const mimeType = mimeTypes[ext]

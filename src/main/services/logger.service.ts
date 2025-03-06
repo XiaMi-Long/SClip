@@ -27,13 +27,13 @@ export class Logger {
     console.log(logMessage, data ? data + '\n' : '')
 
     // 保存到数据库
-    this.db.insertLog({
-      level: 'info',
-      module,
-      message,
-      data: data ? JSON.stringify(data) : undefined,
-      created_at: Date.now()
-    })
+    // this.db.insertLog({
+    //   level: 'info',
+    //   module,
+    //   message,
+    //   data: data ? JSON.stringify(data) : undefined,
+    //   created_at: Date.now()
+    // })
   }
 
   /**
@@ -86,12 +86,12 @@ export class Logger {
     }
 
     // 保存到数据库
-    this.db.insertLog({
-      level: 'debug',
-      module,
-      message,
-      data: data ? JSON.stringify(data) : undefined,
-      created_at: Date.now()
-    })
+    // this.db.insertLog({
+    //   level: 'debug',
+    //   module,
+    //   message,
+    //   data: data ? JSON.stringify(data) : undefined,
+    //   created_at: Date.now()
+    // })
   }
 }

@@ -5,29 +5,34 @@ import TitleBar from './components/TitleBar/index.vue'
 import { useClipboardStore } from './store/useClipboardStore'
 import { useConfigStore } from './store/useConfigStore'
 import { switchThemeMode } from './util/system.theme'
+import { listenFromMain, invokeMain } from './util/ipc.renderer.service'
 
 try {
-  window.clipboard.setClipboardToRenderer((clipboardState: ClipboardState[]) => {
+  // 监听剪贴板数据更新
+  listenFromMain.onClipboardUpdate((clipboardState: ClipboardState[]) => {
     useClipboardStore().pushClipboard(clipboardState)
   })
 
-  window.appConfig.getAppSetting(async (setting: Setting) => {
+  // 监听应用配置更新
+  listenFromMain.onAppSettingUpdate(async (setting: Setting) => {
     console.log('setting', setting)
 
     useConfigStore().setSetting(setting)
     if (setting.applicationTheme === 'system') {
-      const isDark = await window.systemTheme.getNativeThemeShouldUseDarkColors()
+      const isDark = await invokeMain.getNativeThemeShouldUseDarkColors()
       switchThemeMode(isDark ? 'dark' : 'light')
     } else {
       switchThemeMode(setting.applicationTheme)
     }
   })
 
-  window.appConfig.setWindowId((windowId: string) => {
+  // 监听窗口ID更新
+  listenFromMain.onWindowIdUpdate((windowId: string) => {
     useConfigStore().setWindowId(windowId)
   })
 
-  window.systemTheme.sendNativeThemeUpdated((isDarkMode: boolean) => {
+  // 监听系统主题变化
+  listenFromMain.onNativeThemeUpdate((isDarkMode: boolean) => {
     console.log(useConfigStore().getSetting)
 
     if (useConfigStore().getSetting.applicationTheme === 'system') {
@@ -63,8 +68,7 @@ const isShowTitleBar = computed(() => useConfigStore().getSetting.system)
 }
 
 /* Windows下特殊处理 */
-@media screen and (-ms-high-contrast: active),
-(-ms-high-contrast: none) {
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
   #app {
     border: 1px solid transparent;
     /* 防止Windows下边缘锯齿 */

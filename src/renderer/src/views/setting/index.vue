@@ -3,16 +3,18 @@
  * 设置页面组件
  * 包含左侧导航和右侧内容区域
  */
-import { ref, shallowRef } from 'vue'
+import { ref, shallowRef, type Component } from 'vue'
 import ThemeSettings from './theme/ThemeSettings.vue'
 import LanguageSettings from './language/index.vue'
 import KeyboardSettings from './keyboard/index.vue'
+import LogViewer from './log/index.vue'
+import SClipSettings from './sclip/index.vue'
 
 // 子菜单项类型
 interface SubmenuItem {
   id: string
   label: string
-  component: unknown
+  component: Component | null
 }
 
 // 菜单项类型
@@ -21,7 +23,7 @@ interface MenuItem {
   icon: string
   label: string
   children?: SubmenuItem[]
-  component?: unknown
+  component?: Component | null
 }
 
 // 菜单项
@@ -35,8 +37,8 @@ const menuItems: MenuItem[] = [
       { id: 'language', label: '语言设置', component: LanguageSettings },
       { id: 'keyboard', label: '快捷键设置', component: KeyboardSettings },
       // { id: 'date', label: '趣味数据', component: null },
-      { id: 'log', label: '日志', component: null },
-      { id: 'sclip', label: 'SClip设置', component: null }
+      { id: 'log', label: '日志查看', component: LogViewer },
+      { id: 'sclip', label: 'SClip设置', component: SClipSettings }
     ]
   }
 ]
@@ -46,7 +48,7 @@ const selectedMenu = ref('general')
 const selectedSubmenu = ref('appearance')
 
 // 当前显示的组件
-const currentComponent = shallowRef(ThemeSettings)
+const currentComponent = shallowRef<Component | null>(ThemeSettings)
 
 /**
  * 设置当前选中的菜单和子菜单
@@ -71,10 +73,13 @@ const selectMenu = (menuId: string, submenuId: string | null = null) => {
   }
 
   // 设置当前显示的组件
-  // 这里只实现了主题设置，所以默认显示ThemeSettings
-  currentComponent.value = menuItems
-    .find((item) => item.id === menuId)
-    ?.children?.find((child) => child.id === submenuId)?.component
+  const foundMenu = menuItems.find((item) => item.id === menuId)
+  if (foundMenu && foundMenu.children) {
+    const foundSubMenu = foundMenu.children.find((child) => child.id === selectedSubmenu.value)
+    if (foundSubMenu && foundSubMenu.component) {
+      currentComponent.value = foundSubMenu.component
+    }
+  }
 }
 
 // 初始化时默认选中general菜单，显示主题设置

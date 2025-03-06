@@ -29,6 +29,13 @@ export class ConfigManager {
           macDefaultShortcuts: 'Alt+V'
         }
       },
+      imageSettings: {
+        displayMode: 'auto',
+        enableAnimation: true
+      },
+      appBehavior: {
+        jumpToFirstPage: true
+      },
       system: {
         platform: process.platform,
         isMac: process.platform === 'darwin',

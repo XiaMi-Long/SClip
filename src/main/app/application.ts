@@ -6,7 +6,6 @@ import {
   app,
   shell,
   BrowserWindow,
-  ipcMain,
   BrowserWindowConstructorOptions,
   powerMonitor,
   Tray
@@ -17,10 +16,8 @@ import { ClipboardManager } from '../clipboard'
 import { GlobalShortcut } from '../shortcuts/shortcut.manager.ts'
 import { DBManager } from '../database/database.manager'
 import { Logger } from '../services/logger.service'
-import sendRenderer from '../services/ipc.service'
-import { clipboard, nativeImage } from 'electron'
-import robot from 'robotjs'
 import { ConfigManager } from '../config/app.config'
+import { MainIPCService } from '../services/ipc.main.service'
 
 /**
  * 基础事件注册接口
@@ -119,7 +116,13 @@ export class ApplicationRegister {
     }
   }
 
-  constructor() {}
+  /**
+   * 类构造函数
+   * 由于所有方法都是静态的，此构造函数为空
+   */
+  constructor() {
+    // 空构造函数，所有功能通过静态方法实现
+  }
 
   /**
    * 应用注册事件对象
@@ -180,148 +183,8 @@ export class ApplicationRegister {
      * 注册应用IPC通信事件
      */
     registerIPCEvent() {
-      /**
-       * 监听渲染进程通信-渲染进程通知主进程准备复制剪贴板的内容到用户输入区域
-       */
-      ipcMain.on('write-clipboard', (event, clipboardState: ClipboardState) => {
-        console.warn(clipboardState)
-
-        Logger.info('Application', `主进程通信-获取到渲染进程剪贴板记录`)
-        const window = BrowserWindow.getAllWindows()[0]
-        if (!window) return
-
-        window.hide()
-        try {
-          // 根据类型处理不同内容
-          switch (clipboardState.type) {
-            case 'image': {
-              const image = nativeImage.createFromDataURL(clipboardState.content)
-              clipboard.writeImage(image)
-              break
-            }
-            case 'rtf': {
-              const setting = ConfigManager.getInstance().getSetting()
-              if (setting.rtfRenderType === 'rtf') {
-                clipboard.writeRTF(clipboardState.content)
-              } else if (setting.rtfRenderType === 'html') {
-                clipboard.writeHTML(clipboardState.meta.rtf_html)
-              } else {
-                clipboard.writeText(clipboardState.meta.rtf_text)
-              }
-              break
-            }
-            default:
-              clipboard.writeText(clipboardState.content)
-              break
-          }
-          setTimeout(() => {
-            // 模拟粘贴操作
-            robot.mouseClick('left')
-            robot.keyTap('v', process.platform === 'darwin' ? 'command' : 'control')
-          }, 200)
-        } catch (error) {
-          Logger.error('Application', '粘贴内容失败', error)
-        }
-      })
-
-      /**
-       * 监听渲染进程通信-更新剪贴板数据
-       */
-      ipcMain.on('update-clipboard-item', (event, clipboardState: ClipboardState) => {
-        console.error(clipboardState)
-        try {
-          if (clipboardState) {
-            DBManager.getInstance().updateClipboardItem(clipboardState)
-          }
-        } catch (error) {
-          Logger.error('Application', '更新剪贴板数据失败', error)
-        }
-      })
-
-      /**
-       * 监听渲染进程通信-删除剪贴板数据
-       */
-      ipcMain.on('delete-clipboard-item', (event, clipboardState: ClipboardState) => {
-        try {
-          if (clipboardState && clipboardState.id) {
-            DBManager.getInstance().deleteClipboardItem(clipboardState.id)
-          }
-        } catch (error) {
-          Logger.error('Application', '删除剪贴板数据失败', error)
-        }
-      })
-
-      /**
-       * 监听渲染进程通信-打开设置窗口
-       */
-      ipcMain.on('open-setting', () => {
-        ApplicationRegister.getSettingWindowMethod().init()
-      })
-
-      /**
-       * 窗口最小化
-       */
-      ipcMain.on('window-minimize', (event) => {
-        // 获取发送事件的窗口
-        const win = BrowserWindow.fromWebContents(event.sender)
-        if (win) {
-          win.minimize()
-        }
-      })
-
-      /**
-       * 窗口最大化（目前设置为不可用）
-       */
-      ipcMain.on('window-maximize', (event) => {
-        const win = BrowserWindow.fromWebContents(event.sender)
-        if (win) {
-          // 由于我们设置了窗口不可最大化，这里可以不做处理
-          // 或者可以添加一些提示
-          Logger.info('Application', '窗口不支持最大化')
-        }
-      })
-
-      /**
-       * 窗口关闭
-       */
-      ipcMain.on('window-close', (event) => {
-        const win = BrowserWindow.fromWebContents(event.sender)
-        if (!win) return
-
-        const windowType =
-          win === ApplicationRegister.getMainWindowMethod().getMainWindow() ? 'main' : 'setting'
-
-        if (windowType === 'main') {
-          // 主窗口隐藏时保持任务栏图标
-          win.hide()
-        } else {
-          // 其他窗口（如设置窗口）直接关闭
-          win.close()
-        }
-      })
-
-      /**
-       * 监听渲染进程通信-获取当前系统主题
-       */
-      ipcMain.handle('get-native-theme-shouldUseDarkColors', () => {
-        return nativeTheme.shouldUseDarkColors
-      })
-
-      /**
-       * 监听渲染进程通信-更新应用配置
-       */
-      ipcMain.on('update-config-setting', (event, setting: Setting, windowId: string) => {
-        ConfigManager.getInstance().updateSetting(setting)
-        // 获取所有窗口
-        const allWindows = BrowserWindowManager.getBrowserWindows()
-        // 遍历所有窗口，向非 windowId 窗口发送更新配置事件
-        allWindows.forEach((_, key) => {
-          // 跳过 windowId 窗口，只向其他窗口发送更新
-          if (key !== windowId) {
-            sendRenderer.setSettingWindow(setting, key)
-          }
-        })
-      })
+      // 使用整合的IPC服务注册所有事件
+      MainIPCService.registerAllEvents()
     },
 
     /**
@@ -453,26 +316,15 @@ export class ApplicationRegister {
      * 2. 监听 nativeTheme 的 'updated' 事件
      * 3. 当事件触发时，检查系统主题是否发生变化
      * 4. 如果主题发生变化，更新 isDarkMode 变量
-     * 5. 获取主窗口实例，如果存在则发送 'native-theme-updated' 事件通知渲染进程
-     * 6. 获取设置窗口实例，如果存在则发送 'native-theme-updated' 事件通知渲染进程
-     *
-     * 注意：
-     * - 只有当主题实际发生变化时才会通知渲染进程
+     * 5. 使用IPC服务发送消息到所有渲染进程
      */
     registerNativeThemeEvent(): void {
       let isDarkMode = nativeTheme.shouldUseDarkColors
       nativeTheme.on('updated', () => {
         if (isDarkMode !== nativeTheme.shouldUseDarkColors) {
           isDarkMode = !isDarkMode
-          const mainWindow = ApplicationRegister.getMainWindowMethod().getMainWindow()
-          if (mainWindow) {
-            mainWindow.webContents.send('native-theme-updated', isDarkMode)
-          }
-
-          const settingWindow = ApplicationRegister.getSettingWindowMethod().getSettingWindow()
-          if (settingWindow) {
-            settingWindow.webContents.send('native-theme-updated', isDarkMode)
-          }
+          // 使用IPC服务发送系统主题变化事件
+          MainIPCService.sendToRenderer.sendNativeThemeUpdated(isDarkMode)
         }
       })
     }
@@ -525,15 +377,15 @@ export class ApplicationRegister {
               // mainWindow.setAlwaysOnTop(true, 'screen-saver')
               try {
                 const clipboardHistory = DBManager.getInstance().getClipboardHistory()
-                sendRenderer.setClipboardToRenderer(clipboardHistory)
+                MainIPCService.sendToRenderer.setClipboardToRenderer(clipboardHistory)
               } catch (error) {
                 Logger.error('Application', `初始化应用恢复剪贴板记录失败`, error)
               }
 
               try {
                 const setting = ConfigManager.getInstance().getSetting()
-                sendRenderer.setSettingWindow(setting, 'main')
-                sendRenderer.setWindowId('main', 'main')
+                MainIPCService.sendToRenderer.setSettingWindow(setting, 'main')
+                MainIPCService.sendToRenderer.setWindowId('main', 'main')
               } catch (error) {
                 Logger.error('Application', `初始化应用恢复设置失败`, error)
               }
@@ -660,10 +512,10 @@ export class ApplicationRegister {
           settingWindow.on('ready-to-show', () => {
             settingWindow.show()
             // 发送窗口 ID 到渲染进程
-            sendRenderer.setWindowId('setting', 'setting')
+            MainIPCService.sendToRenderer.setWindowId('setting', 'setting')
             // 发送设置到渲染进程
             const setting = ConfigManager.getInstance().getSetting()
-            sendRenderer.setSettingWindow(setting, 'setting')
+            MainIPCService.sendToRenderer.setSettingWindow(setting, 'setting')
 
             if (is.dev) {
               settingWindow.webContents.openDevTools()
@@ -683,8 +535,11 @@ export class ApplicationRegister {
 
       /**
        * 注册设置窗口事件
+       * 当需要为设置窗口添加特定事件时实现此方法
        */
-      registerEvent() {},
+      registerEvent() {
+        // 当前无需注册特定事件
+      },
 
       /**
        * 获取设置窗口

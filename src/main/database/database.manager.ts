@@ -269,8 +269,14 @@ export class DBManager {
       const params: Array<string | number> = []
 
       if (options.level) {
-        query += ' AND level = ?'
-        params.push(options.level)
+        const levels = options.level.split(',')
+        if (levels.length > 1) {
+          query += ` AND level IN (${levels.map(() => '?').join(',')})`
+          params.push(...levels)
+        } else {
+          query += ' AND level = ?'
+          params.push(options.level)
+        }
       }
 
       if (options.startTime) {
