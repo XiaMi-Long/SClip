@@ -4,6 +4,9 @@ import { isDarkMode } from '../../../util/system.theme'
 import SettingPreviewLight from '../../../assets/image/setting-preview-light.jpg'
 import SettingPreviewDark from '../../../assets/image/setting-preview-dark.jpg'
 import { useConfigStore } from '@renderer/store/useConfigStore'
+import { Message } from '@renderer/components/VMessage'
+import VSwitch from '@renderer/components/VSwitch'
+
 /**
  * SClip设置组件
  * 包含图片显示设置和应用操作逻辑设置
@@ -103,24 +106,36 @@ const selectDisplayMode = (modeId: 'auto' | 'contain' | 'cover'): void => {
   useConfigStore().setImageSettings({
     displayMode: modeId
   })
+  // 显示成功消息通知
+  Message.success({
+    title: '设置已保存',
+    message: '图片显示模式设置已成功应用，下次打开应用时生效',
+    duration: 2000
+  })
 }
 
 /**
  * 切换图片微动画开关
  */
-const toggleImageAnimation = (): void => {
-  enableImageAnimation.value = !enableImageAnimation.value
+const toggleImageAnimation = (value: boolean): void => {
+  enableImageAnimation.value = value
   // 这里可以添加保存设置的逻辑
   useConfigStore().setImageSettings({
-    enableAnimation: enableImageAnimation.value
+    enableAnimation: value
+  })
+  // 显示成功消息通知
+  Message.success({
+    title: '设置已保存',
+    message: '图片微动画设置已成功应用，下次打开应用时生效',
+    duration: 2000
   })
 }
 
 /**
  * 切换是否回到第一页的设置
  */
-const toggleJumpToFirstPage = (): void => {
-  jumpToFirstPage.value = !jumpToFirstPage.value
+const toggleJumpToFirstPage = (value: boolean): void => {
+  jumpToFirstPage.value = value
   // 这里可以添加保存设置的逻辑
 }
 </script>
@@ -141,30 +156,17 @@ const toggleJumpToFirstPage = (): void => {
 
       <div class="display-mode-options">
         <!-- 显示模式预览卡片 -->
-        <div
-          v-for="mode in displayModes"
-          :key="mode.id"
-          class="display-mode-card"
-          :class="{ active: selectedDisplayMode === mode.id }"
-          @click="selectDisplayMode(mode.id)"
-        >
+        <div v-for="mode in displayModes" :key="mode.id" class="display-mode-card"
+          :class="{ active: selectedDisplayMode === mode.id }" @click="selectDisplayMode(mode.id)">
           <!-- 显示模式预览 -->
           <div class="display-preview">
-            <img
-              :src="displayModeImage"
-              :style="{ objectFit: getDisplayModeFit(mode.id) }"
-              alt="预览图"
-              :class="'preview-image preview-image-' + mode.id"
-            />
+            <img :src="displayModeImage" :style="{ objectFit: getDisplayModeFit(mode.id) }" alt="预览图"
+              :class="'preview-image preview-image-' + mode.id" />
           </div>
 
           <!-- 显示模式信息和选择状态 -->
           <div class="mode-info">
-            <div
-              v-if="selectedDisplayMode === mode.id"
-              v-motion="checkIconMotion"
-              class="check-icon-wrapper"
-            >
+            <div v-if="selectedDisplayMode === mode.id" v-motion="checkIconMotion" class="check-icon-wrapper">
               <div class="check-icon">✓</div>
             </div>
             <div class="mode-text" :class="{ active: selectedDisplayMode === mode.id }">
@@ -189,13 +191,8 @@ const toggleJumpToFirstPage = (): void => {
       <!-- 添加预览区域 -->
       <div class="animation-preview">
         <div class="preview-container">
-          <img
-            v-motion="imgMotion"
-            :src="SettingPreviewDark"
-            :style="{ objectFit: 'cover' }"
-            alt="动画预览"
-            class="preview-image-animation"
-          />
+          <img v-motion="imgMotion" :src="SettingPreviewDark" :style="{ objectFit: 'cover' }" alt="动画预览"
+            class="preview-image-animation" />
         </div>
       </div>
 
@@ -204,13 +201,7 @@ const toggleJumpToFirstPage = (): void => {
           <div class="option-title">启用图片微动画</div>
           <div class="option-description">为图片卡片添加轻微的动态效果，增强视觉体验</div>
         </div>
-        <div
-          class="toggle-switch"
-          :class="{ active: enableImageAnimation }"
-          @click="toggleImageAnimation"
-        >
-          <div class="toggle-slider"></div>
-        </div>
+        <VSwitch v-model="enableImageAnimation" @change="toggleImageAnimation" />
       </div>
     </div>
 
@@ -229,13 +220,7 @@ const toggleJumpToFirstPage = (): void => {
           <div class="option-title">启动回到首页</div>
           <div class="option-description">每次打开应用时自动回到第一页</div>
         </div>
-        <div
-          class="toggle-switch"
-          :class="{ active: jumpToFirstPage }"
-          @click="toggleJumpToFirstPage"
-        >
-          <div class="toggle-slider"></div>
-        </div>
+        <VSwitch v-model="jumpToFirstPage" @change="toggleJumpToFirstPage" />
       </div>
     </div>
   </div>
@@ -307,8 +292,7 @@ const toggleJumpToFirstPage = (): void => {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
   }
 
-  &.active {
-  }
+  &.active {}
 }
 
 .display-preview {
@@ -351,6 +335,7 @@ const toggleJumpToFirstPage = (): void => {
 .mode-text {
   flex: 1;
   transition: all 0.5s ease;
+
   &.active {
     transform: translateX(10px);
   }
@@ -402,37 +387,6 @@ const toggleJumpToFirstPage = (): void => {
   color: var(--text-color);
   opacity: 0.7;
   transition: color 0.5s ease;
-}
-
-.toggle-switch {
-  width: 50px;
-  height: 26px;
-  background-color: rgba(var(--rgb-text-color, 0, 0, 0), 0.1);
-  transition: background-color 0.5s ease;
-  border-radius: 13px;
-  position: relative;
-  cursor: pointer;
-  transition: all 0.3s ease;
-
-  &.active {
-    background-color: var(--accent-color, #4285f4);
-  }
-
-  .toggle-slider {
-    position: absolute;
-    width: 22px;
-    height: 22px;
-    background-color: white;
-    border-radius: 50%;
-    top: 2px;
-    left: 2px;
-    transition: all 0.3s ease;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-
-    .active & {
-      left: 26px;
-    }
-  }
 }
 
 .animation-section,

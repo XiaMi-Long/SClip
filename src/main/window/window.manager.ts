@@ -35,7 +35,13 @@ export class BrowserWindowManager {
       ...options.browserWindow
     })
 
-    // 添加窗口关闭时的清理
+    // 如果窗口关闭，则隐藏窗口
+    newBrowserWindow.on('close', (e) => {
+      e.preventDefault()
+      newBrowserWindow.hide()
+    })
+
+    // 添加窗口真正关闭时的清理
     newBrowserWindow.on('closed', () => {
       this.browserWindows.delete(options.key)
     })

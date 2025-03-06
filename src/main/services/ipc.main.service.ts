@@ -39,7 +39,6 @@ export class MainIPCService {
       const window = BrowserWindow.getAllWindows()[0]
       if (!window) return
 
-      window.hide()
       try {
         // 根据类型处理不同内容
         switch (clipboardState.type) {
@@ -63,6 +62,7 @@ export class MainIPCService {
             clipboard.writeText(clipboardState.content)
             break
         }
+        window.hide()
         setTimeout(() => {
           // 模拟粘贴操作
           robot.mouseClick('left')

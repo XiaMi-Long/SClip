@@ -26,6 +26,7 @@ declare global {
     appConfig: {
       getAppSetting: (callback: (setting: Setting) => void) => void
       setWindowId: (callback: (windowId: string) => void) => void
+      updateConfigSetting: (setting: Setting, windowId: string) => void
     }
     browserWindow: {
       openSetting: () => void
@@ -33,7 +34,6 @@ declare global {
     systemTheme: {
       getNativeThemeShouldUseDarkColors: () => Promise<boolean>
       sendNativeThemeUpdated: (callback: (isDarkMode: boolean) => void) => void
-      updateConfigSetting: (setting: Setting, windowId: string) => void
     }
     database: {
       /**

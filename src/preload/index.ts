@@ -48,7 +48,13 @@ if (process.contextIsolated) {
        * @param {function} callback - 回调函数
        */
       setWindowId: (callback) =>
-        ipcRenderer.on('set-window-id', (event, windowId: string) => callback(windowId))
+        ipcRenderer.on('set-window-id', (event, windowId: string) => callback(windowId)),
+
+      /**
+       * 更新应用配置
+       */
+      updateConfigSetting: (setting: Setting, windowId: string) =>
+        ipcRenderer.send('update-config-setting', setting, windowId)
     })
 
     contextBridge.exposeInMainWorld('browserWindow', {
@@ -86,15 +92,7 @@ if (process.contextIsolated) {
        * 发送系统主题变化事件
        */
       sendNativeThemeUpdated: (callback) =>
-        ipcRenderer.on('native-theme-updated', (event, isDarkMode: boolean) =>
-          callback(isDarkMode)
-        ),
-
-      /**
-       * 更新应用配置
-       */
-      updateConfigSetting: (setting: Setting, windowId: string) =>
-        ipcRenderer.send('update-config-setting', setting, windowId)
+        ipcRenderer.on('native-theme-updated', (event, isDarkMode: boolean) => callback(isDarkMode))
     })
 
     // 添加数据库操作接口

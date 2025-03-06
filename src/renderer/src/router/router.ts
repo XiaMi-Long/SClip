@@ -1,15 +1,17 @@
 import { createWebHashHistory, createRouter } from 'vue-router'
+import Home from '../views/home/index.vue'
+import SettingIndex from '../views/setting/index.vue'
 
 const routes = [
-  { path: '/', component: () => import('../views/home/index.vue') },
+  { path: '/', component: Home },
   {
     path: '/setting',
     name: 'setting',
-    component: () => import('../views/setting/index.vue'),
-    redirect: '/setting/appearance',
+    component: SettingIndex,
+    redirect: '/setting/theme',
     children: [
       {
-        path: 'appearance',
+        path: 'theme',
         name: 'Theme',
         component: () => import('../views/setting/theme/theme.vue')
       },

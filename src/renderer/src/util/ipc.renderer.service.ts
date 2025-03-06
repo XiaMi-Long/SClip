@@ -76,7 +76,7 @@ export const sendToMain = {
    * @param {string} windowId - 窗口ID
    */
   updateConfigSetting: (setting: Setting, windowId: string): void => {
-    window.systemTheme.updateConfigSetting(setting, windowId)
+    window.appConfig.updateConfigSetting(setting, windowId)
   }
 }
 

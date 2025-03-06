@@ -44,6 +44,7 @@ const route = useRoute()
 const selectedMenu = ref('general')
 const selectedSubmenu = ref('Theme')
 
+
 /**
  * 设置当前选中的菜单并导航到相应路由
  * @param {string} menuId - 菜单ID
@@ -96,27 +97,15 @@ updateSelectedFromRoute()
       <div class="menu-container">
         <!-- 主菜单 -->
         <div v-for="item in menuItems" :key="item.id" class="menu-group">
-          <div
-            class="menu-item"
-            :class="{ active: selectedMenu === item.id }"
-            @click="selectMenu(item.id)"
-          >
+          <div class="menu-item" :class="{ active: selectedMenu === item.id }" @click="selectMenu(item.id)">
             <span class="menu-icon" v-html="item.icon"></span>
             <span class="menu-label">{{ item.label }}</span>
           </div>
 
           <!-- 子菜单 -->
-          <div
-            v-if="item.id === selectedMenu && item.children && item.children.length"
-            class="submenu"
-          >
-            <div
-              v-for="subItem in item.children"
-              :key="subItem.id"
-              class="submenu-item"
-              :class="{ active: selectedSubmenu === subItem.id }"
-              @click.stop="selectMenu(item.id, subItem.id, subItem.name)"
-            >
+          <div v-if="item.id === selectedMenu && item.children && item.children.length" class="submenu">
+            <div v-for="subItem in item.children" :key="subItem.id" class="submenu-item"
+              :class="{ active: selectedSubmenu === subItem.id }" @click.stop="selectMenu(item.id, subItem.id, subItem.name)">
               {{ subItem.label }}
             </div>
           </div>
@@ -126,11 +115,14 @@ updateSelectedFromRoute()
 
     <!-- 右侧内容区域 -->
     <div class="settings-content">
-      <router-view v-slot="{ Component }">
+      <router-view v-slot="{ Component, route }">
         <transition name="fade" mode="out-in">
-          <keep-alive>
-            <component :is="Component" :key="route.name" />
-          </keep-alive>
+          <!-- 添加一个包装div，使用route.name作为key以确保路由变化时重新渲染 -->
+          <div :key="route.name">
+            <keep-alive>
+              <component :is="Component" />
+            </keep-alive>
+          </div>
         </transition>
       </router-view>
     </div>
@@ -182,6 +174,7 @@ updateSelectedFromRoute()
   margin: 0 10px;
   position: relative;
   transition: background-color 0.5s;
+
   &:hover {
     background-color: var(--title-bar-bg);
   }
@@ -217,6 +210,7 @@ updateSelectedFromRoute()
   margin: 2px 10px;
   font-size: 14px;
   transition: background-color 0.5s;
+
   &:hover {
     background-color: var(--title-bar-bg);
   }
@@ -237,7 +231,7 @@ updateSelectedFromRoute()
   scrollbar-width: none;
 }
 
-// 过渡动画
+
 .fade-enter-active,
 .fade-leave-active {
   transition:

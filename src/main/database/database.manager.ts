@@ -50,6 +50,7 @@ export class DBManager {
       // this.db.exec(`
       //     DROP TABLE IF EXISTS clipboard_history;
       //     DROP TABLE IF EXISTS app_logs;
+      //     DROP TABLE IF EXISTS app_settings;
       // `)
 
       // 创建剪贴板历史表

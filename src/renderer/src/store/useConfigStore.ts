@@ -84,10 +84,10 @@ export const useConfigStore = defineStore('config', {
       displayMode?: 'auto' | 'contain' | 'cover'
       enableAnimation?: boolean
     }) {
-      if (displayMode) {
+      if (displayMode !== undefined) {
         this.setting.imageSettings.displayMode = displayMode
       }
-      if (enableAnimation) {
+      if (enableAnimation !== undefined) {
         this.setting.imageSettings.enableAnimation = enableAnimation
       }
 

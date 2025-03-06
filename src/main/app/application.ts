@@ -72,7 +72,7 @@ export class ApplicationRegister {
       height,
       show: false,
       frame: false,
-      transparent: true,
+      transparent: process.platform === 'darwin' ? true : false,
       titleBarStyle: 'hidden',
       trafficLightPosition: { x: 12, y: 10 },
       autoHideMenuBar: true,
@@ -163,8 +163,15 @@ export class ApplicationRegister {
 
       // 监听应用关闭事件
       app.on('window-all-closed', () => {
-        if (process.platform !== 'darwin') {
-          app.quit()
+        if (process.platform === 'darwin') {
+          app.hide()
+        } else {
+          const windows = BrowserWindowManager.getBrowserWindows()
+          for (const [key, window] of windows) {
+            if (window) {
+              window.hide()
+            }
+          }
         }
       })
 
