@@ -3,18 +3,14 @@
  * 设置页面组件
  * 包含左侧导航和右侧内容区域
  */
-import { ref, shallowRef, type Component } from 'vue'
-import ThemeSettings from './theme/ThemeSettings.vue'
-import LanguageSettings from './language/index.vue'
-import KeyboardSettings from './keyboard/index.vue'
-import LogViewer from './log/index.vue'
-import SClipSettings from './sclip/index.vue'
+import { ref } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 
 // 子菜单项类型
 interface SubmenuItem {
   id: string
   label: string
-  component: Component | null
+  name: string
 }
 
 // 菜单项类型
@@ -23,7 +19,6 @@ interface MenuItem {
   icon: string
   label: string
   children?: SubmenuItem[]
-  component?: Component | null
 }
 
 // 菜单项
@@ -33,33 +28,35 @@ const menuItems: MenuItem[] = [
     icon: '&#9881;',
     label: '系统设置',
     children: [
-      { id: 'appearance', label: '外观设置', component: ThemeSettings },
-      { id: 'language', label: '语言设置', component: LanguageSettings },
-      { id: 'keyboard', label: '快捷键设置', component: KeyboardSettings },
-      // { id: 'date', label: '趣味数据', component: null },
-      { id: 'log', label: '日志查看', component: LogViewer },
-      { id: 'sclip', label: 'SClip设置', component: SClipSettings }
+      { id: 'Theme', label: '外观设置', name: 'Theme' },
+      { id: 'Language', label: '语言设置', name: 'Language' },
+      { id: 'Keyboard', label: '快捷键设置', name: 'Keyboard' },
+      { id: 'Log', label: '日志查看', name: 'Log' },
+      { id: 'Sclip', label: 'SClip设置', name: 'Sclip' }
     ]
   }
 ]
 
+const router = useRouter()
+const route = useRoute()
+
 // 当前选中的菜单和子菜单
 const selectedMenu = ref('general')
-const selectedSubmenu = ref('appearance')
-
-// 当前显示的组件
-const currentComponent = shallowRef<Component | null>(ThemeSettings)
+const selectedSubmenu = ref('Theme')
 
 /**
- * 设置当前选中的菜单和子菜单
+ * 设置当前选中的菜单并导航到相应路由
  * @param {string} menuId - 菜单ID
  * @param {string | null} submenuId - 子菜单ID
+ * @param {string | null} routePath - 路由路径
  */
-const selectMenu = (menuId: string, submenuId: string | null = null) => {
-  console.log(menuId, submenuId)
+const selectMenu = (
+  menuId: string,
+  submenuId: string | null = null,
+  routeName: string | null = null
+) => {
   selectedMenu.value = menuId
 
-  // 如果有子菜单，设置子菜单，否则清空子菜单
   if (submenuId) {
     selectedSubmenu.value = submenuId
   } else {
@@ -67,23 +64,27 @@ const selectMenu = (menuId: string, submenuId: string | null = null) => {
     const menu = menuItems.find((item) => item.id === menuId)
     if (menu && menu.children && menu.children.length > 0) {
       selectedSubmenu.value = menu.children[0].id
+      router.push({ name: menu.children[0].name })
     } else {
       selectedSubmenu.value = ''
     }
   }
 
-  // 设置当前显示的组件
-  const foundMenu = menuItems.find((item) => item.id === menuId)
-  if (foundMenu && foundMenu.children) {
-    const foundSubMenu = foundMenu.children.find((child) => child.id === selectedSubmenu.value)
-    if (foundSubMenu && foundSubMenu.component) {
-      currentComponent.value = foundSubMenu.component
-    }
+  // 如果提供了路由路径，则导航到该路径
+  if (routeName) {
+    router.push({ name: routeName })
   }
 }
 
-// 初始化时默认选中general菜单，显示主题设置
-selectMenu('general', 'appearance')
+// 监听路由变化更新选中状态
+const updateSelectedFromRoute = () => {
+  const pathSegments = route.path.split('/')
+  const currentSubmenu = pathSegments.pop() || 'Theme'
+  selectedSubmenu.value = currentSubmenu
+}
+
+// 初始化时根据当前路由设置选中状态
+updateSelectedFromRoute()
 </script>
 
 <template>
@@ -102,7 +103,6 @@ selectMenu('general', 'appearance')
           >
             <span class="menu-icon" v-html="item.icon"></span>
             <span class="menu-label">{{ item.label }}</span>
-            <!-- <span v-if="item.children && item.children.length" class="menu-arrow">&#9662;</span> -->
           </div>
 
           <!-- 子菜单 -->
@@ -115,7 +115,7 @@ selectMenu('general', 'appearance')
               :key="subItem.id"
               class="submenu-item"
               :class="{ active: selectedSubmenu === subItem.id }"
-              @click.stop="selectMenu(item.id, subItem.id)"
+              @click.stop="selectMenu(item.id, subItem.id, subItem.name)"
             >
               {{ subItem.label }}
             </div>
@@ -126,11 +126,13 @@ selectMenu('general', 'appearance')
 
     <!-- 右侧内容区域 -->
     <div class="settings-content">
-      <transition name="fade" mode="out-in">
-        <keep-alive :max="10">
-          <component :is="currentComponent" />
-        </keep-alive>
-      </transition>
+      <router-view v-slot="{ Component }">
+        <transition name="fade" mode="out-in">
+          <keep-alive>
+            <component :is="Component" :key="route.name" />
+          </keep-alive>
+        </transition>
+      </router-view>
     </div>
   </div>
 </template>
@@ -181,11 +183,11 @@ selectMenu('general', 'appearance')
   position: relative;
   transition: background-color 0.5s;
   &:hover {
-    background-color: var(--setting-menu-active-bg);
+    background-color: var(--title-bar-bg);
   }
 
   &.active {
-    background-color: var(--setting-menu-active-bg);
+    background-color: var(--title-bar-bg);
     font-weight: 500;
   }
 }
@@ -204,15 +206,6 @@ selectMenu('general', 'appearance')
   flex: 1;
 }
 
-.menu-arrow {
-  font-size: 12px;
-  transition: transform 0.3s;
-
-  .active & {
-    transform: rotate(180deg);
-  }
-}
-
 .submenu {
   margin: 4px 0 8px 20px;
 }
@@ -225,11 +218,11 @@ selectMenu('general', 'appearance')
   font-size: 14px;
   transition: background-color 0.5s;
   &:hover {
-    background-color: var(--setting-menu-active-bg);
+    background-color: var(--title-bar-bg);
   }
 
   &.active {
-    background-color: var(--setting-menu-active-bg);
+    background-color: var(--title-bar-bg);
     font-weight: 500;
   }
 }
@@ -248,13 +241,13 @@ selectMenu('general', 'appearance')
 .fade-enter-active,
 .fade-leave-active {
   transition:
-    opacity 0.3s,
-    transform 0.3s;
+    opacity 0.4s ease,
+    transform 0.4s ease;
 }
 
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(15px);
 }
 </style>

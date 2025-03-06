@@ -154,7 +154,6 @@ export class DBManager {
                     last_file_name_text,
                     isSticky
                 FROM clipboard_history
-                ORDER BY timestamp DESC
                 LIMIT ?
             `)
       const results = stmt.all(limit) as Array<{
