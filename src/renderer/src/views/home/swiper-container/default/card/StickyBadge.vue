@@ -1,9 +1,9 @@
 <script setup lang="ts">
 /**
- * @file SelectBadge 组件
- * @description 显示选中状态的标记组件，使用动画效果显示选中标记
+ * @file StickyBadge 组件
+ * @description 显示固定选项的标记组件，使用动画效果显示固定标记
  */
-import selectImage from '../../../../../../assets/select_white.png'
+import stickyImage from '../../../../../assets/sticky_white.png'
 import { useMotions } from '@vueuse/motion'
 import { computed } from 'vue'
 
@@ -13,6 +13,7 @@ import { computed } from 'vue'
  * @property {number} cardId - 卡片ID，用于动画标识
  */
 const props = defineProps<{
+  card: ClipboardState
   cardId: number
 }>()
 
@@ -28,7 +29,7 @@ const badgeMotion = {
     opacity: 1,
     scale: 1,
     transition: {
-      duration: 500,
+      duration: 300,
       ease: [0.215, 0.61, 0.355, 1]
     }
   },
@@ -41,10 +42,13 @@ const badgeMotion = {
   }
 }
 
-const rotateMotion = {
-  initial: { rotate: 0 },
-  enter: { rotate: 180, transition: { duration: 500, ease: [0.215, 0.61, 0.355, 1] } }
-}
+/**
+ * @description 计算是否应该显示标记
+ * @returns {boolean} 是否显示标记
+ */
+const shouldShow = computed(() => {
+  return props.card.isSticky === 'true'
+})
 
 /**
  * @description 获取卡片ID，用于动画标识
@@ -60,33 +64,34 @@ const getCardId = computed(() => {
  * @param {Function} done - 动画完成回调
  */
 const handleLeave = (_: Element, done: () => void) => {
-  motions[`selectBadge${getCardId.value}`].leave(done)
+  motions[`stickyBadge${getCardId.value}`].leave(done)
 }
 </script>
 
 <template>
   <transition :css="false" @leave="handleLeave">
     <div
-      v-motion="'selectBadge' + getCardId"
+      v-if="shouldShow"
+      v-motion="'stickyBadge' + getCardId"
       :initial="badgeMotion.initial"
       :enter="badgeMotion.enter"
       :leave="badgeMotion.leave"
-      class="select-badge"
+      class="sticky-badge"
     >
-      <img v-motion="rotateMotion" :src="selectImage" alt="选中标记" />
+      <img :src="stickyImage" alt="固定标记" />
     </div>
   </transition>
 </template>
 
 <style scoped lang="scss">
 /**
- * @description SelectBadge 样式定义
+ * @description StickyBadge 样式定义
  */
-.select-badge {
+.sticky-badge {
   z-index: 2;
   position: absolute;
   box-sizing: border-box;
-  right: 5%;
+  left: 5%;
   bottom: 5%;
   width: 1.5em;
   height: 1.5em;
@@ -97,11 +102,46 @@ const handleLeave = (_: Element, done: () => void) => {
   align-items: center;
   justify-content: center;
   border-radius: 5px;
+
+  &.error {
+    animation-name: tada;
+    animation-duration: 1.5s;
+    animation-fill-mode: both;
+  }
 }
 
-.select-badge img {
+.sticky-badge img {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
+}
+
+@keyframes tada {
+  0% {
+    transform: scale3d(1, 1, 1);
+  }
+
+  10%,
+  20% {
+    transform: scale3d(0.9, 0.9, 0.9) rotate3d(0, 0, 1, -3deg);
+  }
+
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: scale3d(1.2, 1.2, 1.2) rotate3d(0, 0, 1, 3deg);
+    background-color: var(--stickybadge-error-bg);
+  }
+
+  40%,
+  60%,
+  80% {
+    transform: scale3d(1.4, 1.4, 1.4) rotate3d(0, 0, 1, -3deg);
+  }
+
+  100% {
+    transform: scale3d(1, 1, 1);
+  }
 }
 </style>

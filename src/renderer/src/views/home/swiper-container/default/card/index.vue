@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import TextCard from './card-style/text.vue'
 import ImageCard from './card-style/image.vue'
 import RtfCard from './card-style/rtf.vue'
+
 const props = defineProps<{
   clipboardOptions: ClipboardState
 }>()

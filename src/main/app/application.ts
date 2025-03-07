@@ -375,6 +375,9 @@ export class ApplicationRegister {
        */
       registerEvent() {
         const mainWindow = this.getMainWindow()
+        const setting = ConfigManager.getInstance().getSetting()
+        const clipboardHistory = DBManager.getInstance().getClipboardHistory()
+
         if (mainWindow) {
           mainWindow.on('ready-to-show', () => {
             if (mainWindow) {
@@ -382,20 +385,10 @@ export class ApplicationRegister {
               mainWindow.maximizable = false
               mainWindow.resizable = false
               // mainWindow.setAlwaysOnTop(true, 'screen-saver')
-              try {
-                const clipboardHistory = DBManager.getInstance().getClipboardHistory()
-                MainIPCService.sendToRenderer.setClipboardToRenderer(clipboardHistory)
-              } catch (error) {
-                Logger.error('Application', `初始化应用恢复剪贴板记录失败`, error)
-              }
 
-              try {
-                const setting = ConfigManager.getInstance().getSetting()
-                MainIPCService.sendToRenderer.setSettingWindow(setting, 'main')
-                MainIPCService.sendToRenderer.setWindowId('main', 'main')
-              } catch (error) {
-                Logger.error('Application', `初始化应用恢复设置失败`, error)
-              }
+              MainIPCService.sendToRenderer.setClipboardToRenderer(clipboardHistory)
+              MainIPCService.sendToRenderer.setSettingWindow(setting, 'main')
+              MainIPCService.sendToRenderer.setWindowId('main', 'main')
 
               // 在开发环境下打开 DevTools
               if (is.dev) {
@@ -514,6 +507,8 @@ export class ApplicationRegister {
         })
 
         const settingWindow = this.getSettingWindow()
+        const setting = ConfigManager.getInstance().getSetting()
+
         if (settingWindow) {
           // 设置窗口事件
           settingWindow.on('ready-to-show', () => {
@@ -521,7 +516,6 @@ export class ApplicationRegister {
             // 发送窗口 ID 到渲染进程
             MainIPCService.sendToRenderer.setWindowId('setting', 'setting')
             // 发送设置到渲染进程
-            const setting = ConfigManager.getInstance().getSetting()
             MainIPCService.sendToRenderer.setSettingWindow(setting, 'setting')
 
             if (is.dev) {

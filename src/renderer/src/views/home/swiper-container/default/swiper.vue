@@ -14,10 +14,6 @@ import { useCarousel } from './hooks'
 
 // 解构hooks,只使用我们需要的状态和getter
 const { state, getters } = useCarousel()
-
-// 解构计算属性，使其在模板中自动解包
-const { allCards, activeAbsoluteIndex } = toRefs(getters)
-
 /** 每页的宽度（像素） */
 const PAGE_WIDTH = computed(() => {
   return document.documentElement.clientWidth
@@ -34,13 +30,17 @@ const listStyle = computed(() => ({
 }))
 
 console.log(getters.allCards.value)
+
+setTimeout(() => {
+  console.log(getters.allCards.value)
+}, 3000)
 </script>
 
 <template>
   <div class="carousel-container">
     <!-- 内层列表，将所有卡片渲染出来 -->
     <transition name="no-data" appear>
-      <div v-if="allCards && allCards.length === 0" class="no-data-container">
+      <div v-if="getters.allCards && getters.allCards.value.length === 0" class="no-data-container">
         <div class="no-data-content">
           <div class="no-data-icon">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -74,20 +74,24 @@ console.log(getters.allCards.value)
     </transition>
     <div class="all-cards" :style="listStyle">
       <div
-        v-for="(card, index) in allCards"
+        v-for="(card, index) in getters.allCards.value"
         :key="card.id"
-        :class="['card-wrapper', { active: index === activeAbsoluteIndex }]"
+        :class="['card-wrapper', { active: index === getters.activeAbsoluteIndex.value }]"
         :style="{ width: PAGE_WIDTH + 'px' }"
         :data-id="card.id"
       >
         <StickyBadge :card="card" :card-id="card.id" />
-        <SelectBadge v-if="index === activeAbsoluteIndex" :card="card" :card-id="card.id" />
+        <SelectBadge
+          v-if="index === getters.activeAbsoluteIndex.value"
+          :card="card"
+          :card-id="card.id"
+        />
         <VClipboardCard :clipboard-options="card" />
       </div>
     </div>
     <!-- 分页状态展示组件（仅展示当前页码，不具备点击功能） -->
     <PaginationIndicator
-      v-if="allCards && allCards.length > 0"
+      v-if="getters.allCards && getters.allCards.value.length > 0"
       :current="state.currentPage.value"
       :total="getters.totalPages.value"
     />

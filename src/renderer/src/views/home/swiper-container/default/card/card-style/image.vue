@@ -87,8 +87,8 @@ onMounted(() => {
       imageDisplayMode.value === 'auto'
         ? handleImageLoad
         : () => {
-          console.log('图片加载完成')
-        }
+            console.log('图片加载完成')
+          }
     )
 
     // 动态更新 x 和 y 的值
@@ -106,8 +106,14 @@ onMounted(() => {
 <template>
   <div class="clipboard-card-image-container">
     <!-- {{ props.clipboardOptions.content }} -->
-    <img ref="clipboardCardImage" v-motion="enableAnimation" :src="props.clipboardOptions.content" alt=""
-      class="clipboard-card-image" :style="{ objectFit }" />
+    <img
+      ref="clipboardCardImage"
+      v-motion="enableAnimation"
+      :src="props.clipboardOptions.content"
+      alt=""
+      class="clipboard-card-image"
+      :style="{ objectFit }"
+    />
   </div>
 </template>
 
