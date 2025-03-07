@@ -15,30 +15,12 @@ const isShow = computed(() => {
 
 <template>
   <div class="swiper-container">
-    <Transition name="fade">
-      <DefaultSwiper v-if="isShow" />
-    </Transition>
+    <DefaultSwiper v-if="isShow" />
   </div>
 </template>
 
 <style scoped lang="scss">
 .swiper-container {
   height: 100%;
-
-  // 过渡动画样式
-  .fade-enter-active,
-  .fade-leave-active {
-    transition: transform 0.5s ease;
-  }
-
-  .fade-enter-from,
-  .fade-leave-to {
-    transform: translateY(10px);
-  }
-
-  .fade-enter-to,
-  .fade-leave-from {
-    transform: translateY(0);
-  }
 }
 </style>

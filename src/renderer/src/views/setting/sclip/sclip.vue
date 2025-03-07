@@ -70,13 +70,13 @@ const checkIconMotion = {
 const getRandomPosition = () => Math.random() * 20 - 18
 
 // 图片浮动动画
-const imgMotion = ref({
+const imgMotion = {
   initial: {
     scale: 1.1,
     x: 0,
     y: 0
   },
-  visible: {
+  enter: {
     scale: 1.1,
     x: getRandomPosition(),
     y: getRandomPosition(),
@@ -87,7 +87,38 @@ const imgMotion = ref({
       ease: 'easeInOut'
     }
   }
-})
+}
+
+// 卡片滚动动画 - 使用v-Motion实现，根据需求调整
+const cardScrollMotion = {
+  initial: {
+    x: 0,
+    opacity: 1
+  },
+  enter: {
+    // 调整位移和透明度的关键帧序列
+    x: [0, -250, -250, -250, -250, 0, 0],
+    opacity: [1, 1, 0, 0, 1, 1, 1],
+    transition: {
+      // 整体时长调整为8秒
+      duration: 8000,
+      repeat: Infinity,
+      repeatType: 'loop',
+      // 调整时间点：
+      // 0%: 初始状态
+      // 15%: 完成位移(-250)
+      // 25%: 开始淡出(opacity: 0)
+      // 50%: 保持透明状态2秒
+      // 55%: 快速显示出来
+      // 65%: 快速位移回原位(只用10%的时间)
+      // 100%: 保持初始状态直至结束(35%的时间，约3秒)
+      times: [0, 0.15, 0.25, 0.5, 0.55, 0.65, 1],
+      // 为不同阶段设置不同的缓动函数
+      // 注意：缓动函数数组长度必须是值数组长度减1
+      ease: ['easeOut', 'linear', 'linear', 'easeOut', 'easeOut', 'linear']
+    }
+  }
+}
 
 const getDisplayModeFit = (modeId: 'auto' | 'contain' | 'cover'): string => {
   if (modeId !== 'auto') {
@@ -156,17 +187,30 @@ const toggleJumpToFirstPage = (value: boolean): void => {
 
       <div class="display-mode-options">
         <!-- 显示模式预览卡片 -->
-        <div v-for="mode in displayModes" :key="mode.id" class="display-mode-card"
-          :class="{ active: selectedDisplayMode === mode.id }" @click="selectDisplayMode(mode.id)">
+        <div
+          v-for="mode in displayModes"
+          :key="mode.id"
+          class="display-mode-card"
+          :class="{ active: selectedDisplayMode === mode.id }"
+          @click="selectDisplayMode(mode.id)"
+        >
           <!-- 显示模式预览 -->
           <div class="display-preview">
-            <img :src="displayModeImage" :style="{ objectFit: getDisplayModeFit(mode.id) }" alt="预览图"
-              :class="'preview-image preview-image-' + mode.id" />
+            <img
+              :src="displayModeImage"
+              :style="{ objectFit: getDisplayModeFit(mode.id) }"
+              alt="预览图"
+              :class="'preview-image preview-image-' + mode.id"
+            />
           </div>
 
           <!-- 显示模式信息和选择状态 -->
           <div class="mode-info">
-            <div v-if="selectedDisplayMode === mode.id" v-motion="checkIconMotion" class="check-icon-wrapper">
+            <div
+              v-if="selectedDisplayMode === mode.id"
+              v-motion="checkIconMotion"
+              class="check-icon-wrapper"
+            >
               <div class="check-icon">✓</div>
             </div>
             <div class="mode-text" :class="{ active: selectedDisplayMode === mode.id }">
@@ -191,8 +235,13 @@ const toggleJumpToFirstPage = (value: boolean): void => {
       <!-- 添加预览区域 -->
       <div class="animation-preview">
         <div class="preview-container">
-          <img v-motion="imgMotion" :src="SettingPreviewDark" :style="{ objectFit: 'cover' }" alt="动画预览"
-            class="preview-image-animation" />
+          <img
+            v-motion="imgMotion"
+            :src="SettingPreviewDark"
+            :style="{ objectFit: 'cover' }"
+            alt="动画预览"
+            class="preview-image-animation"
+          />
         </div>
       </div>
 
@@ -215,10 +264,26 @@ const toggleJumpToFirstPage = (value: boolean): void => {
         <p class="subtitle">自定义应用的操作逻辑</p>
       </div>
 
+      <div class="wakeup-preview">
+        <div class="preview-container">
+          <div class="preview-card-container">
+            <!-- 使用v-motion指令代替CSS动画 -->
+            <div v-motion="cardScrollMotion" class="card-container">
+              <div class="card-item">春风拂面</div>
+              <div class="card-item">月光如水</div>
+              <div class="card-item">花开有声</div>
+              <div class="card-item">云淡风轻</div>
+              <div class="card-item">静听雨落</div>
+              <div class="card-item">星河璀璨</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="toggle-option">
         <div class="option-info">
-          <div class="option-title">启动回到首页</div>
-          <div class="option-description">每次打开应用时自动回到第一页</div>
+          <div class="option-title">唤醒回到首页</div>
+          <div class="option-description">每次唤醒应用时自动回到第一页</div>
         </div>
         <VSwitch v-model="jumpToFirstPage" @change="toggleJumpToFirstPage" />
       </div>
@@ -292,7 +357,8 @@ const toggleJumpToFirstPage = (value: boolean): void => {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
   }
 
-  &.active {}
+  &.active {
+  }
 }
 
 .display-preview {
@@ -415,4 +481,95 @@ const toggleJumpToFirstPage = (value: boolean): void => {
     will-change: transform;
   }
 }
+
+$card-width: 250px;
+$card-height: 380px;
+
+.wakeup-preview {
+  margin-bottom: 20px;
+
+  .preview-container {
+    width: 100%;
+    height: 400px;
+    background-color: var(--title-bar-bg);
+    transition: background-color 0.5s ease;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .preview-card-container {
+      width: $card-width;
+      height: $card-height;
+      background-color: var(--title-bar-bg);
+      transition: background-color 0.5s ease;
+      border-radius: 10px;
+      padding: 3px;
+      box-sizing: border-box;
+      overflow: hidden;
+
+      .card-container {
+        width: calc($card-width * 2);
+        height: 100%;
+        display: flex;
+        gap: 5px;
+        flex-direction: column;
+        flex-wrap: wrap;
+        will-change: transform, opacity;
+
+        .card-item {
+          width: calc($card-width - 6px);
+          height: calc($card-height / 3 - 7px);
+          display: flex;
+          background-color: var(--container-bg);
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          border-radius: 10px;
+        }
+      }
+    }
+  }
+}
+
+// 移除不再需要的CSS scroll动画
+// @keyframes scroll {
+//   0% {
+//     transform: translateX(0) translateY(0);
+//     opacity: 1;
+//   }
+//
+//   15% {
+//     transform: translateX(-$card-width) translateY(0);
+//     opacity: 1;
+//   }
+//
+//   25% {
+//     transform: translateX(-$card-width) translateY(0);
+//     opacity: 1;
+//   }
+//
+//   35% {
+//     transform: translateX(-$card-width) translateY(0);
+//     opacity: 0;
+//   }
+//
+//   45% {
+//     transform: translateX(-$card-width) translateY(0);
+//     opacity: 0.6;
+//   }
+//
+//   65% {
+//     transform: translateX(-$card-width) translateY(0);
+//     opacity: 1;
+//   }
+//
+//   80% {
+//     transform: translateX(0) translateY(0);
+//   }
+//
+//   100% {
+//     transform: translateX(0) translateY(0);
+//   }
+// }
 </style>
