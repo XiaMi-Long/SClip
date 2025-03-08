@@ -5,19 +5,72 @@
  * @description 自定义轮播视图组件，实现卡片的分页展示和导航
  */
 
-import { computed, toRefs } from 'vue'
+import { computed, ref, watch } from 'vue'
 import VClipboardCard from './card/index.vue'
 import StickyBadge from './card/StickyBadge.vue'
 import SelectBadge from './card/selectBadge.vue'
 import PaginationIndicator from './card/PaginationIndicator.vue'
 import { useCarousel } from './hooks'
 import { listenFromMain } from '@renderer/util/ipc.renderer.service'
+// 全局类型定义中已经包含ClipboardState接口，不需要显式导入
 
 // 解构hooks,只使用我们需要的状态和getter
 const { state, getters, actions } = useCarousel()
+
+// 延迟加载配置
+const INITIAL_LOAD_COUNT = 20 // 初始加载20条
+const BATCH_SIZE = 10 // 每次新加载10条
+const LOAD_THRESHOLD = 5 // 当用户浏览到倒数第5条时触发加载
+
+// 实际显示的卡片数据
+const displayedCards = ref<ClipboardState[]>([])
+
+// 空数据动画
+const noDataMotion = {
+  initial: {
+    opacity: 0,
+    y: -10
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 600,
+      ease: [0.215, 0.61, 0.355, 1]
+    }
+  }
+}
+
+/**
+ * 加载更多数据
+ * @description 从allCards中加载更多数据到displayedCards
+ */
+const loadMoreCards = () => {
+  if (displayedCards.value.length >= getters.allCards.value.length) {
+    return // 已加载全部数据
+  }
+
+  const nextBatchSize = Math.min(
+    BATCH_SIZE,
+    getters.allCards.value.length - displayedCards.value.length
+  )
+
+  const newCards = getters.allCards.value.slice(
+    displayedCards.value.length,
+    displayedCards.value.length + nextBatchSize
+  )
+
+  displayedCards.value.push(...newCards)
+}
+
 /** 每页的宽度（像素） */
 const PAGE_WIDTH = computed(() => {
   return document.documentElement.clientWidth
+})
+
+/** 总页数 */
+const totalPages = computed(() => {
+  return Math.ceil(displayedCards.value.length / 3)
 })
 
 /**
@@ -27,11 +80,39 @@ const PAGE_WIDTH = computed(() => {
 const listStyle = computed(() => ({
   transform: `translateX(-${state.currentPage.value * PAGE_WIDTH.value}px)`,
   transition: 'transform 0.3s ease',
-  width: `${getters.totalPages.value * PAGE_WIDTH.value}px`
+  width: `${totalPages.value * PAGE_WIDTH.value}px`
 }))
 
+// 初始加载
+watch(
+  () => getters.allCards.value,
+  (newCards) => {
+    console.log('newCards', newCards)
+
+    if (newCards.length > 0) {
+      // 初始只加载指定数量的卡片
+      displayedCards.value = newCards.slice(0, Math.min(INITIAL_LOAD_COUNT, newCards.length))
+    } else {
+      displayedCards.value = []
+    }
+  },
+  { immediate: true }
+)
+
+// 监听活动索引变化，在接近末尾时加载更多
+watch(
+  () => getters.activeAbsoluteIndex.value,
+  (newIndex) => {
+    if (
+      displayedCards.value.length - newIndex <= LOAD_THRESHOLD &&
+      displayedCards.value.length < getters.allCards.value.length
+    ) {
+      loadMoreCards()
+    }
+  }
+)
+
 listenFromMain.onShowMainWindow(() => {
-  console.log('showMainWindow')
   actions.navigate.jumpToFirstPage()
 })
 </script>
@@ -39,42 +120,46 @@ listenFromMain.onShowMainWindow(() => {
 <template>
   <div class="carousel-container">
     <!-- 内层列表，将所有卡片渲染出来 -->
-    <transition name="no-data" appear>
-      <div v-if="getters.allCards && getters.allCards.value.length === 0" class="no-data-container">
-        <div class="no-data-content">
-          <div class="no-data-icon">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M19.5 3.5L18 2L16.5 3.5L15 2L13.5 3.5L12 2L10.5 3.5L9 2L7.5 3.5L6 2L4.5 3.5L3 2V13.5H21V2L19.5 3.5Z"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M3 13.5H21V22H3V13.5Z"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M9 17H15"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </div>
-          <h3>暂无剪贴板记录</h3>
-          <p>复制一些内容后会在这里显示</p>
+
+    <div
+      v-if="getters.allCards && getters.allCards.value.length === 0"
+      v-motion="noDataMotion"
+      class="no-data-container"
+    >
+      <div class="no-data-content">
+        <div class="no-data-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M19.5 3.5L18 2L16.5 3.5L15 2L13.5 3.5L12 2L10.5 3.5L9 2L7.5 3.5L6 2L4.5 3.5L3 2V13.5H21V2L19.5 3.5Z"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M3 13.5H21V22H3V13.5Z"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M9 17H15"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
         </div>
+        <h3>暂无剪贴板记录</h3>
+        <p>复制一些内容后会在这里显示</p>
       </div>
-    </transition>
+    </div>
+
     <div class="all-cards" :style="listStyle">
       <div
-        v-for="(card, index) in getters.allCards.value"
+        v-for="(card, index) in displayedCards"
         :key="card.id"
         :class="['card-wrapper', { active: index === getters.activeAbsoluteIndex.value }]"
         :style="{ width: PAGE_WIDTH + 'px' }"
@@ -116,23 +201,18 @@ listenFromMain.onShowMainWindow(() => {
   height: 100%;
   background-color: var(--container-bg);
   transition: background-color 0.5s ease;
+  will-change: transform; /* 提示浏览器优化变换性能 */
 }
 
 /* 卡片样式：设置基础样式和过渡效果 */
 .card-wrapper {
   box-sizing: border-box;
-  // padding: 15px;
   height: calc((100% - 6px - 2.5px) / 3);
   position: relative;
   border-radius: 5px;
   cursor: pointer;
   transition: transform 0.2s ease;
-  // box-shadow: 0 2px 4px rgb(132 132 132 / 10%);
-
-  /* 使用 will-change 提示浏览器优化 */
   will-change: transform;
-
-  /* 强制开启硬件加速 */
   backface-visibility: hidden;
 }
 
@@ -180,49 +260,6 @@ listenFromMain.onShowMainWindow(() => {
   }
 }
 
-/* 空数据动画 */
-.no-data-enter-active {
-  animation: bounceIn 0.5s ease;
-}
-
-@keyframes bounceIn {
-  0%,
-  100%,
-  20%,
-  40%,
-  60%,
-  80% {
-    transition-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
-  }
-
-  0% {
-    opacity: 0;
-    transform: scale3d(0.3, 0.3, 0.3);
-  }
-
-  20% {
-    transform: scale3d(1.1, 1.1, 1.1);
-  }
-
-  40% {
-    transform: scale3d(0.9, 0.9, 0.9);
-  }
-
-  60% {
-    opacity: 1;
-    transform: scale3d(1.03, 1.03, 1.03);
-  }
-
-  80% {
-    transform: scale3d(0.97, 0.97, 0.97);
-  }
-
-  100% {
-    opacity: 1;
-    transform: scale3d(1, 1, 1);
-  }
-}
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -230,17 +267,6 @@ listenFromMain.onShowMainWindow(() => {
 
   to {
     opacity: 1;
-  }
-}
-
-@keyframes floatAnimation {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-10px);
   }
 }
 </style>

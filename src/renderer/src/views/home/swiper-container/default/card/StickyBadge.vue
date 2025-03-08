@@ -131,7 +131,7 @@ const handleLeave = (_: Element, done: () => void) => {
   70%,
   90% {
     transform: scale3d(1.2, 1.2, 1.2) rotate3d(0, 0, 1, 3deg);
-    background-color: var(--stickybadge-error-bg);
+    background-color: var(--sticky-badge-error-bg);
   }
 
   40%,

@@ -141,8 +141,10 @@ export class DBManager {
 
   /**
    * 获取剪贴板历史记录
+   * @param {number} limit - 限制返回的记录数量
+   * @returns {ClipboardState[]} 剪贴板记录数组，按时间从旧到新排序
    */
-  public getClipboardHistory(limit: number = 50): ClipboardState[] {
+  public getClipboardHistory(limit: number = 100): ClipboardState[] {
     try {
       const stmt = this.db.prepare(`
                 SELECT
@@ -155,6 +157,7 @@ export class DBManager {
                     last_file_name_text,
                     isSticky
                 FROM clipboard_history
+                ORDER BY timestamp DESC
                 LIMIT ?
             `)
       const results = stmt.all(limit) as Array<{
@@ -168,7 +171,8 @@ export class DBManager {
         isSticky: string
       }>
 
-      return results.map((row) => ({
+      // 反转结果数组，使最早的记录在前，最新的记录在后
+      return results.reverse().map((row) => ({
         ...row,
         meta: JSON.parse(row.meta || '{}')
       })) as ClipboardState[]

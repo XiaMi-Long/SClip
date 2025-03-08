@@ -82,21 +82,14 @@ onMounted(() => {
       handleImageLoad()
     }
     // 如果图片显示模式为自动，则监听图片加载完成事件
-    img.addEventListener(
-      'load',
-      imageDisplayMode.value === 'auto'
-        ? handleImageLoad
-        : () => {
-            console.log('图片加载完成')
-          }
-    )
+    img.addEventListener('load', imageDisplayMode.value === 'auto' ? handleImageLoad : () => {})
 
     // 动态更新 x 和 y 的值
     imgMotion.value.visible.x = getRandomPosition()
     imgMotion.value.visible.y = getRandomPosition()
   }
 
-  // 如果图片显示模式为自动，则监听图片加载完成事件
+  // 如果图片显示模式不为自动，则直接设置显示模式
   if (imageDisplayMode.value !== 'auto') {
     objectFit.value = imageDisplayMode.value
   }

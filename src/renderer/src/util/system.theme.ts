@@ -5,12 +5,12 @@
 import { ref } from 'vue'
 /**
  * @typedef {Object} SystemTheme
- * @property {string} [clipboardListBg] - 剪贴板列表背景颜色
- * @property {string} [clipboardCardBg] - 剪贴板卡片背景颜色
- * @property {string} [accentColor] - 应用强调色
+ * @property {string} [titleBarBg] - 标题栏背景颜色
+ * @property {string} [containerBg] - 容器背景颜色
+ * @property {string} [textColor] - 文本颜色
+ * @property {string} [settingMenuActiveBg] - 设置菜单激活背景颜色
  * @property {string} [stickyBadgeBg] - 固定徽章背景颜色
  * @property {string} [stickyBadgeErrorBg] - 固定徽章错误背景颜色
- * @property {string} [systemTheme] - 系统主题 light/dark
  */
 interface SystemTheme {
   titleBarBg: string
@@ -18,6 +18,7 @@ interface SystemTheme {
   textColor: string
   settingMenuActiveBg: string
   stickyBadgeBg: string
+  stickyBadgeErrorBg: string
 }
 
 /**
@@ -33,7 +34,8 @@ const lightTheme: SystemTheme = {
   containerBg: '#fdfcfb',
   textColor: '#333',
   settingMenuActiveBg: '#d9d9d9',
-  stickyBadgeBg: '#d7d7d7'
+  stickyBadgeBg: '#d7d7d7',
+  stickyBadgeErrorBg: '#f26a76'
 }
 
 /**
@@ -44,7 +46,8 @@ const darkTheme: SystemTheme = {
   containerBg: '#323232',
   textColor: '#fff',
   settingMenuActiveBg: '#676767',
-  stickyBadgeBg: '#464646'
+  stickyBadgeBg: '#464646',
+  stickyBadgeErrorBg: '#f26a76'
 }
 
 /**
@@ -63,6 +66,7 @@ export function setSystemTheme(theme: SystemTheme): void {
   root.style.setProperty('--text-color', theme.textColor)
   root.style.setProperty('--setting-menu-active-bg', theme.settingMenuActiveBg)
   root.style.setProperty('--sticky-badge-bg', theme.stickyBadgeBg)
+  root.style.setProperty('--sticky-badge-error-bg', theme.stickyBadgeErrorBg)
 }
 
 /**

@@ -129,6 +129,7 @@ export function useCarousel(): UseCarouselReturn {
           state.currentPage.value--
         }
       },
+
       /** 切换到下一页 */
       nextPage: () => {
         if (state.currentPage.value < getters.totalPages.value - 1) {
@@ -138,12 +139,14 @@ export function useCarousel(): UseCarouselReturn {
           }
         }
       },
+
       /** 选择上一个卡片 */
       prevCard: () => {
         if (state.currentCardIndex.value > 0) {
           state.currentCardIndex.value--
         }
       },
+
       /** 选择下一个卡片 */
       nextCard: () => {
         if (state.currentCardIndex.value < getters.currentPageLength.value - 1) {

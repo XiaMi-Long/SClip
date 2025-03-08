@@ -419,9 +419,9 @@ export class ApplicationRegister {
           // 监听主窗口失去焦点事件
           mainWindow.on('blur', () => {
             // 如果窗口没有固定，则隐藏
-            if (!mainWindow.isAlwaysOnTop()) {
-              mainWindow.hide()
-            }
+            // if (!mainWindow.isAlwaysOnTop()) {
+            //   mainWindow.hide()
+            // }
           })
 
           mainWindow.on('show', () => {

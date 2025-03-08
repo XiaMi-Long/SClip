@@ -53,7 +53,7 @@ const enableImageAnimation = ref(setting.imageSettings.enableAnimation)
 // 是否每次打开应用时回到第一页
 const jumpToFirstPage = ref(true)
 
-// 过渡动画
+// 勾选过渡动画
 const checkIconMotion = {
   initial: { opacity: 0, scale: 0.6 },
   enter: {
@@ -67,7 +67,7 @@ const checkIconMotion = {
 }
 
 // 生成 -10 到 10 之间的随机数
-const getRandomPosition = () => Math.random() * 20 - 18
+const getRandomPosition = () => Math.random() * 30 - 25
 
 // 图片浮动动画
 const imgMotion = {
@@ -76,7 +76,7 @@ const imgMotion = {
     x: 0,
     y: 0
   },
-  enter: {
+  visible: {
     scale: 1.1,
     x: getRandomPosition(),
     y: getRandomPosition(),
@@ -95,7 +95,7 @@ const cardScrollMotion = {
     x: 0,
     opacity: 1
   },
-  enter: {
+  visible: {
     // 调整位移和透明度的关键帧序列
     x: [0, -250, -250, -250, -250, 0, 0],
     opacity: [1, 1, 0, 0, 1, 1, 1],
@@ -120,12 +120,13 @@ const cardScrollMotion = {
   }
 }
 
+// 首次显示动画
 const enableFirstShowTransition = {
   initial: {
     opacity: 0,
     y: 70
   },
-  visibleOnce: {
+  visible: {
     opacity: 1,
     y: 0,
     transition: {
@@ -135,6 +136,7 @@ const enableFirstShowTransition = {
   }
 }
 
+// 获取图片显示模式
 const getDisplayModeFit = (modeId: 'auto' | 'contain' | 'cover'): string => {
   if (modeId !== 'auto') {
     return modeId
@@ -553,45 +555,4 @@ $card-height: 380px;
     }
   }
 }
-
-// 移除不再需要的CSS scroll动画
-// @keyframes scroll {
-//   0% {
-//     transform: translateX(0) translateY(0);
-//     opacity: 1;
-//   }
-//
-//   15% {
-//     transform: translateX(-$card-width) translateY(0);
-//     opacity: 1;
-//   }
-//
-//   25% {
-//     transform: translateX(-$card-width) translateY(0);
-//     opacity: 1;
-//   }
-//
-//   35% {
-//     transform: translateX(-$card-width) translateY(0);
-//     opacity: 0;
-//   }
-//
-//   45% {
-//     transform: translateX(-$card-width) translateY(0);
-//     opacity: 0.6;
-//   }
-//
-//   65% {
-//     transform: translateX(-$card-width) translateY(0);
-//     opacity: 1;
-//   }
-//
-//   80% {
-//     transform: translateX(0) translateY(0);
-//   }
-//
-//   100% {
-//     transform: translateX(0) translateY(0);
-//   }
-// }
 </style>

@@ -44,7 +44,6 @@ const route = useRoute()
 const selectedMenu = ref('general')
 const selectedSubmenu = ref('Theme')
 
-
 /**
  * 设置当前选中的菜单并导航到相应路由
  * @param {string} menuId - 菜单ID
@@ -97,15 +96,27 @@ updateSelectedFromRoute()
       <div class="menu-container">
         <!-- 主菜单 -->
         <div v-for="item in menuItems" :key="item.id" class="menu-group">
-          <div class="menu-item" :class="{ active: selectedMenu === item.id }" @click="selectMenu(item.id)">
+          <div
+            class="menu-item"
+            :class="{ active: selectedMenu === item.id }"
+            @click="selectMenu(item.id)"
+          >
             <span class="menu-icon" v-html="item.icon"></span>
             <span class="menu-label">{{ item.label }}</span>
           </div>
 
           <!-- 子菜单 -->
-          <div v-if="item.id === selectedMenu && item.children && item.children.length" class="submenu">
-            <div v-for="subItem in item.children" :key="subItem.id" class="submenu-item"
-              :class="{ active: selectedSubmenu === subItem.id }" @click.stop="selectMenu(item.id, subItem.id, subItem.name)">
+          <div
+            v-if="item.id === selectedMenu && item.children && item.children.length"
+            class="submenu"
+          >
+            <div
+              v-for="subItem in item.children"
+              :key="subItem.id"
+              class="submenu-item"
+              :class="{ active: selectedSubmenu === subItem.id }"
+              @click.stop="selectMenu(item.id, subItem.id, subItem.name)"
+            >
               {{ subItem.label }}
             </div>
           </div>
@@ -227,10 +238,9 @@ updateSelectedFromRoute()
   padding: 30px;
   color: var(--text-color);
   transition: color 0.5s;
-
+  scroll-behavior: smooth;
   scrollbar-width: none;
 }
-
 
 .fade-enter-active,
 .fade-leave-active {
