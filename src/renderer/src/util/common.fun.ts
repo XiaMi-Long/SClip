@@ -14,4 +14,23 @@ const formatDateTime = (timestamp: number) => {
   })
 }
 
-export { formatDateTime }
+/**
+ * 通用首次显示动画
+ * @returns 动画配置
+ */
+const firstShowTransitionMotion = {
+  initial: {
+    opacity: 0,
+    y: 70
+  },
+  visibleOnce: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 1000,
+      ease: [0.215, 0.61, 0.355, 1]
+    }
+  }
+}
+
+export { formatDateTime, firstShowTransitionMotion }

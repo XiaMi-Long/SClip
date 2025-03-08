@@ -7,6 +7,7 @@ import { ref, computed, onBeforeUnmount } from 'vue'
 import VAlert from '@renderer/components/VAlert/index.vue'
 import { Message } from '@renderer/components/VMessage'
 import { useConfigStore } from '@renderer/store/useConfigStore'
+import { firstShowTransitionMotion } from '@renderer/util/common.fun'
 
 // 快捷键类型
 interface Shortcut {
@@ -16,6 +17,9 @@ interface Shortcut {
   description: string
   editable: boolean
 }
+
+// 首次显示动画
+const enableFirstShowTransition = firstShowTransitionMotion
 
 // 检测当前操作系统
 const isMac = computed(() => {
@@ -293,7 +297,7 @@ const clearShortcut = (): void => {
     <div class="divider"></div>
 
     <!-- 可更改的快捷键 -->
-    <div class="shortcuts-section">
+    <div v-motion="enableFirstShowTransition" class="shortcuts-section">
       <h3>自定义快捷键</h3>
       <p class="section-description">点击快捷键进行自定义设置</p>
 

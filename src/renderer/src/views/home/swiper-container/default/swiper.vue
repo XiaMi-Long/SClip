@@ -8,7 +8,7 @@
 import { computed, ref, watch } from 'vue'
 import VClipboardCard from './card/index.vue'
 import StickyBadge from './card/badge-componet/StickyBadge.vue'
-import SelectBadge from './card/badge-componet/selectBadge.vue'
+import SelectBadge from './card/badge-componet/SelectBadge.vue'
 import PaginationIndicator from './card/pagination-component/PaginationIndicator.vue'
 import { useCarousel } from './hooks'
 import { listenFromMain } from '@renderer/util/ipc.renderer.service'
