@@ -55,5 +55,8 @@ declare global {
        */
       clearAllLogs: () => Promise<number>
     }
+    mainWindow: {
+      showMainWindow: (callback: () => void) => void
+    }
   }
 }

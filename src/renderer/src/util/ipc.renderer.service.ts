@@ -1,3 +1,5 @@
+import { useConfigStore } from '@renderer/store/useConfigStore'
+
 /**
  * 渲染进程IPC通信服务
  * 整合所有与preload相关的调用
@@ -155,5 +157,15 @@ export const listenFromMain = {
    */
   onNativeThemeUpdate: (callback: (isDarkMode: boolean) => void): void => {
     window.systemTheme.sendNativeThemeUpdated(callback)
+  },
+
+  /**
+   * 监听显示主窗口
+   * @param {function} callback - 回调函数
+   */
+  onShowMainWindow: (callback: () => void): void => {
+    if (useConfigStore().getSetting.appBehavior.jumpToFirstPage) {
+      window.mainWindow.showMainWindow(callback)
+    }
   }
 }

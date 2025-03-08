@@ -285,6 +285,21 @@ export class MainIPCService {
           window.webContents.send('native-theme-updated', isDarkMode)
         }
       })
+    },
+
+    /**
+     * 发送显示主窗口事件
+     */
+    sendShowMainWindow: () => {
+      const mainWindow = BrowserWindowManager.getBrowserWindow('main')
+      if (mainWindow) {
+        if (
+          mainWindow.isVisible() &&
+          ConfigManager.getInstance().getSetting().appBehavior.jumpToFirstPage
+        ) {
+          mainWindow.webContents.send('show-main-window')
+        }
+      }
     }
   }
 }

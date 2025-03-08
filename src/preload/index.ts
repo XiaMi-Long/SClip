@@ -110,6 +110,13 @@ if (process.contextIsolated) {
        */
       clearAllLogs: () => ipcRenderer.invoke('clear-all-logs')
     })
+
+    contextBridge.exposeInMainWorld('mainWindow', {
+      /**
+       * 显示主窗口
+       */
+      showMainWindow: (callback) => ipcRenderer.on('show-main-window', () => callback())
+    })
   } catch (error) {
     console.error(error)
   }

@@ -51,6 +51,8 @@ interface CarouselActions {
     prevCard: () => void
     /** 选择下一个卡片 */
     nextCard: () => void
+    /** 跳转到首页 */
+    jumpToFirstPage: () => void
   }
   /** 卡片项操作 */
   itemActions: {
@@ -147,6 +149,12 @@ export function useCarousel(): UseCarouselReturn {
         if (state.currentCardIndex.value < getters.currentPageLength.value - 1) {
           state.currentCardIndex.value++
         }
+      },
+
+      /** 跳转到首页 */
+      jumpToFirstPage: () => {
+        state.currentPage.value = 0
+        state.currentCardIndex.value = 0
       }
     },
     itemActions: {

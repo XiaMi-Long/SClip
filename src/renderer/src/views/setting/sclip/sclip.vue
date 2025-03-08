@@ -120,6 +120,21 @@ const cardScrollMotion = {
   }
 }
 
+const enableFirstShowTransition = {
+  initial: {
+    opacity: 0,
+    y: 70
+  },
+  visibleOnce: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 1000,
+      ease: [0.215, 0.61, 0.355, 1]
+    }
+  }
+}
+
 const getDisplayModeFit = (modeId: 'auto' | 'contain' | 'cover'): string => {
   if (modeId !== 'auto') {
     return modeId
@@ -168,6 +183,13 @@ const toggleImageAnimation = (value: boolean): void => {
 const toggleJumpToFirstPage = (value: boolean): void => {
   jumpToFirstPage.value = value
   // 这里可以添加保存设置的逻辑
+  useConfigStore().setJumpToFirstPage(value)
+  // 显示成功消息通知
+  Message.success({
+    title: '设置已保存',
+    message: '唤醒回到首页设置已成功应用，已经生效',
+    duration: 2000
+  })
 }
 </script>
 
@@ -226,7 +248,7 @@ const toggleJumpToFirstPage = (value: boolean): void => {
     <div class="divider"></div>
 
     <!-- 图片微动画设置区域 -->
-    <div class="animation-section">
+    <div class="animation-section" v-motion="enableFirstShowTransition">
       <div class="section-title">
         <h3>图片微动画</h3>
         <p class="subtitle">为图片添加微妙的动态效果</p>
@@ -258,7 +280,7 @@ const toggleJumpToFirstPage = (value: boolean): void => {
     <div class="divider"></div>
 
     <!-- 应用操作逻辑设置区域 -->
-    <div class="behavior-section">
+    <div class="behavior-section" v-motion="enableFirstShowTransition">
       <div class="section-title">
         <h3>应用行为</h3>
         <p class="subtitle">自定义应用的操作逻辑</p>

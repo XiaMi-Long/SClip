@@ -167,7 +167,7 @@ export class ApplicationRegister {
           app.hide()
         } else {
           const windows = BrowserWindowManager.getBrowserWindows()
-          for (const [key, window] of windows) {
+          for (const [_, window] of windows) {
             if (window) {
               window.hide()
             }
@@ -418,7 +418,15 @@ export class ApplicationRegister {
 
           // 监听主窗口失去焦点事件
           mainWindow.on('blur', () => {
-            // mainWindow.hide()
+            // 如果窗口没有固定，则隐藏
+            if (!mainWindow.isAlwaysOnTop()) {
+              mainWindow.hide()
+            }
+          })
+
+          mainWindow.on('show', () => {
+            console.log('show')
+            MainIPCService.sendToRenderer.sendShowMainWindow()
           })
 
           // 监听主窗口打开外部链接事件

@@ -11,9 +11,10 @@ import StickyBadge from './card/StickyBadge.vue'
 import SelectBadge from './card/selectBadge.vue'
 import PaginationIndicator from './card/PaginationIndicator.vue'
 import { useCarousel } from './hooks'
+import { listenFromMain } from '@renderer/util/ipc.renderer.service'
 
 // 解构hooks,只使用我们需要的状态和getter
-const { state, getters } = useCarousel()
+const { state, getters, actions } = useCarousel()
 /** 每页的宽度（像素） */
 const PAGE_WIDTH = computed(() => {
   return document.documentElement.clientWidth
@@ -29,11 +30,10 @@ const listStyle = computed(() => ({
   width: `${getters.totalPages.value * PAGE_WIDTH.value}px`
 }))
 
-console.log(getters.allCards.value)
-
-setTimeout(() => {
-  console.log(getters.allCards.value)
-}, 3000)
+listenFromMain.onShowMainWindow(() => {
+  console.log('showMainWindow')
+  actions.navigate.jumpToFirstPage()
+})
 </script>
 
 <template>

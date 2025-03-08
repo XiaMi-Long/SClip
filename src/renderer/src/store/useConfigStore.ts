@@ -95,6 +95,16 @@ export const useConfigStore = defineStore('config', {
     },
 
     /**
+     * 设置是否启用显示主窗口并回到首页
+     * @param {boolean} enableHomeOnShowMainWindow 是否启用显示主窗口并回到首页
+     * @description 设置是否启用显示主窗口并回到首页，并更新应用配置
+     */
+    setJumpToFirstPage(jumpToFirstPage: boolean) {
+      this.setting.appBehavior.jumpToFirstPage = jumpToFirstPage
+      sendToMain.updateConfigSetting(toRaw(this.setting), this.windowId)
+    },
+
+    /**
      * 设置窗口ID
      * @param {string} windowId 窗口唯一标识ID
      * @description 设置当前窗口的唯一标识ID，用于多窗口场景下的窗口识别与管理
