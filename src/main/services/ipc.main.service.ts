@@ -49,9 +49,9 @@ export class MainIPCService {
           }
           case 'rtf': {
             const setting = ConfigManager.getInstance().getSetting()
-            if (setting.rtfRenderType === 'rtf') {
+            if (setting.clipboard.rtfRenderType === 'rtf') {
               clipboard.writeRTF(clipboardState.content)
-            } else if (setting.rtfRenderType === 'html') {
+            } else if (setting.clipboard.rtfRenderType === 'html') {
               clipboard.writeHTML(clipboardState.meta.rtf_html)
             } else {
               clipboard.writeText(clipboardState.meta.rtf_text)

@@ -32,13 +32,23 @@ declare global {
     applicationTheme: ThemeMode
 
     /**
-     * rtf 文本缩放
+     * 剪贴板卡片样式
      */
-    rtfTextZoom: number
-    /**
-     * rtf 文本内容
-     */
-    rtfRenderType: 'rtf' | 'html' | 'text'
+    clipboard: {
+      /**
+       * rtf 文本缩放
+       */
+      rtfTextZoom: number
+      /**
+       * rtf 文本内容
+       */
+      rtfRenderType: 'rtf' | 'html' | 'text'
+
+      /**
+       * 是否显示类型标识
+       */
+      showTypeIndicator: boolean
+    }
 
     /**
      *

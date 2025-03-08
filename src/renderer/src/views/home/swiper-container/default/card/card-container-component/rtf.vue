@@ -43,7 +43,7 @@ onMounted(() => {
 
             .rtf-content {
                 word-wrap: break-word;
-                zoom: ${useConfigStore().getSetting.rtfTextZoom}
+                zoom: ${useConfigStore().getSetting.clipboard.rtfTextZoom}
             }
 
             img {

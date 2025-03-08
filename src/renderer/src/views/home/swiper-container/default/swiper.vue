@@ -7,9 +7,9 @@
 
 import { computed, ref, watch } from 'vue'
 import VClipboardCard from './card/index.vue'
-import StickyBadge from './card/StickyBadge.vue'
-import SelectBadge from './card/selectBadge.vue'
-import PaginationIndicator from './card/PaginationIndicator.vue'
+import StickyBadge from './card/badge-componet/StickyBadge.vue'
+import SelectBadge from './card/badge-componet/selectBadge.vue'
+import PaginationIndicator from './card/pagination-component/PaginationIndicator.vue'
 import { useCarousel } from './hooks'
 import { listenFromMain } from '@renderer/util/ipc.renderer.service'
 // 全局类型定义中已经包含ClipboardState接口，不需要显式导入
@@ -71,6 +71,11 @@ const PAGE_WIDTH = computed(() => {
 /** 总页数 */
 const totalPages = computed(() => {
   return Math.ceil(displayedCards.value.length / 3)
+})
+
+/** 是否显示分页状态 */
+const displayCardsIsEmptyData = computed(() => {
+  return displayedCards.value.length > 0
 })
 
 /**
@@ -171,14 +176,19 @@ listenFromMain.onShowMainWindow(() => {
           :card="card"
           :card-id="card.id"
         />
+
+        <template>
+          <div>12312</div>
+        </template>
         <VClipboardCard :clipboard-options="card" />
       </div>
     </div>
+
     <!-- 分页状态展示组件（仅展示当前页码，不具备点击功能） -->
     <PaginationIndicator
-      v-if="getters.allCards && getters.allCards.value.length > 0"
+      v-if="displayCardsIsEmptyData"
       :current="state.currentPage.value"
-      :total="getters.totalPages.value"
+      :total="totalPages"
     />
   </div>
 </template>

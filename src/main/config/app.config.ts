@@ -17,8 +17,11 @@ export class ConfigManager {
     // 初始化默认配置
     this.setting = {
       applicationTheme: 'light',
-      rtfTextZoom: 0.3,
-      rtfRenderType: 'rtf',
+      clipboard: {
+        rtfTextZoom: 0.7,
+        rtfRenderType: 'rtf',
+        showTypeIndicator: true
+      },
       appLanguage: 'zh-CN',
       shortcut: {
         appVisibleShortcut: {

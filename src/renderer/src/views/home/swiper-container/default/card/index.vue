@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import TextCard from './card-style/text.vue'
-import ImageCard from './card-style/image.vue'
-import RtfCard from './card-style/rtf.vue'
+import TextCard from './card-container-component/text.vue'
+import ImageCard from './card-container-component/image.vue'
+import RtfCard from './card-container-component/rtf.vue'
 
 const props = defineProps<{
   clipboardOptions: ClipboardState
@@ -20,7 +20,7 @@ const cardType = computed(() => {
 
 <template>
   <div class="clipboard-card-container">
-    <div v-if="props?.clipboardOptions?.type" :class="cardType">
+    <div v-if="props?.clipboardOptions?.type" v-once :class="cardType">
       <template v-if="props?.clipboardOptions?.type === 'text'">
         <TextCard :clipboard-options="props.clipboardOptions" />
       </template>
