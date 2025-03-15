@@ -81,128 +81,195 @@ const toggleJumpToFirstPage = (value: boolean): void => {
       <p class="subtitle">自定义应用的操作逻辑</p>
     </div>
 
-    <div class="wakeup-preview">
-      <div class="preview-container">
-        <div class="preview-card-container">
-          <!-- 使用v-motion指令代替CSS动画 -->
-          <div v-motion="cardScrollMotion" class="card-container">
-            <div class="card-item">春风拂面</div>
-            <div class="card-item">月光如水</div>
-            <div class="card-item">花开有声</div>
-            <div class="card-item">云淡风轻</div>
-            <div class="card-item">静听雨落</div>
-            <div class="card-item">星河璀璨</div>
+    <!-- 唤醒回到首页功能区 -->
+    <div class="wakeup">
+      <div class="wakeup__preview">
+        <div class="wakeup__preview__container">
+          <div class="wakeup__preview__container__cards">
+            <!-- 使用v-motion指令代替CSS动画 -->
+            <div v-motion="cardScrollMotion" class="wakeup__preview__container__cards__list">
+              <div class="wakeup__preview__container__cards__list__item">春风拂面</div>
+              <div class="wakeup__preview__container__cards__list__item">月光如水</div>
+              <div class="wakeup__preview__container__cards__list__item">花开有声</div>
+              <div class="wakeup__preview__container__cards__list__item">云淡风轻</div>
+              <div class="wakeup__preview__container__cards__list__item">静听雨落</div>
+              <div class="wakeup__preview__container__cards__list__item">星河璀璨</div>
+            </div>
           </div>
         </div>
       </div>
+
+      <div class="wakeup__toggle">
+        <div class="wakeup__toggle__info">
+          <div class="wakeup__toggle__title">唤醒回到首页</div>
+          <div class="wakeup__toggle__description">每次唤醒应用时自动回到第一页</div>
+        </div>
+        <VSwitch v-model="jumpToFirstPageValue" @change="toggleJumpToFirstPage" />
+      </div>
     </div>
 
-    <div class="toggle-option">
-      <div class="option-info">
-        <div class="option-title">唤醒回到首页</div>
-        <div class="option-description">每次唤醒应用时自动回到第一页</div>
+    <!-- 历史记录限制功能区 -->
+    <div class="history-limit">
+      <div class="history-limit__preview">
+        <div class="history-limit__preview__container">
+          <div class="history-limit__preview__container__list">
+            <div
+              v-for="i in 100"
+              :key="i"
+              class="history-limit__preview__container__list__item"
+            ></div>
+          </div>
+        </div>
       </div>
-      <VSwitch v-model="jumpToFirstPageValue" @change="toggleJumpToFirstPage" />
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.behavior-section {
-  margin-bottom: 30px;
-}
-
-.section-title {
-  margin-bottom: 20px;
-
-  h3 {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 5px;
-  }
-
-  .subtitle {
-    font-size: 14px;
-    color: var(--text-color);
-    opacity: 0.7;
-    transition: color 0.5s ease;
-  }
-}
-
+// 定义变量
 $card-width: 250px;
 $card-height: 380px;
+$border-radius: 10px;
+$transition-default: 0.5s ease;
 
-.wakeup-preview {
-  margin-bottom: 20px;
-
-  .preview-container {
-    width: 100%;
-    height: 400px;
-    background-color: var(--title-bar-bg);
-    transition: background-color 0.5s ease;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    .preview-card-container {
-      width: $card-width;
-      height: $card-height;
-      background-color: var(--title-bar-bg);
-      transition: background-color 0.5s ease;
-      border-radius: 10px;
-      padding: 3px;
-      box-sizing: border-box;
-      overflow: hidden;
-
-      .card-container {
-        width: calc($card-width * 2);
-        height: 100%;
-        display: flex;
-        gap: 5px;
-        flex-direction: column;
-        flex-wrap: wrap;
-        will-change: transform, opacity;
-
-        .card-item {
-          width: calc($card-width - 6px);
-          height: calc($card-height / 3 - 7px);
-          display: flex;
-          background-color: var(--container-bg);
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          border-radius: 10px;
-        }
-      }
-    }
-  }
+// 混合器
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.toggle-option {
+@mixin card-container-base {
+  background-color: var(--title-bar-bg);
+  transition: background-color $transition-default;
+  border-radius: $border-radius;
+}
+
+@mixin toggle-base {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 15px;
   background-color: rgba(var(--rgb-text-color, 0, 0, 0), 0.03);
-  transition: background-color 0.5s ease;
-  border-radius: 10px;
+  transition: background-color $transition-default;
+  border-radius: $border-radius;
   margin-bottom: 15px;
+}
 
-  .option-info {
-    flex: 1;
+@mixin toggle-text {
+  color: var(--text-color);
+  opacity: 0.7;
+  transition: color $transition-default;
+}
 
-    .option-title {
+// 整体部分样式
+.behavior-section {
+  margin-bottom: 30px;
+
+  .section-title {
+    margin-bottom: 20px;
+
+    h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      @include toggle-text;
+    }
+  }
+}
+
+// 唤醒回到首页功能区样式
+.wakeup {
+  margin-bottom: 20px;
+
+  &__preview {
+    margin-bottom: 20px;
+
+    &__container {
+      width: 100%;
+      height: 400px;
+      @include card-container-base;
+      @include flex-center;
+
+      &__cards {
+        width: $card-width;
+        height: $card-height;
+        @include card-container-base;
+        padding: 3px;
+        box-sizing: border-box;
+        overflow: hidden;
+
+        &__list {
+          width: calc($card-width * 2);
+          height: 100%;
+          display: flex;
+          gap: 5px;
+          flex-direction: column;
+          flex-wrap: wrap;
+          will-change: transform, opacity;
+
+          &__item {
+            width: calc($card-width - 6px);
+            height: calc($card-height / 3 - 7px);
+            @include flex-center;
+            background-color: var(--container-bg);
+            flex-direction: column;
+            border-radius: $border-radius;
+          }
+        }
+      }
+    }
+  }
+
+  &__toggle {
+    @include toggle-base;
+
+    &__info {
+      flex: 1;
+    }
+
+    &__title {
       font-size: 16px;
       font-weight: 500;
       margin-bottom: 5px;
     }
 
-    .option-description {
+    &__description {
       font-size: 14px;
-      color: var(--text-color);
-      opacity: 0.7;
-      transition: color 0.5s ease;
+      @include toggle-text;
+    }
+  }
+}
+
+// 历史记录限制功能区样式
+.history-limit {
+  margin-bottom: 20px;
+
+  &__preview {
+    margin-bottom: 20px;
+
+    &__container {
+      width: 100%;
+      height: 250px;
+      padding: 20px;
+      @include card-container-base;
+
+      &__list {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+
+        &__item {
+          border: 1px solid var(--container-bg);
+          border-radius: 5px;
+          width: 50px;
+          height: 25px;
+        }
+      }
     }
   }
 }

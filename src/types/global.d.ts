@@ -130,6 +130,11 @@ declare global {
        * 每次打开默认回到第一页
        */
       jumpToFirstPage: boolean
+
+      /**
+       * 应用启动时加载的历史记录条数
+       */
+      historyLimit: number
     }
   }
 }

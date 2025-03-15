@@ -1,10 +1,5 @@
 <!-- src/renderer/src/views/swiper-container/themes/default/swiper.vue -->
 <script setup lang="ts">
-/**
- * @module swiper.vue
- * @description 自定义轮播视图组件，实现卡片的分页展示和导航
- */
-
 import { computed, ref, watch } from 'vue'
 import VClipboardCard from './card/index.vue'
 import StickyBadge from './card/badge-componet/StickyBadge.vue'
@@ -16,14 +11,6 @@ import { listenFromMain } from '@renderer/util/ipc.renderer.service'
 
 // 解构hooks,只使用我们需要的状态和getter
 const { state, getters, actions } = useCarousel()
-
-// 延迟加载配置
-const INITIAL_LOAD_COUNT = 20 // 初始加载20条
-const BATCH_SIZE = 10 // 每次新加载10条
-const LOAD_THRESHOLD = 5 // 当用户浏览到倒数第5条时触发加载
-
-// 实际显示的卡片数据
-const displayedCards = ref<ClipboardState[]>([])
 
 // 空数据动画
 const noDataMotion = {
@@ -41,28 +28,6 @@ const noDataMotion = {
   }
 }
 
-/**
- * 加载更多数据
- * @description 从allCards中加载更多数据到displayedCards
- */
-const loadMoreCards = () => {
-  if (displayedCards.value.length >= getters.allCards.value.length) {
-    return // 已加载全部数据
-  }
-
-  const nextBatchSize = Math.min(
-    BATCH_SIZE,
-    getters.allCards.value.length - displayedCards.value.length
-  )
-
-  const newCards = getters.allCards.value.slice(
-    displayedCards.value.length,
-    displayedCards.value.length + nextBatchSize
-  )
-
-  displayedCards.value.push(...newCards)
-}
-
 /** 每页的宽度（像素） */
 const PAGE_WIDTH = computed(() => {
   return document.documentElement.clientWidth
@@ -70,12 +35,12 @@ const PAGE_WIDTH = computed(() => {
 
 /** 总页数 */
 const totalPages = computed(() => {
-  return Math.ceil(displayedCards.value.length / 3)
+  return Math.ceil(getters.allCards.value.length / 3)
 })
 
 /** 是否显示分页状态 */
 const displayCardsIsEmptyData = computed(() => {
-  return displayedCards.value.length > 0
+  return getters.allCards.value.length > 0
 })
 
 /**
@@ -87,35 +52,6 @@ const listStyle = computed(() => ({
   transition: 'transform 0.3s ease',
   width: `${totalPages.value * PAGE_WIDTH.value}px`
 }))
-
-// 初始加载
-watch(
-  () => getters.allCards.value,
-  (newCards) => {
-    console.log('newCards', newCards)
-
-    if (newCards.length > 0) {
-      // 初始只加载指定数量的卡片
-      displayedCards.value = newCards.slice(0, Math.min(INITIAL_LOAD_COUNT, newCards.length))
-    } else {
-      displayedCards.value = []
-    }
-  },
-  { immediate: true }
-)
-
-// 监听活动索引变化，在接近末尾时加载更多
-watch(
-  () => getters.activeAbsoluteIndex.value,
-  (newIndex) => {
-    if (
-      displayedCards.value.length - newIndex <= LOAD_THRESHOLD &&
-      displayedCards.value.length < getters.allCards.value.length
-    ) {
-      loadMoreCards()
-    }
-  }
-)
 
 listenFromMain.onShowMainWindow(() => {
   actions.navigate.jumpToFirstPage()
@@ -164,7 +100,7 @@ listenFromMain.onShowMainWindow(() => {
 
     <div class="all-cards" :style="listStyle">
       <div
-        v-for="(card, index) in displayedCards"
+        v-for="(card, index) in getters.allCards.value"
         :key="card.id"
         :class="['card-wrapper', { active: index === getters.activeAbsoluteIndex.value }]"
         :style="{ width: PAGE_WIDTH + 'px' }"
@@ -177,9 +113,6 @@ listenFromMain.onShowMainWindow(() => {
           :card-id="card.id"
         />
 
-        <template>
-          <div>12312</div>
-        </template>
         <VClipboardCard :clipboard-options="card" />
       </div>
     </div>

@@ -21,7 +21,10 @@ const selectedDisplayMode = ref<'auto' | 'contain' | 'cover'>(setting.imageSetti
 const enableImageAnimation = ref(setting.imageSettings.enableAnimation)
 
 // 是否每次打开应用时回到第一页
-const jumpToFirstPage = ref(true)
+const jumpToFirstPage = ref(setting.appBehavior.jumpToFirstPage)
+
+// 应用启动时加载的历史记录条数
+const historyLimit = ref(setting.appBehavior.historyLimit || 50) // 默认值为50条
 </script>
 
 <template>
@@ -44,7 +47,10 @@ const jumpToFirstPage = ref(true)
     <div class="divider"></div>
 
     <!-- 应用操作逻辑设置区域 -->
-    <BehaviorSection v-model:jump-to-first-page="jumpToFirstPage" />
+    <BehaviorSection
+      v-model:jump-to-first-page="jumpToFirstPage"
+      v-model:history-limit="historyLimit"
+    />
   </div>
 </template>
 
