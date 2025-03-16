@@ -153,11 +153,19 @@ export class ApplicationRegister {
 
       // 监听应用激活事件
       app.on('activate', function () {
-        const mainWindow = ApplicationRegister.getMainWindowMethod().getMainWindow()
-        if (mainWindow === undefined) {
-          ApplicationRegister.getMainWindowMethod().createMainWindow()
+        const windows = BrowserWindowManager.getBrowserWindows()
+        if (windows.size > 0) {
+          for (const [_, window] of windows) {
+            if (window) {
+              window.show()
+            }
+          }
         } else {
-          mainWindow.show()
+          ApplicationRegister.getMainWindowMethod().createMainWindow()
+          const mainWindow = ApplicationRegister.getMainWindowMethod().getMainWindow()
+          if (mainWindow) {
+            mainWindow.show()
+          }
         }
       })
 
@@ -376,7 +384,9 @@ export class ApplicationRegister {
       registerEvent() {
         const mainWindow = this.getMainWindow()
         const setting = ConfigManager.getInstance().getSetting()
-        const clipboardHistory = DBManager.getInstance().getClipboardHistory()
+        const clipboardHistory = DBManager.getInstance().getClipboardHistory(
+          setting.appBehavior.historyLimit
+        )
 
         if (mainWindow) {
           mainWindow.on('ready-to-show', () => {
@@ -384,7 +394,7 @@ export class ApplicationRegister {
               mainWindow.show()
               mainWindow.maximizable = false
               mainWindow.resizable = false
-              // mainWindow.setAlwaysOnTop(true, 'screen-saver')
+              mainWindow.setAlwaysOnTop(setting.appBehavior.isFixedWindow)
 
               MainIPCService.sendToRenderer.setClipboardToRenderer(clipboardHistory)
               MainIPCService.sendToRenderer.setSettingWindow(setting, 'main')
@@ -424,8 +434,8 @@ export class ApplicationRegister {
             // }
           })
 
+          // 监听主窗口显示事件-用于显示的时候是否跳转到第一页
           mainWindow.on('show', () => {
-            console.log('show')
             MainIPCService.sendToRenderer.sendShowMainWindow()
           })
 

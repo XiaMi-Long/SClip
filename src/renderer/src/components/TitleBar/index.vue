@@ -2,15 +2,22 @@
 import { computed } from 'vue'
 import { useConfigStore } from '@renderer/store/useConfigStore'
 import settingImage from '@renderer/assets/image/setting.png'
+import affixImage from '@renderer/assets/image/affix.png'
 import { sendToMain } from '@renderer/util/ipc.renderer.service'
 
 const configStore = useConfigStore()
+// 是否是mac系统
 const isMac = computed(() => configStore.getSetting.system.platform === 'darwin')
+// 是否是主窗口，如果不是主窗口，则不显示设置相关按钮
 const isMainWindow = computed(() => configStore.getWindowId === 'main')
+// 是否固定窗口
+const isAffix = computed(() => configStore.getSetting.appBehavior.isFixedWindow)
+
 const handleMinimize = () => sendToMain.minimize()
 // const handleMaximize = () => sendToMain.maximize()
 const handleClose = () => sendToMain.close()
 const handleSetting = () => sendToMain.openSetting()
+const handleAffix = () => configStore.setIsFixedWindow(!isAffix.value)
 </script>
 
 <template>
@@ -23,10 +30,23 @@ const handleSetting = () => sendToMain.openSetting()
 
     <!-- 工具区域 -->
     <div class="tools-area" :class="{ 'mac-tools-area': isMac, 'win-tools-area': !isMac }">
+      <!-- 固定按钮 -->
       <button
-        class="tool-button"
+        class="tool-button tool-button-affix"
+        :class="[
+          isMainWindow ? 'setting-button-show' : 'setting-button-hidden',
+          isAffix ? 'affix-button-true' : 'affix-button-false'
+        ]"
+        @click="handleAffix"
+      >
+        <img :src="affixImage" alt="固定" class="tool-icon" />
+      </button>
+
+      <!-- 设置按钮 -->
+      <button
+        class="tool-button tool-button-setting"
+        :class="[isMainWindow ? 'setting-button-show' : 'setting-button-hidden']"
         @click="handleSetting"
-        :class="isMainWindow ? 'setting-button-show' : 'setting-button-hidden'"
       >
         <img :src="settingImage" alt="设置" class="tool-icon" />
       </button>
@@ -64,6 +84,8 @@ const handleSetting = () => sendToMain.openSetting()
 $traffic-light-size: 12px;
 $control-button-size: 46px; // 增大按钮尺寸
 $control-button-height: 32px; // 控制按钮高度
+$tool-button-size: 32px; // 工具按钮尺寸
+$tool-button-height: 32px; // 工具按钮高度
 $border-radius: 6px;
 
 // 混合器
@@ -227,7 +249,6 @@ $border-radius: 6px;
   height: 100%;
   position: absolute;
   @include flex-center;
-  gap: 8px;
   // padding: 0 8px;
   -webkit-app-region: no-drag;
 }
@@ -235,8 +256,8 @@ $border-radius: 6px;
 .tool-button {
   @include flex-center;
   @include button-base;
-  width: $control-button-size;
-  height: $control-button-size;
+  width: $tool-button-size;
+  height: $tool-button-size;
   border-radius: $border-radius;
 
   &:hover {
@@ -249,11 +270,11 @@ $border-radius: 6px;
   height: 16px;
   opacity: 0.7;
   transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-  .tool-button:hover & {
-    opacity: 1;
-    transform: rotate(30deg);
-  }
+.tool-button:hover .tool-icon {
+  opacity: 1;
+  transform: rotate(30deg);
 }
 
 // 设置按钮显示/隐藏
@@ -264,5 +285,16 @@ $border-radius: 6px;
   &-hidden {
     display: none;
   }
+}
+
+// 固定按钮是否选中
+.affix-button-true {
+  .tool-icon {
+    opacity: 1;
+    filter: brightness(2);
+  }
+}
+
+.affix-button-false {
 }
 </style>

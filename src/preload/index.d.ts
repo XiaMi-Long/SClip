@@ -57,6 +57,7 @@ declare global {
     }
     mainWindow: {
       showMainWindow: (callback: () => void) => void
+      setIsFixedWindow: (isFixedWindow: boolean) => void
     }
   }
 }

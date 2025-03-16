@@ -37,7 +37,11 @@ export class ConfigManager {
         enableAnimation: true
       },
       appBehavior: {
-        jumpToFirstPage: true
+        jumpToFirstPage: true,
+        historyLimit: 50,
+        isFixedWindow: false,
+        showTypeIndicator: false,
+        showLongContentTip: false
       },
       system: {
         platform: process.platform,

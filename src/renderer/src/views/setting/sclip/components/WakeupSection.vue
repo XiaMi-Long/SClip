@@ -4,9 +4,10 @@ import { useConfigStore } from '@renderer/store/useConfigStore'
 import { Message } from '@renderer/components/VMessage'
 import VSwitch from '@renderer/components/VSwitch'
 import { firstShowTransitionMotion } from '@renderer/util/common.fun'
+
 /**
- * 应用操作逻辑设置组件
- * 负责管理应用行为设置
+ * 唤醒回到首页功能组件
+ * 负责管理应用唤醒时的页面跳转行为
  */
 
 const props = defineProps<{
@@ -75,10 +76,10 @@ const toggleJumpToFirstPage = (value: boolean): void => {
 </script>
 
 <template>
-  <div v-motion="enableFirstShowTransition" class="behavior-section">
+  <div v-motion="enableFirstShowTransition" class="wakeup-section">
     <div class="section-title">
-      <h3>应用行为</h3>
-      <p class="subtitle">自定义应用的操作逻辑</p>
+      <h3>唤醒回到首页</h3>
+      <p class="subtitle">自定义应用唤醒时的页面行为</p>
     </div>
 
     <!-- 唤醒回到首页功能区 -->
@@ -105,21 +106,6 @@ const toggleJumpToFirstPage = (value: boolean): void => {
           <div class="wakeup__toggle__description">每次唤醒应用时自动回到第一页</div>
         </div>
         <VSwitch v-model="jumpToFirstPageValue" @change="toggleJumpToFirstPage" />
-      </div>
-    </div>
-
-    <!-- 历史记录限制功能区 -->
-    <div class="history-limit">
-      <div class="history-limit__preview">
-        <div class="history-limit__preview__container">
-          <div class="history-limit__preview__container__list">
-            <div
-              v-for="i in 100"
-              :key="i"
-              class="history-limit__preview__container__list__item"
-            ></div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -163,7 +149,7 @@ $transition-default: 0.5s ease;
 }
 
 // 整体部分样式
-.behavior-section {
+.wakeup-section {
   margin-bottom: 30px;
 
   .section-title {
@@ -241,35 +227,6 @@ $transition-default: 0.5s ease;
     &__description {
       font-size: 14px;
       @include toggle-text;
-    }
-  }
-}
-
-// 历史记录限制功能区样式
-.history-limit {
-  margin-bottom: 20px;
-
-  &__preview {
-    margin-bottom: 20px;
-
-    &__container {
-      width: 100%;
-      height: 250px;
-      padding: 20px;
-      @include card-container-base;
-
-      &__list {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-
-        &__item {
-          border: 1px solid var(--container-bg);
-          border-radius: 5px;
-          width: 50px;
-          height: 25px;
-        }
-      }
     }
   }
 }

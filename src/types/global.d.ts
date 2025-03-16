@@ -135,6 +135,21 @@ declare global {
        * 应用启动时加载的历史记录条数
        */
       historyLimit: number
+
+      /**
+       * 是否固定窗口
+       */
+      isFixedWindow: boolean
+
+      /**
+       * 是否显示复制内容的类型标识
+       */
+      showTypeIndicator: boolean
+
+      /**
+       * 是否显示复制内容超长提示
+       */
+      showLongContentTip: boolean
     }
   }
 }

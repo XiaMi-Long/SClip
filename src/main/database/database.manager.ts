@@ -144,7 +144,7 @@ export class DBManager {
    * @param {number} limit - 限制返回的记录数量
    * @returns {ClipboardState[]} 剪贴板记录数组，按时间从旧到新排序
    */
-  public getClipboardHistory(limit: number = 100): ClipboardState[] {
+  public getClipboardHistory(limit: number = 50): ClipboardState[] {
     try {
       const stmt = this.db.prepare(`
                 SELECT

@@ -79,6 +79,15 @@ export const sendToMain = {
    */
   updateConfigSetting: (setting: Setting, windowId: string): void => {
     window.appConfig.updateConfigSetting(setting, windowId)
+  },
+
+  /**
+   * 设置是否固定窗口
+   * @param {boolean} isFixedWindow - 是否固定窗口
+   * @param {string} windowId - 窗口ID
+   */
+  setIsFixedWindow: (isFixedWindow: boolean): void => {
+    window.mainWindow.setIsFixedWindow(isFixedWindow)
   }
 }
 

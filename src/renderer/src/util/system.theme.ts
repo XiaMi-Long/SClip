@@ -11,6 +11,7 @@ import { ref } from 'vue'
  * @property {string} [settingMenuActiveBg] - 设置菜单激活背景颜色
  * @property {string} [stickyBadgeBg] - 固定徽章背景颜色
  * @property {string} [stickyBadgeErrorBg] - 固定徽章错误背景颜色
+ * @property {string} [buttonPrimaryBg] - 按钮主色调背景颜色
  */
 interface SystemTheme {
   titleBarBg: string
@@ -19,6 +20,7 @@ interface SystemTheme {
   settingMenuActiveBg: string
   stickyBadgeBg: string
   stickyBadgeErrorBg: string
+  buttonPrimaryBg: string
 }
 
 /**
@@ -35,7 +37,8 @@ const lightTheme: SystemTheme = {
   textColor: '#333',
   settingMenuActiveBg: '#d9d9d9',
   stickyBadgeBg: '#d7d7d7',
-  stickyBadgeErrorBg: '#f26a76'
+  stickyBadgeErrorBg: '#f26a76',
+  buttonPrimaryBg: '#4285f4'
 }
 
 /**
@@ -47,7 +50,8 @@ const darkTheme: SystemTheme = {
   textColor: '#fff',
   settingMenuActiveBg: '#676767',
   stickyBadgeBg: '#464646',
-  stickyBadgeErrorBg: '#f26a76'
+  stickyBadgeErrorBg: '#f26a76',
+  buttonPrimaryBg: '#4285f4'
 }
 
 /**
@@ -67,6 +71,7 @@ export function setSystemTheme(theme: SystemTheme): void {
   root.style.setProperty('--setting-menu-active-bg', theme.settingMenuActiveBg)
   root.style.setProperty('--sticky-badge-bg', theme.stickyBadgeBg)
   root.style.setProperty('--sticky-badge-error-bg', theme.stickyBadgeErrorBg)
+  root.style.setProperty('--button-primary-bg', theme.buttonPrimaryBg)
 }
 
 /**

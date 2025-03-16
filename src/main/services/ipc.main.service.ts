@@ -34,7 +34,7 @@ export class MainIPCService {
     /**
      * 监听渲染进程通信-渲染进程通知主进程准备复制剪贴板的内容到用户输入区域
      */
-    ipcMain.on('write-clipboard', (event, clipboardState: ClipboardState) => {
+    ipcMain.on('clipboard:write-clipboard', (event, clipboardState: ClipboardState) => {
       Logger.info('Application', `主进程通信-获取到渲染进程剪贴板记录`)
       const window = BrowserWindow.getAllWindows()[0]
       if (!window) return
@@ -76,7 +76,7 @@ export class MainIPCService {
     /**
      * 监听渲染进程通信-更新剪贴板数据
      */
-    ipcMain.on('update-clipboard-item', (event, clipboardState: ClipboardState) => {
+    ipcMain.on('clipboard:update-clipboard-item', (event, clipboardState: ClipboardState) => {
       try {
         if (clipboardState) {
           DBManager.getInstance().updateClipboardItem(clipboardState)
@@ -89,7 +89,7 @@ export class MainIPCService {
     /**
      * 监听渲染进程通信-删除剪贴板数据
      */
-    ipcMain.on('delete-clipboard-item', (_event, clipboardState: ClipboardState) => {
+    ipcMain.on('clipboard:delete-clipboard-item', (_event, clipboardState: ClipboardState) => {
       Logger.info('IPC', '接收到删除剪贴板项目请求', {
         id: clipboardState.id
       })
@@ -100,14 +100,14 @@ export class MainIPCService {
     /**
      * 监听渲染进程通信-打开设置窗口
      */
-    ipcMain.on('open-setting', () => {
+    ipcMain.on('browserWindow:open-setting', () => {
       ApplicationRegister.getSettingWindowMethod().init()
     })
 
     /**
      * 窗口最小化
      */
-    ipcMain.on('window-minimize', (event) => {
+    ipcMain.on('titleBar:window-minimize', (event) => {
       // 获取发送事件的窗口
       const win = BrowserWindow.fromWebContents(event.sender)
       if (win) {
@@ -118,7 +118,7 @@ export class MainIPCService {
     /**
      * 窗口最大化（目前设置为不可用）
      */
-    ipcMain.on('window-maximize', (event) => {
+    ipcMain.on('titleBar:window-maximize', (event) => {
       const win = BrowserWindow.fromWebContents(event.sender)
       if (win) {
         // 由于我们设置了窗口不可最大化，这里可以不做处理
@@ -130,7 +130,7 @@ export class MainIPCService {
     /**
      * 窗口关闭
      */
-    ipcMain.on('window-close', (event) => {
+    ipcMain.on('titleBar:window-close', (event) => {
       const win = BrowserWindow.fromWebContents(event.sender)
       if (!win) return
 
@@ -149,7 +149,7 @@ export class MainIPCService {
     /**
      * 监听渲染进程通信-更新应用配置
      */
-    ipcMain.on('update-config-setting', (event, setting: Setting, windowId: string) => {
+    ipcMain.on('appConfig:update-config-setting', (event, setting: Setting, windowId: string) => {
       ConfigManager.getInstance().updateSetting(setting)
       // 获取所有窗口
       const allWindows = BrowserWindowManager.getBrowserWindows()
@@ -161,6 +161,16 @@ export class MainIPCService {
         }
       })
     })
+
+    /**
+     * 监听渲染进程通信-设置是否固定main窗口
+     */
+    ipcMain.on('mainWindow:set-is-fixed-window', (event, isFixedWindow: boolean) => {
+      const window = BrowserWindowManager.getBrowserWindow('main')
+      if (window) {
+        window.setAlwaysOnTop(isFixedWindow)
+      }
+    })
   }
 
   /**
@@ -171,14 +181,14 @@ export class MainIPCService {
     /**
      * 监听渲染进程通信-获取当前系统主题
      */
-    ipcMain.handle('get-native-theme-shouldUseDarkColors', () => {
+    ipcMain.handle('systemTheme:get-native-theme-shouldUseDarkColors', () => {
       return nativeTheme.shouldUseDarkColors
     })
 
     /**
      * 处理获取日志请求
      */
-    ipcMain.handle('get-logs', async (_event, options) => {
+    ipcMain.handle('database:get-logs', async (_event, options) => {
       Logger.info('IPC', '接收到获取日志请求', options)
 
       try {
@@ -202,7 +212,7 @@ export class MainIPCService {
     /**
      * 处理清空所有日志请求
      */
-    ipcMain.handle('clear-all-logs', async () => {
+    ipcMain.handle('database:clear-all-logs', async () => {
       Logger.info('IPC', '接收到清空所有日志请求')
 
       try {
@@ -229,7 +239,7 @@ export class MainIPCService {
         Logger.info('SendRenderer', '发送剪贴板数据', data)
         const mainWindow = BrowserWindowManager.getBrowserWindow('main')
         if (mainWindow) {
-          mainWindow.webContents.send('set-clipboard-to-render', data)
+          mainWindow.webContents.send('clipboard:set-clipboard-to-render', data)
         }
       } catch (error) {
         Logger.error('SendRenderer', '发送剪贴板数据失败', error)
@@ -250,7 +260,7 @@ export class MainIPCService {
         )
         const browserWindow = BrowserWindowManager.getBrowserWindow(browserWindowKey)
         if (browserWindow) {
-          browserWindow.webContents.send('get-app-setting', data)
+          browserWindow.webContents.send('appConfig:get-app-setting', data)
         }
       } catch (error) {
         Logger.error('SendRenderer', '发送应用配置数据失败', error)
@@ -266,7 +276,7 @@ export class MainIPCService {
       try {
         const browserWindow = BrowserWindowManager.getBrowserWindow(browserWindowKey)
         if (browserWindow) {
-          browserWindow.webContents.send('set-window-id', windowId)
+          browserWindow.webContents.send('appConfig:set-window-id', windowId)
         }
       } catch (error) {
         Logger.error('SendRenderer', '发送窗口ID失败', error)
@@ -282,7 +292,7 @@ export class MainIPCService {
       allWindows.forEach((_, key) => {
         const window = BrowserWindowManager.getBrowserWindow(key)
         if (window) {
-          window.webContents.send('native-theme-updated', isDarkMode)
+          window.webContents.send('systemTheme:native-theme-updated', isDarkMode)
         }
       })
     },
@@ -297,7 +307,7 @@ export class MainIPCService {
           mainWindow.isVisible() &&
           ConfigManager.getInstance().getSetting().appBehavior.jumpToFirstPage
         ) {
-          mainWindow.webContents.send('show-main-window')
+          mainWindow.webContents.send('mainWindow:show-main-window')
         }
       }
     }

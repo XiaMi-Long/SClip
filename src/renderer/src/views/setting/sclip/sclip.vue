@@ -5,7 +5,10 @@ import { useConfigStore } from '@renderer/store/useConfigStore'
 // 导入拆分后的组件
 import ImageDisplaySection from './components/ImageDisplaySection.vue'
 import AnimationSection from './components/AnimationSection.vue'
-import BehaviorSection from './components/BehaviorSection.vue'
+import WakeupSection from './components/WakeupSection.vue'
+import HistoryLimitSection from './components/HistoryLimitSection.vue'
+import FixedWindowSection from './components/FixedWindowSection.vue'
+import IndicatorSection from './components/IndicatorSection.vue'
 
 /**
  * SClip设置组件
@@ -13,6 +16,8 @@ import BehaviorSection from './components/BehaviorSection.vue'
  */
 
 const setting = useConfigStore().getSetting
+
+console.log(setting)
 
 // 选中的图片显示模式
 const selectedDisplayMode = ref<'auto' | 'contain' | 'cover'>(setting.imageSettings.displayMode)
@@ -25,6 +30,15 @@ const jumpToFirstPage = ref(setting.appBehavior.jumpToFirstPage)
 
 // 应用启动时加载的历史记录条数
 const historyLimit = ref(setting.appBehavior.historyLimit || 50) // 默认值为50条
+
+// 是否固定窗口
+const isFixedWindow = ref(setting.appBehavior.isFixedWindow || false)
+
+// 是否显示类型标识
+const showTypeIndicator = ref(setting.appBehavior.showTypeIndicator || false)
+
+// 是否显示长内容提示
+const showLongContentTip = ref(setting.appBehavior.showLongContentTip || false)
 </script>
 
 <template>
@@ -46,10 +60,34 @@ const historyLimit = ref(setting.appBehavior.historyLimit || 50) // 默认值为
     <!-- 分隔线 -->
     <div class="divider"></div>
 
-    <!-- 应用操作逻辑设置区域 -->
-    <BehaviorSection
-      v-model:jump-to-first-page="jumpToFirstPage"
-      v-model:history-limit="historyLimit"
+    <!-- 应用行为设置区域标题 -->
+    <div class="settings-header">
+      <h2>应用行为设置</h2>
+      <p class="subtitle">自定义应用的操作逻辑</p>
+    </div>
+
+    <!-- 唤醒回到首页设置 -->
+    <WakeupSection v-model:jump-to-first-page="jumpToFirstPage" />
+
+    <!-- 分隔线 -->
+    <div class="divider"></div>
+
+    <!-- 历史记录限制设置 -->
+    <HistoryLimitSection v-model:history-limit="historyLimit" />
+
+    <!-- 分隔线 -->
+    <div class="divider"></div>
+
+    <!-- 固定窗口设置 -->
+    <FixedWindowSection v-model:is-fixed-window="isFixedWindow" />
+
+    <!-- 分隔线 -->
+    <div class="divider"></div>
+
+    <!-- 标识和提示设置 -->
+    <IndicatorSection
+      v-model:show-type-indicator="showTypeIndicator"
+      v-model:show-long-content-tip="showLongContentTip"
     />
   </div>
 </template>

@@ -105,6 +105,45 @@ export const useConfigStore = defineStore('config', {
     },
 
     /**
+     * 设置历史记录限制
+     * @param {number} historyLimit 历史记录限制
+     * @description 设置历史记录限制，并更新应用配置
+     */
+    setHistoryLimit(historyLimit: number) {
+      this.setting.appBehavior.historyLimit = historyLimit
+      sendToMain.updateConfigSetting(toRaw(this.setting), this.windowId)
+    },
+
+    /**
+     * 设置是否固定窗口
+     * @param {boolean} isFixedWindow 是否固定窗口
+     * @description 设置是否固定窗口，并更新应用配置
+     */
+    setIsFixedWindow(isFixedWindow: boolean) {
+      this.setting.appBehavior.isFixedWindow = isFixedWindow
+      sendToMain.setIsFixedWindow(isFixedWindow)
+      sendToMain.updateConfigSetting(toRaw(this.setting), this.windowId)
+    },
+
+    /**
+     * 设置是否显示类型标识
+     * @param {boolean} showTypeIndicator 是否显示类型标识
+     * @param {boolean} showLongContentTip 是否显示长内容提示
+     * @description 设置是否显示类型标识，并更新应用配置
+     */
+    setShowTypeIndicator({
+      showTypeIndicator,
+      showLongContentTip
+    }: {
+      showTypeIndicator: boolean
+      showLongContentTip: boolean
+    }) {
+      this.setting.appBehavior.showTypeIndicator = showTypeIndicator
+      this.setting.appBehavior.showLongContentTip = showLongContentTip
+      sendToMain.updateConfigSetting(toRaw(this.setting), this.windowId)
+    },
+
+    /**
      * 设置窗口ID
      * @param {string} windowId 窗口唯一标识ID
      * @description 设置当前窗口的唯一标识ID，用于多窗口场景下的窗口识别与管理

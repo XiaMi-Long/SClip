@@ -4,7 +4,7 @@
  * 包含不可更改和可更改的快捷键设置
  */
 import { ref, computed, onBeforeUnmount } from 'vue'
-import VAlert from '@renderer/components/VAlert/index.vue'
+import VAlert from '@renderer/components/VAlert'
 import { Message } from '@renderer/components/VMessage'
 import { useConfigStore } from '@renderer/store/useConfigStore'
 import { firstShowTransitionMotion } from '@renderer/util/common.fun'
