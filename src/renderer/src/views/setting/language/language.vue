@@ -88,13 +88,8 @@ const applyLanguageSetting = (): void => {
       <h3>选择语言</h3>
       <div class="language-options">
         <!-- 语言卡片 -->
-        <div
-          v-for="language in languages"
-          :key="language.id"
-          class="language-card"
-          :class="{ active: selectedLanguage === language.id }"
-          @click="selectLanguage(language.id)"
-        >
+        <div v-for="language in languages" :key="language.id" class="language-card"
+          :class="{ active: selectedLanguage === language.id }" @click="selectLanguage(language.id)">
           <div class="language-flag">{{ language.flagEmoji }}</div>
           <div class="language-info">
             <div class="language-name">{{ language.name }}</div>
@@ -253,7 +248,7 @@ $text-font-size: 14px;
 }
 
 .apply-button {
-  background-color: #4285f4;
+  background-color: var(--button-primary-bg);
   color: white;
   border: none;
   border-radius: 6px;
@@ -264,11 +259,11 @@ $text-font-size: 14px;
   transition: background-color 0.3s;
 
   &:hover {
-    background-color: #3367d6;
+    background-color: var(--button-primary-bg);
   }
 
   &:active {
-    background-color: #2955c8;
+    background-color: var(--button-primary-bg);
   }
 }
 
@@ -277,6 +272,7 @@ $text-font-size: 14px;
     opacity: 0;
     transform: scale(0.8);
   }
+
   to {
     opacity: 1;
     transform: scale(1);

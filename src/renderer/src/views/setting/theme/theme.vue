@@ -5,7 +5,7 @@ import { useConfigStore } from '../../../store/useConfigStore'
  * 主题设置组件
  * 包含主题选择和强调色设置
  */
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 // 主题类型
 interface Theme {
@@ -15,10 +15,16 @@ interface Theme {
 }
 
 // 颜色类型
-// interface Color {
-//   id: string
-//   hex: string
-// }
+interface ColorOption {
+  id: string
+  type: 'solid' | 'gradient'
+  value: string
+  gradient?: {
+    from: string
+    to: string
+    direction: string
+  }
+}
 
 // 主题选项
 const themes: Theme[] = [
@@ -39,14 +45,35 @@ const themes: Theme[] = [
   }
 ]
 
-// 强调色选项
-// const accentColors: Color[] = [
-//   { id: 'blue', hex: '#4285F4' },
-//   { id: 'red', hex: '#EA4335' },
-//   { id: 'green', hex: '#34A853' },
-//   { id: 'yellow', hex: '#FBBC05' },
-//   { id: 'purple', hex: '#9C27B0' }
-// ]
+// 预设纯色选项
+const solidColors: ColorOption[] = [
+  { id: 'blue', type: 'solid', value: '#4285f4' }, // 默认蓝色
+  { id: 'red', type: 'solid', value: '#ea4335' }, // 红色
+  { id: 'green', type: 'solid', value: '#34a853' }, // 绿色
+  { id: 'purple', type: 'solid', value: '#8e44ad' }, // 紫色
+  { id: 'orange', type: 'solid', value: '#ff9800' }, // 橙色
+  { id: 'teal', type: 'solid', value: '#009688' }, // 蓝绿色
+  { id: 'pink', type: 'solid', value: '#e91e63' }, // 粉色
+  { id: 'indigo', type: 'solid', value: '#3f51b5' }, // 靛蓝色
+  // 添加新的单色
+  { id: 'color1', type: 'solid', value: '#c5e3f6' },
+  { id: 'color2', type: 'solid', value: '#fc5c9c' },
+  { id: 'color3', type: 'solid', value: '#fccde2' },
+  { id: 'color4', type: 'solid', value: '#fcefee' },
+  { id: 'color5', type: 'solid', value: '#581b98' },
+  { id: 'color6', type: 'solid', value: '#9c1de7' },
+  { id: 'color7', type: 'solid', value: '#f3558e' },
+  { id: 'color8', type: 'solid', value: '#faee1c' },
+  { id: 'color9', type: 'solid', value: '#482ff7' },
+  { id: 'color10', type: 'solid', value: '#2d6cdf' },
+  { id: 'color11', type: 'solid', value: '#46c3db' },
+  { id: 'color12', type: 'solid', value: '#f3f169' },
+  { id: 'color13', type: 'solid', value: '#a7ff83' },
+  { id: 'color14', type: 'solid', value: '#17b978' },
+  { id: 'color15', type: 'solid', value: '#086972' },
+  { id: 'color16', type: 'solid', value: '#085f63' }
+]
+
 
 const checkIconMotion = {
   initial: { opacity: 0, scale: 0.6 },
@@ -62,10 +89,34 @@ const checkIconMotion = {
 
 // 当前选中的主题和强调色
 const selectedTheme = ref(useConfigStore().getSetting.applicationTheme)
-// const selectedAccentColor = ref('blue')
-// const customColorInput = ref('')
-// 动画开启状态
-// const showAnimations = ref(true)
+const selectedApplicationPrimaryColor = ref(useConfigStore().getSetting.applicationPrimaryColor)
+
+// 计算属性：所有颜色选项（将选中的颜色移到第一位）
+const allColorOptions = computed(() => {
+  // 只使用纯色
+  const allColors = [...solidColors]
+
+  // 找到当前选中的颜色
+  const selectedColorIndex = allColors.findIndex(color => {
+    if (color.type === 'solid') {
+      return color.value === selectedApplicationPrimaryColor.value
+    }
+    return false
+  })
+
+  // 如果找到选中的颜色，将其移到第一位
+  if (selectedColorIndex !== -1) {
+    const selectedColor = allColors[selectedColorIndex]
+    // 创建新数组，将选中的颜色放在第一位
+    return [
+      selectedColor,
+      ...allColors.slice(0, selectedColorIndex),
+      ...allColors.slice(selectedColorIndex + 1)
+    ]
+  }
+
+  return allColors
+})
 
 /**
  * 选择主题
@@ -78,20 +129,32 @@ const selectTheme = async (themeId: ThemeMode): Promise<void> => {
   useConfigStore().setApplicationTheme(themeId)
 }
 
-// /**
-//  * 选择强调色
-//  * @param {string} colorId - 颜色ID
-//  */
-// const selectAccentColor = (colorId: string): void => {
-//   selectedAccentColor.value = colorId
-// }
+/**
+ * 选择强调色
+ * @param {ColorOption} color - 颜色选项
+ */
+const selectColor = (color: ColorOption): void => {
+  // 对于纯色，直接使用颜色值
+  if (color.type === 'solid') {
+    selectedApplicationPrimaryColor.value = color.value
+    useConfigStore().setApplicationPrimaryColor(color.value)
+  }
 
-// /**
-//  * 切换动画开关
-//  */
-// const toggleAnimations = (): void => {
-//   showAnimations.value = !showAnimations.value
-// }
+}
+
+/**
+ * 检查颜色是否被选中
+ * @param {ColorOption} color - 颜色选项
+ * @returns {boolean} 是否选中
+ */
+const isColorSelected = (color: ColorOption): boolean => {
+  if (color.type === 'solid') {
+    return color.value === selectedApplicationPrimaryColor.value
+  } else if (color.type === 'gradient' && color.gradient) {
+    return color.gradient.from === selectedApplicationPrimaryColor.value
+  }
+  return false
+}
 </script>
 
 <template>
@@ -105,13 +168,8 @@ const selectTheme = async (themeId: ThemeMode): Promise<void> => {
     <div class="theme-section">
       <div class="theme-options">
         <!-- 主题卡片 - 使用v-for循环渲染不同主题选项 -->
-        <div
-          v-for="theme in themes"
-          :key="theme.id"
-          class="theme-card"
-          :class="{ active: selectedTheme === theme.id }"
-          @click="selectTheme(theme.id)"
-        >
+        <div v-for="theme in themes" :key="theme.id" class="theme-card" :class="{ active: selectedTheme === theme.id }"
+          @click="selectTheme(theme.id)">
           <!-- 主题预览窗口 -->
           <div class="theme-preview" :class="theme.id">
             <!-- 仿Mac窗口控制按钮 -->
@@ -136,11 +194,7 @@ const selectTheme = async (themeId: ThemeMode): Promise<void> => {
 
           <!-- 主题信息和选择状态 -->
           <div class="theme-info">
-            <div
-              v-if="selectedTheme === theme.id"
-              v-motion="checkIconMotion"
-              class="check-icon-wrapper"
-            >
+            <div v-if="selectedTheme === theme.id" v-motion="checkIconMotion" class="check-icon-wrapper">
               <div class="check-icon">✓</div>
             </div>
             <div class="theme-text" :class="{ active: selectedTheme === theme.id }">
@@ -154,63 +208,27 @@ const selectTheme = async (themeId: ThemeMode): Promise<void> => {
     <!-- 分隔线 -->
     <div class="divider"></div>
 
-    <!-- 强调色选择区域 - 左右整体布局 -->
-    <!-- <div class="accent-section">
+    <!-- 强调色设置区域 -->
+    <div class="accent-color-section">
       <div class="section-title">
-        <h3>强调色</h3>
-        <p class="subtitle">使用系统或自定义强调色</p>
+        <h3>系统强调色</h3>
+        <p class="subtitle">选择应用的主要颜色，影响按钮、选中状态等元素</p>
       </div>
 
-      <div class="color-selection">
-        <div class="preset-colors">
-          <div
-            v-for="color in accentColors"
-            :key="color.id"
-            class="color-circle"
-            :style="{ backgroundColor: color.hex }"
-            :class="{ active: selectedAccentColor === color.id }"
-            @click="selectAccentColor(color.id)"
-          >
-            <div v-if="selectedAccentColor === color.id" class="check-icon">✓</div>
-          </div>
-        </div>
-
-        <div class="custom-color">
-          <div class="color-input-container">
-            <div class="color-label">自定义颜色</div>
-            <input
-              v-model="customColorInput"
-              type="text"
-              placeholder="#4146F8"
-              class="color-input"
-            />
-            <div
-              class="color-circle color-preview"
-              :style="{ backgroundColor: customColorInput }"
-            ></div>
-          </div>
-        </div>
+      <!-- 颜色选择区域 -->
+      <div class="color-options-container">
+        <transition-group name="color-move" tag="div" class="color-options-wrapper">
+          <template v-for="(color, index) in allColorOptions" :key="color.id">
+            <div class="color-card" :class="{ active: isColorSelected(color) }" @click="selectColor(color)">
+              <div class="color-preview" :style="{ background: color.value }">
+              </div>
+            </div>
+            <!-- <div v-if="(index + 1) % 8 === 0 && index !== allColorOptions.length - 1" class="color-divider"
+              :key="`divider-${index}`"></div> -->
+          </template>
+        </transition-group>
       </div>
-    </div> -->
-
-    <!-- 分隔线 -->
-    <!-- <div class="divider"></div> -->
-
-    <!-- 动画设置区域 - 左右布局 -->
-    <!-- <div class="animation-section">
-      <div class="animation-info">
-        <h3>显示动画</h3>
-        <p class="subtitle">启用或禁用界面动画</p>
-      </div>
-
-      <div class="toggle-container">
-        <div class="toggle" @click="toggleAnimations">
-          <div class="toggle-track" :class="{ active: showAnimations }">
-            <div class="toggle-indicator"></div>
-          </div>
-        </div>
-      </div>
-    </div> -->
+    </div>
   </div>
 </template>
 
@@ -218,6 +236,8 @@ const selectTheme = async (themeId: ThemeMode): Promise<void> => {
 // 主题卡片尺寸变量 - 可根据需要调整
 $theme-card-width: 230px; // 卡片宽度
 $theme-card-preview-height: 150px; // 预览区域高度
+$color-card-width: 180px; // 颜色卡片宽度
+$color-card-height: 120px; // 颜色卡片高度
 
 // 整体更小的字体尺寸
 $title-font-size: 20px;
@@ -404,7 +424,8 @@ $text-font-size: 14px;
   .check-icon {
     width: 22px;
     height: 22px;
-    background-color: var(--accent-color, #4146f8);
+    background-color: var(--button-primary-bg);
+    transition: background-color 0.5s;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -417,6 +438,7 @@ $text-font-size: 14px;
 
 .theme-text {
   transition: transform 0.5s;
+
   .theme-name {
     font-weight: 500;
     font-size: $text-font-size;
@@ -434,114 +456,98 @@ $text-font-size: 14px;
   }
 }
 
-// 强调色部分
-.accent-section {
-  margin-bottom: 20px;
-  // 修改为整体左右布局
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+// 强调色设置部分
+.accent-color-section {
+  margin-bottom: 30px;
 
   .section-title {
-    margin-bottom: 0;
-    flex: 1;
+    margin-bottom: 20px;
 
     h3 {
       font-size: $section-title-font-size;
       font-weight: 600;
-      margin-bottom: 4px;
+      margin-bottom: 5px;
     }
 
     .subtitle {
       font-size: $subtitle-font-size;
-      color: var(--text-secondary, #666);
+      color: var(--text-color);
+      opacity: 0.7;
     }
   }
 }
 
-// 右侧颜色选择区域
-.color-selection {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  min-width: 280px;
+.color-options-container {
+  width: 100%;
+  overflow: hidden;
 }
 
-// 预设颜色选择
-.preset-colors {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
+.color-options-wrapper {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  width: 100%;
 }
 
-.color-circle {
-  width: 30px; // 调小颜色圆圈
-  height: 30px;
-  border-radius: 50%;
-  cursor: pointer;
-  position: relative;
+// 添加过渡动画样式
+.color-move {
+  transition: all 0.5s ease;
+}
+
+.color-divider {
+  grid-column: 1 / -1;
+  height: 1px;
+  background-color: var(--title-bar-bg);
+  margin: 8px 0;
+  transition: all 0.5s ease;
+}
+
+.color-card {
+  border-radius: 8px;
+  overflow: hidden;
   border: 2px solid transparent;
-  transition:
-    transform 0.2s,
-    box-shadow 0.2s;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background-color: var(--title-bar-bg);
 
   &:hover {
-    transform: scale(1.05);
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   }
 
   &.active {
-    border-color: var(--border-color, #d1d1d1);
-    box-shadow:
-      0 0 0 2px #fff,
-      0 0 0 4px var(--accent-color, #4146f8);
-  }
-
-  .check-icon {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-    font-weight: bold;
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
-    font-size: 12px;
-  }
-}
-
-.custom-color {
-  .color-label {
-    font-size: $subtitle-font-size;
-    margin-bottom: 6px;
-    text-align: right;
-  }
-
-  .color-input-container {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    justify-content: flex-end;
-  }
-
-  .color-input {
-    width: 120px;
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid var(--border-color, #d1d1d1);
-    font-family: monospace;
-    font-size: $subtitle-font-size;
-
-    &:focus {
-      outline: none;
-      border-color: var(--accent-color, #4146f8);
-      box-shadow: 0 0 0 2px rgba(65, 70, 248, 0.2);
-    }
+    border-color: var(--button-primary-bg, #4285f4);
   }
 
   .color-preview {
-    margin: 0;
-    cursor: default;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    .check-icon-wrapper {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+
+  .color-info {
+    padding: 10px;
+    text-align: center;
+
+    .color-type {
+      font-size: 12px;
+      opacity: 0.7;
+      margin-bottom: 2px;
+    }
+
+    .color-value {
+      font-size: 12px;
+      font-family: monospace;
+    }
   }
 }
 
@@ -604,6 +610,19 @@ $text-font-size: 14px;
     .toggle-track.active & {
       transform: translateX(22px);
     }
+  }
+}
+
+// 响应式调整
+@media (max-width: 768px) {
+  .color-options {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .color-options {
+    grid-template-columns: 1fr;
   }
 }
 </style>

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { switchThemeMode } from '../util/system.theme'
+import { switchThemeMode, updateAccentColor } from '../util/system.theme'
 import { toRaw } from 'vue'
 import { invokeMain, sendToMain } from '../util/ipc.renderer.service'
 
@@ -55,6 +55,19 @@ export const useConfigStore = defineStore('config', {
       } else {
         switchThemeMode(theme)
       }
+      sendToMain.updateConfigSetting(toRaw(this.setting), this.windowId)
+    },
+
+    /**
+     * 设置应用强调色
+     * @param {string} color 强调色的十六进制颜色代码
+     * @description 设置应用的强调色并应用相应的样式
+     */
+    setApplicationPrimaryColor(color: string) {
+      this.setting.applicationPrimaryColor = color
+      // 更新应用强调色
+      updateAccentColor(color)
+      // 更新配置
       sendToMain.updateConfigSetting(toRaw(this.setting), this.windowId)
     },
 
@@ -154,11 +167,13 @@ export const useConfigStore = defineStore('config', {
     setEnableTextStyle({
       enableTextStyle,
       textStyleZoom,
-      rtfTextZoom
+      rtfTextZoom,
+      longTextLimit
     }: {
       enableTextStyle: boolean
       textStyleZoom?: number
       rtfTextZoom?: number
+      longTextLimit?: number
     }) {
       this.setting.clipboard.enableTextStyle = enableTextStyle
 
@@ -170,6 +185,25 @@ export const useConfigStore = defineStore('config', {
         this.setting.clipboard.rtfTextZoom = rtfTextZoom
       }
 
+      if (longTextLimit !== undefined) {
+        this.setting.clipboard.longTextLimit = longTextLimit
+      }
+
+      sendToMain.updateConfigSetting(toRaw(this.setting), this.windowId)
+    },
+
+    /**
+     * 设置是否强制使用Mac状态栏
+     * @param {boolean} forceMacStatusBar 是否强制使用Mac状态栏
+     * @description 设置是否在Windows系统上使用Mac风格的状态栏，并更新应用配置
+     */
+    setForceMacStatusBar(forceMacStatusBar: boolean) {
+      // 如果是Mac系统，则不设置
+      if (this.setting.system?.isMac) {
+        return
+      }
+      // 直接设置到 setting 对象上，而不是 appBehavior 子对象
+      this.setting.forceMacStatusBar = forceMacStatusBar
       sendToMain.updateConfigSetting(toRaw(this.setting), this.windowId)
     },
 

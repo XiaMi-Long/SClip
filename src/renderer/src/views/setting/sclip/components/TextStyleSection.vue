@@ -15,12 +15,14 @@ const props = defineProps<{
   enableTextStyle: boolean
   textStyleZoom: number
   rtfTextZoom: number
+  longTextLimit?: number
 }>()
 
 const emit = defineEmits<{
   (e: 'update:enableTextStyle', value: boolean): void
   (e: 'update:textStyleZoom', value: number): void
   (e: 'update:rtfTextZoom', value: number): void
+  (e: 'update:longTextLimit', value: number): void
 }>()
 
 // 是否启用文本样式
@@ -41,12 +43,32 @@ const rtfTextZoomValue = computed({
   set: (value) => emit('update:rtfTextZoom', value)
 })
 
+// 超长文本显示上限
+const longTextLimitValue = computed({
+  get: () => props.longTextLimit || 400,
+  set: (value) => emit('update:longTextLimit', value)
+})
+
+// 自定义输入值
+const customValue = ref('')
+
+// 检查当前值是否为预设值，如果不是则设置为自定义输入
+const initCustomValue = () => {
+  const currentValue = props.longTextLimit || 400
+  if (!textLimitPresets.includes(currentValue)) {
+    customValue.value = currentValue.toString()
+  }
+}
+
 // 预设的缩放值
 const zoomPresets = [0.3, 0.5, 0.7, 0.9, 1, 1.2, 1.4, 1.5]
 
+// 预设的文本长度限制选项
+const textLimitPresets = [200, 300, 400, 500, 600]
+
 // 监听值的变化，当值变化时保存设置
 watch(
-  [enableTextStyleValue, textStyleZoomValue, rtfTextZoomValue],
+  [enableTextStyleValue, textStyleZoomValue, rtfTextZoomValue, longTextLimitValue],
   () => {
     saveSettings()
     if (textStyleZoomValue.value) {
@@ -55,6 +77,8 @@ watch(
   },
   { deep: true }
 )
+
+
 
 // 首次显示动画
 const enableFirstShowTransition = firstShowTransitionMotion
@@ -89,7 +113,8 @@ const saveSettings = (): void => {
   useConfigStore().setEnableTextStyle({
     enableTextStyle: enableTextStyleValue.value,
     textStyleZoom: textStyleZoomValue.value,
-    rtfTextZoom: rtfTextZoomValue.value
+    rtfTextZoom: rtfTextZoomValue.value,
+    longTextLimit: longTextLimitValue.value
   })
 
   // 显示成功消息通知
@@ -105,16 +130,30 @@ const saveSettings = (): void => {
  */
 const initShadowDOM = () => {
   if (htmlContentRef.value) {
-    // 清除之前的内容
-    while (htmlContentRef.value.firstChild) {
-      htmlContentRef.value.removeChild(htmlContentRef.value.firstChild)
+    let shadow: ShadowRoot;
+
+    // 检查是否已经有Shadow DOM
+    if (htmlContentRef.value.shadowRoot) {
+      // 如果已经有Shadow DOM，直接使用它
+      shadow = htmlContentRef.value.shadowRoot;
+
+      // 清除现有内容
+      while (shadow.firstChild) {
+        shadow.removeChild(shadow.firstChild);
+      }
+    } else {
+      // 如果没有Shadow DOM，创建一个新的
+      // 清除之前的内容
+      while (htmlContentRef.value.firstChild) {
+        htmlContentRef.value.removeChild(htmlContentRef.value.firstChild);
+      }
+
+      // 创建Shadow DOM
+      shadow = htmlContentRef.value.attachShadow({ mode: 'open' });
     }
 
-    // 创建Shadow DOM
-    const shadow = htmlContentRef.value.attachShadow({ mode: 'open' })
-
     // 添加样式
-    const style = document.createElement('style')
+    const style = document.createElement('style');
     style.textContent = `
       :host {
         display: block;
@@ -149,22 +188,69 @@ const initShadowDOM = () => {
         word-wrap: break-word;
         zoom: ${textStyleZoomValue.value};
       }
-    `
+    `;
 
     // 创建内容容器
-    const content = document.createElement('div')
-    content.className = 'html-content'
-    content.innerHTML = htmlTextExample.content
+    const content = document.createElement('div');
+    content.className = 'html-content';
+    content.innerHTML = htmlTextExample.content;
 
     // 添加到Shadow DOM
-    shadow.appendChild(style)
-    shadow.appendChild(content)
+    shadow.appendChild(style);
+    shadow.appendChild(content);
+  }
+}
+
+/**
+ * 选择预设的文本长度限制
+ * @param {number} value - 预设值
+ */
+const selectTextLimitPreset = (value: number): void => {
+  longTextLimitValue.value = value
+  customValue.value = ''
+}
+
+/**
+ * 应用自定义输入的文本长度限制
+ */
+const applyCustomTextLimit = (): void => {
+  if (!customValue.value) return
+
+  const value = parseInt(customValue.value)
+  if (isNaN(value) || value <= 0) {
+    Message.error({
+      title: '输入错误',
+      message: '请输入有效的正整数',
+      duration: 2000
+    })
+    return
+  }
+
+  if (value < 100) {
+    Message.warning({
+      title: '输入错误',
+      message: '请输入大于100的正整数',
+      duration: 2000
+    })
+    return
+  }
+  longTextLimitValue.value = value
+}
+
+/**
+ * 处理自定义输入框的按键事件
+ * @param {KeyboardEvent} event - 键盘事件
+ */
+const handleKeyDown = (event: KeyboardEvent): void => {
+  if (event.key === 'Enter') {
+    applyCustomTextLimit()
   }
 }
 
 // 组件挂载后初始化Shadow DOM
 onMounted(() => {
   initShadowDOM()
+  initCustomValue()
 })
 </script>
 
@@ -203,9 +289,11 @@ onMounted(() => {
     <div class="settings-container">
       <!-- 启用文本样式 -->
       <div class="setting-info setting-item">
-        <div class="setting-title">启用文本样式</div>
-        <div class="setting-description">
-          启用后，复制的文本内容将保留原始格式，如粗体、斜体、颜色等
+        <div class="setting-title-area">
+          <div class="setting-title">启用文本样式</div>
+          <div class="setting-description">
+            启用后，复制的文本内容将保留原始格式，如粗体、斜体、颜色等
+          </div>
         </div>
         <VSwitch v-model="enableTextStyleValue" />
       </div>
@@ -214,12 +302,8 @@ onMounted(() => {
       <div class="setting-item zoom-section">
         <div class="setting-title">文本样式缩放</div>
         <div class="zoom-buttons">
-          <button
-            v-for="zoom in zoomPresets"
-            :key="zoom"
-            :class="['zoom-button', { active: textStyleZoomValue === zoom }]"
-            @click="textStyleZoomValue = zoom"
-          >
+          <button v-for="zoom in zoomPresets" :key="zoom" :class="['zoom-button', { active: textStyleZoomValue === zoom }]"
+            @click="textStyleZoomValue = zoom">
             {{ zoom === 1 ? '100%' : zoom * 100 + '%' }}
           </button>
         </div>
@@ -229,29 +313,37 @@ onMounted(() => {
       <div class="setting-item zoom-section">
         <div class="setting-title">RTF文本缩放</div>
         <div class="zoom-buttons">
-          <button
-            v-for="zoom in zoomPresets"
-            :key="zoom"
-            :class="['zoom-button', { active: rtfTextZoomValue === zoom }]"
-            @click="rtfTextZoomValue = zoom"
-          >
+          <button v-for="zoom in zoomPresets" :key="zoom" :class="['zoom-button', { active: rtfTextZoomValue === zoom }]"
+            @click="rtfTextZoomValue = zoom">
             {{ zoom === 1 ? '100%' : zoom * 100 + '%' }}
           </button>
         </div>
       </div>
+
+      <div class="setting-item length-section">
+        <div class="setting-title">超长文本显示上限</div>
+        <div class="setting-description">
+          设置文本内容显示的最大字符数，超过此限制将被截断并显示"..."按钮
+        </div>
+
+        <div class="text-limit-presets">
+          <button v-for="limit in textLimitPresets" :key="limit"
+            :class="['text-limit-button', { active: longTextLimitValue === limit }]" @click="selectTextLimitPreset(limit)">
+            {{ limit }}
+          </button>
+
+          <div class="custom-input-container">
+            <input v-model="customValue" type="number" min="100" placeholder="自定义" class="custom-input"
+              @keydown="handleKeyDown" />
+            <button class="apply-button" @click="applyCustomTextLimit">应用</button>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <VAlert
-      type="warning"
-      title="RTF格式说明"
-      message="RTF格式通常来自Word、Excel等Office应用程序的复制内容。调整RTF缩放可以优化此类富文本的显示效果，使其更易于阅读。"
-    />
+    <VAlert type="warning" title="RTF格式说明" message="RTF格式通常来自Word、Excel等Office应用程序的复制内容。调整RTF缩放可以优化此类富文本的显示效果，使其更易于阅读。" />
 
-    <VAlert
-      type="info"
-      title="提示"
-      message="启用文本样式后，从Word、网页等应用复制的文本将保留原始格式。禁用后，所有文本将以纯文本形式显示。"
-    />
+    <VAlert type="info" title="提示" message="启用文本样式后，从Word、网页等应用复制的文本将保留原始格式。禁用后，所有文本将以纯文本形式显示。" />
   </div>
 </template>
 
@@ -387,7 +479,11 @@ $transition-default: 0.5s ease;
   }
 
   .setting-info {
-    flex: 1;
+    display: flex;
+
+    .setting-title-area {
+      flex: 1;
+    }
   }
 
   .setting-title {
@@ -402,6 +498,7 @@ $transition-default: 0.5s ease;
     font-size: 14px;
     @include toggle-text;
     flex: 1;
+    margin-bottom: 15px;
   }
 
   .zoom-section {
@@ -443,6 +540,89 @@ $transition-default: 0.5s ease;
       &.active {
         background-color: var(--button-primary-bg);
         color: white;
+      }
+    }
+  }
+
+  .length-section {
+    .text-limit-presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+
+      .text-limit-button {
+        padding: 6px 12px;
+        border-radius: 6px;
+        background-color: var(--container-bg);
+        color: var(--text-color);
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+
+        &:hover {
+          background-color: rgba(var(--rgb-text-color, 0, 0, 0), 0.1);
+        }
+
+        &.active {
+          background-color: var(--button-primary-bg);
+          color: white;
+        }
+      }
+
+      .custom-input-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .custom-input {
+          width: 80px;
+          padding: 6px 10px;
+          border-radius: 6px;
+          border: 1px solid var(--title-bar-bg);
+          background-color: var(--container-bg);
+          color: var(--text-color);
+          font-size: 14px;
+          transition: all 0.3s ease;
+
+          &:focus {
+            outline: none;
+            border-color: var(--button-primary-bg);
+            box-shadow: 0 0 0 2px rgba(var(--button-primary-bg), 0.2);
+          }
+
+          &::placeholder {
+            color: var(--text-color);
+            opacity: 0.5;
+          }
+
+          /* 移除数字输入框的上下箭头 */
+          &::-webkit-inner-spin-button,
+          &::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+          }
+
+          /* Firefox */
+          -moz-appearance: textfield;
+        }
+
+        .apply-button {
+          padding: 6px 12px;
+          border-radius: 6px;
+          background-color: var(--button-primary-bg);
+          color: white;
+          font-size: 14px;
+          border: none;
+          cursor: pointer;
+          transition: all 0.3s ease;
+
+          &:hover {
+            background-color: var(--button-primary-hover-bg);
+            opacity: 0.9;
+          }
+        }
       }
     }
   }

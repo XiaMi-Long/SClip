@@ -4,7 +4,7 @@ import { RouterView } from 'vue-router'
 import TitleBar from './components/TitleBar/index.vue'
 import { useClipboardStore } from './store/useClipboardStore'
 import { useConfigStore } from './store/useConfigStore'
-import { switchThemeMode } from './util/system.theme'
+import { switchThemeMode, updateAccentColor } from './util/system.theme'
 import { listenFromMain, invokeMain } from './util/ipc.renderer.service'
 
 try {
@@ -23,6 +23,10 @@ try {
       switchThemeMode(isDark ? 'dark' : 'light')
     } else {
       switchThemeMode(setting.applicationTheme)
+    }
+
+    if (setting.applicationPrimaryColor) {
+      updateAccentColor(setting.applicationPrimaryColor)
     }
   })
 
@@ -68,7 +72,8 @@ const isShowTitleBar = computed(() => useConfigStore().getSetting.system)
 }
 
 /* Windows下特殊处理 */
-@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+@media screen and (-ms-high-contrast: active),
+(-ms-high-contrast: none) {
   #app {
     border: 1px solid transparent;
     /* 防止Windows下边缘锯齿 */

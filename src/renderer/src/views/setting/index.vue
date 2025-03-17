@@ -31,8 +31,10 @@ const menuItems: MenuItem[] = [
       { id: 'Theme', label: '外观设置', name: 'Theme' },
       { id: 'Language', label: '语言设置', name: 'Language' },
       { id: 'Keyboard', label: '快捷键设置', name: 'Keyboard' },
+      { id: 'Sclip', label: 'SClip设置', name: 'Sclip' },
       { id: 'Log', label: '日志查看', name: 'Log' },
-      { id: 'Sclip', label: 'SClip设置', name: 'Sclip' }
+      { id: 'Fun', label: '趣味设置', name: 'Fun' },
+      { id: 'About', label: '关于', name: 'About' }
     ]
   }
 ]
@@ -96,27 +98,15 @@ updateSelectedFromRoute()
       <div class="menu-container">
         <!-- 主菜单 -->
         <div v-for="item in menuItems" :key="item.id" class="menu-group">
-          <div
-            class="menu-item"
-            :class="{ active: selectedMenu === item.id }"
-            @click="selectMenu(item.id)"
-          >
+          <div class="menu-item" :class="{ active: selectedMenu === item.id }" @click="selectMenu(item.id)">
             <span class="menu-icon" v-html="item.icon"></span>
             <span class="menu-label">{{ item.label }}</span>
           </div>
 
           <!-- 子菜单 -->
-          <div
-            v-if="item.id === selectedMenu && item.children && item.children.length"
-            class="submenu"
-          >
-            <div
-              v-for="subItem in item.children"
-              :key="subItem.id"
-              class="submenu-item"
-              :class="{ active: selectedSubmenu === subItem.id }"
-              @click.stop="selectMenu(item.id, subItem.id, subItem.name)"
-            >
+          <div v-if="item.id === selectedMenu && item.children && item.children.length" class="submenu">
+            <div v-for="subItem in item.children" :key="subItem.id" class="submenu-item"
+              :class="{ active: selectedSubmenu === subItem.id }" @click.stop="selectMenu(item.id, subItem.id, subItem.name)">
               {{ subItem.label }}
             </div>
           </div>

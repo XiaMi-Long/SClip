@@ -78,17 +78,8 @@ onMounted(() => {
 
       <!-- 空状态 -->
       <div v-else-if="logs.length === 0" class="log-empty">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          width="48"
-          height="48"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor"
+          stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 6h-4a2 2 0 0 1-2-2V0" />
           <path d="M15 2H3a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-4" />
           <line x1="9" y1="14" x2="15" y2="14" />
@@ -158,11 +149,12 @@ onMounted(() => {
     padding: 40px 0;
     color: var(--text-color);
     transition: color 0.5s ease;
+
     .loading-indicator {
       width: 24px;
       height: 24px;
       border: 2px solid rgba(0, 0, 0, 0.1);
-      border-top-color: #4096ff;
+      border-top-color: var(--button-primary-bg);
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
       margin-bottom: 12px;
@@ -175,6 +167,7 @@ onMounted(() => {
     padding: 40px 0;
     color: var(--text-color);
     transition: color 0.5s ease;
+
     svg {
       opacity: 0.4;
       margin-bottom: 16px;

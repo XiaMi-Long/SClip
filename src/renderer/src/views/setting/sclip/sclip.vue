@@ -47,6 +47,9 @@ const textStyleZoom = ref(setting.clipboard.textStyleZoom || 1)
 
 // RTF文本缩放
 const rtfTextZoom = ref(setting.clipboard.rtfTextZoom || 1)
+
+// 超长文本显示上限
+const longTextLimit = ref(setting.clipboard.longTextLimit || 400) // 默认值为400个字符
 </script>
 
 <template>
@@ -69,11 +72,8 @@ const rtfTextZoom = ref(setting.clipboard.rtfTextZoom || 1)
     <div class="divider"></div>
 
     <!-- 文本样式设置区域 -->
-    <TextStyleSection
-      v-model:enableTextStyle="enableTextStyle"
-      v-model:textStyleZoom="textStyleZoom"
-      v-model:rtfTextZoom="rtfTextZoom"
-    />
+    <TextStyleSection v-model:enableTextStyle="enableTextStyle" v-model:textStyleZoom="textStyleZoom"
+      v-model:rtfTextZoom="rtfTextZoom" v-model:longTextLimit="longTextLimit" />
 
     <!-- 分隔线 -->
     <div class="divider"></div>
@@ -103,10 +103,7 @@ const rtfTextZoom = ref(setting.clipboard.rtfTextZoom || 1)
     <div class="divider"></div>
 
     <!-- 标识和提示设置 -->
-    <IndicatorSection
-      v-model:show-type-indicator="showTypeIndicator"
-      v-model:show-long-content-tip="showLongContentTip"
-    />
+    <IndicatorSection v-model:show-type-indicator="showTypeIndicator" v-model:show-long-content-tip="showLongContentTip" />
   </div>
 </template>
 

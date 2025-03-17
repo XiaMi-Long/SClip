@@ -17,11 +17,14 @@ export class ConfigManager {
     // 初始化默认配置
     this.setting = {
       applicationTheme: 'light',
+      applicationPrimaryColor: '#4285f4',
+      forceMacStatusBar: false,
       clipboard: {
         rtfTextZoom: 0.7,
         rtfRenderType: 'rtf',
         enableTextStyle: false,
-        textStyleZoom: 1
+        textStyleZoom: 1,
+        longTextLimit: 400
       },
       appLanguage: 'zh-CN',
       shortcut: {

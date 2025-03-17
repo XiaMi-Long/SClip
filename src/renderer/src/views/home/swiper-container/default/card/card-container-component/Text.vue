@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, toRaw, computed } from 'vue'
+import { onMounted, ref, toRaw } from 'vue'
 import { useConfigStore } from '@renderer/store/useConfigStore'
 
 const props = defineProps<{
@@ -14,6 +14,10 @@ const enableTextStyle = () => {
   return configStore.getSetting.clipboard.enableTextStyle
 }
 
+const longTextLimit = () => {
+  return configStore.getSetting.clipboard.longTextLimit
+}
+
 const hasHtmlContent = () => {
   return (
     props.clipboardOptions.clipboardTypes.includes('text/html') &&
@@ -24,8 +28,8 @@ const hasHtmlContent = () => {
 
 const content = () => {
   if (!hasHtmlContent()) {
-    if (props.clipboardOptions.content.length > 150) {
-      displayContent.value = props.clipboardOptions.content.slice(0, 150) + '...'
+    if (props.clipboardOptions.content.length > longTextLimit()) {
+      displayContent.value = props.clipboardOptions.content.slice(0, longTextLimit()) + '...'
     } else {
       displayContent.value = toRaw(props.clipboardOptions.content)
     }
@@ -107,5 +111,6 @@ onMounted(() => {
 .plain-text {
   white-space: pre;
   word-wrap: break-word;
+  user-select: none;
 }
 </style>

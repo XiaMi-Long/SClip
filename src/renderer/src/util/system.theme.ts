@@ -97,8 +97,7 @@ export function switchThemeMode(mode: ThemeMode): void {
  */
 export function updateAccentColor(color: string): void {
   const root = document.documentElement
-  root.style.setProperty('--accent-color', color)
-  root.style.setProperty('--stickybadge-bg', color)
+  root.style.setProperty('--button-primary-bg', color)
 }
 
 /**

@@ -27,7 +27,8 @@ interface ImageDisplayMode {
 }
 
 const displayModeImage = computed(() => {
-  return isDarkMode.value ? SettingPreviewDark : SettingPreviewLight
+  // return isDarkMode.value ? SettingPreviewDark : SettingPreviewLight
+  return SettingPreviewDark
 })
 
 // 图片显示模式选项
@@ -108,31 +109,17 @@ const selectDisplayMode = (modeId: 'auto' | 'contain' | 'cover'): void => {
 
     <div class="display-mode-options">
       <!-- 显示模式预览卡片 -->
-      <div
-        v-for="mode in displayModes"
-        :key="mode.id"
-        class="display-mode-card"
-        :class="{ active: selectedDisplayMode === mode.id }"
-        @click="selectDisplayMode(mode.id)"
-      >
+      <div v-for="mode in displayModes" :key="mode.id" class="display-mode-card"
+        :class="{ active: selectedDisplayMode === mode.id }" @click="selectDisplayMode(mode.id)">
         <!-- 显示模式预览 -->
         <div class="display-preview">
-          <img
-            class="preview-image"
-            :class="'preview-image-' + mode.id"
-            :src="displayModeImage"
-            :alt="'预览图-' + mode.name"
-            :style="{ objectFit: getDisplayModeFit(mode.id) }"
-          />
+          <img class="preview-image" :class="'preview-image-' + mode.id" :src="displayModeImage" :alt="'预览图-' + mode.name"
+            :style="{ objectFit: getDisplayModeFit(mode.id) }" />
         </div>
 
         <!-- 显示模式信息和选择状态 -->
         <div class="mode-info">
-          <div
-            v-if="selectedDisplayMode === mode.id"
-            v-motion="checkIconMotion"
-            class="check-icon-wrapper"
-          >
+          <div v-if="selectedDisplayMode === mode.id" v-motion="checkIconMotion" class="check-icon-wrapper">
             <div class="check-icon">✓</div>
           </div>
           <div class="mode-text" :class="{ active: selectedDisplayMode === mode.id }">

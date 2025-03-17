@@ -48,7 +48,7 @@ const handleChange = (event: Event) => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: var(--title-bar-bg);
+  background-color: var(--container-bg);
   transition: 0.3s;
   border-radius: 13px;
 }

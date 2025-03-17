@@ -121,9 +121,11 @@ export class MainIPCService {
     ipcMain.on('titleBar:window-maximize', (event) => {
       const win = BrowserWindow.fromWebContents(event.sender)
       if (win) {
-        // 由于我们设置了窗口不可最大化，这里可以不做处理
-        // 或者可以添加一些提示
-        Logger.info('Application', '窗口不支持最大化')
+        if (win.isMaximized()) {
+          win.unmaximize()
+        } else {
+          win.maximize()
+        }
       }
     })
 

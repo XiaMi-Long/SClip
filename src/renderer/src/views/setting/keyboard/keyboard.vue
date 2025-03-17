@@ -302,11 +302,7 @@ const clearShortcut = (): void => {
       <p class="section-description">点击快捷键进行自定义设置</p>
 
       <div class="shortcuts-container">
-        <div
-          v-for="shortcut in editableShortcuts"
-          :key="shortcut.id"
-          class="shortcut-item custom-shortcut-item"
-        >
+        <div v-for="shortcut in editableShortcuts" :key="shortcut.id" class="shortcut-item custom-shortcut-item">
           <div class="shortcut-info">
             <div class="shortcut-name">{{ shortcut.name }}</div>
             <div class="shortcut-description">{{ shortcut.description }}</div>
@@ -344,13 +340,7 @@ const clearShortcut = (): void => {
 
         <!-- 提示信息 Alert -->
         <div v-if="!isMac" class="shortcut-alerts">
-          <VAlert
-            :show-icon="true"
-            type="warning"
-            title="注意事项"
-            message="设置更改，下次启动时生效。"
-            class="clipboard-alert"
-          />
+          <VAlert :show-icon="true" type="warning" title="注意事项" message="设置更改，下次启动时生效。" class="clipboard-alert" />
         </div>
       </div>
     </div>
@@ -369,7 +359,7 @@ $subtitle-font-size: 13px;
 $section-title-font-size: 16px;
 $text-font-size: 14px;
 $animation-size: 36px;
-$animation-color: rgba(66, 133, 244, 0.8);
+$animation-color: var(--button-primary-bg);
 
 .keyboard-settings {
   color: var(--text-color);
@@ -523,6 +513,7 @@ $animation-color: rgba(66, 133, 244, 0.8);
 }
 
 @keyframes moveUpAnimation {
+
   0%,
   100% {
     transform: translate(-50%, -50%);
@@ -534,6 +525,7 @@ $animation-color: rgba(66, 133, 244, 0.8);
 }
 
 @keyframes moveDownAnimation {
+
   0%,
   100% {
     transform: translate(-50%, -50%);
@@ -545,6 +537,7 @@ $animation-color: rgba(66, 133, 244, 0.8);
 }
 
 @keyframes moveLeftAnimation {
+
   0%,
   100% {
     transform: translate(-50%, -50%);
@@ -556,6 +549,7 @@ $animation-color: rgba(66, 133, 244, 0.8);
 }
 
 @keyframes moveRightAnimation {
+
   0%,
   100% {
     transform: translate(-50%, -50%);
@@ -567,6 +561,7 @@ $animation-color: rgba(66, 133, 244, 0.8);
 }
 
 @keyframes pinAnimation {
+
   0%,
   100% {
     transform: translate(-50%, -50%) scale(1);
@@ -578,6 +573,7 @@ $animation-color: rgba(66, 133, 244, 0.8);
 }
 
 @keyframes deleteAnimation {
+
   0%,
   100% {
     transform: translate(-50%, -50%) scale(1);
@@ -671,7 +667,7 @@ $animation-color: rgba(66, 133, 244, 0.8);
 
 .shortcut-edit-controls {
   background-color: rgba(66, 133, 244, 0.05);
-  border: 1px solid rgba(66, 133, 244, 0.3);
+  border: 1px solid var(--button-primary-bg);
   border-radius: 8px;
   padding: 12px;
   margin-left: 15px;
@@ -736,11 +732,11 @@ $animation-color: rgba(66, 133, 244, 0.8);
     }
 
     .save-button {
-      background-color: #4285f4;
+      background-color: var(--button-primary-bg);
       color: white;
 
       &:hover {
-        background-color: #3367d6;
+        background-color: var(--button-primary-bg);
       }
     }
   }
@@ -784,7 +780,7 @@ $animation-color: rgba(66, 133, 244, 0.8);
 }
 
 .apply-button {
-  background-color: #4285f4;
+  background-color: var(--button-primary-bg);
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -795,11 +791,11 @@ $animation-color: rgba(66, 133, 244, 0.8);
   transition: background-color 0.3s;
 
   &:hover {
-    background-color: #3367d6;
+    background-color: var(--button-primary-bg);
   }
 
   &:active {
-    background-color: #2955c8;
+    background-color: var(--button-primary-bg);
   }
 }
 

@@ -34,6 +34,16 @@ const routes = [
         path: 'sclip',
         name: 'Sclip',
         component: () => import('../views/setting/sclip/sclip.vue')
+      },
+      {
+        path: 'fun',
+        name: 'Fun',
+        component: () => import('../views/setting/fun/fun.vue')
+      },
+      {
+        path: 'about',
+        name: 'About',
+        component: () => import('../views/setting/about/about.vue')
       }
     ]
   }

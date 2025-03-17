@@ -33,6 +33,16 @@ declare global {
     applicationTheme: ThemeMode
 
     /**
+     * 应用主色调
+     */
+    applicationPrimaryColor: string
+
+    /**
+     * 强制使用mac状态栏（只有window可以设置）
+     */
+    forceMacStatusBar: boolean
+
+    /**
      * 剪贴板卡片样式
      */
     clipboard: {
@@ -55,6 +65,11 @@ declare global {
        * 文本样式缩放
        */
       textStyleZoom: number
+
+      /**
+       * 超长文本显示上限
+       */
+      longTextLimit: number
     }
 
     /**

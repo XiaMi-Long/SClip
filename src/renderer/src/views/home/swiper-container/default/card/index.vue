@@ -16,6 +16,8 @@ const cardStyle = ref({
 const cardType = computed(() => {
   return cardStyle.value[props.clipboardOptions.type]
 })
+
+console.warn(props.clipboardOptions)
 </script>
 
 <template>
