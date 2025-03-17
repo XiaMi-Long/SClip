@@ -41,6 +41,12 @@ const showLongContentTip = ref(setting.appBehavior.showLongContentTip)
 
 // 是否启用文本样式
 const enableTextStyle = ref(setting.clipboard.enableTextStyle)
+
+// 文本样式缩放
+const textStyleZoom = ref(setting.clipboard.textStyleZoom || 1)
+
+// RTF文本缩放
+const rtfTextZoom = ref(setting.clipboard.rtfTextZoom || 1)
 </script>
 
 <template>
@@ -63,7 +69,11 @@ const enableTextStyle = ref(setting.clipboard.enableTextStyle)
     <div class="divider"></div>
 
     <!-- 文本样式设置区域 -->
-    <TextStyleSection v-model:enable-text-style="enableTextStyle" />
+    <TextStyleSection
+      v-model:enableTextStyle="enableTextStyle"
+      v-model:textStyleZoom="textStyleZoom"
+      v-model:rtfTextZoom="rtfTextZoom"
+    />
 
     <!-- 分隔线 -->
     <div class="divider"></div>

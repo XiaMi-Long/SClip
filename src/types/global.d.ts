@@ -40,6 +40,7 @@ declare global {
        * rtf 文本缩放
        */
       rtfTextZoom: number
+
       /**
        * rtf 文本内容
        */
@@ -49,6 +50,11 @@ declare global {
        * 是否启用文本样式，如果不启用，则默认展示纯文本
        */
       enableTextStyle: boolean
+
+      /**
+       * 文本样式缩放
+       */
+      textStyleZoom: number
     }
 
     /**

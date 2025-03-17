@@ -20,7 +20,8 @@ export class ConfigManager {
       clipboard: {
         rtfTextZoom: 0.7,
         rtfRenderType: 'rtf',
-        enableTextStyle: false
+        enableTextStyle: false,
+        textStyleZoom: 1
       },
       appLanguage: 'zh-CN',
       shortcut: {

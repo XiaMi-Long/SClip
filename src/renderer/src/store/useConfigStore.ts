@@ -147,10 +147,29 @@ export const useConfigStore = defineStore('config', {
     /**
      * 设置是否启用文本样式
      * @param {boolean} enableTextStyle 是否启用文本样式
-     * @description 设置是否启用文本样式，并更新应用配置
+     * @param {number} textStyleZoom 文本样式缩放比例
+     * @param {number} rtfTextZoom RTF文本缩放比例
+     * @description 设置文本样式相关配置，并更新应用配置
      */
-    setEnableTextStyle({ enableTextStyle }: { enableTextStyle: boolean }) {
+    setEnableTextStyle({
+      enableTextStyle,
+      textStyleZoom,
+      rtfTextZoom
+    }: {
+      enableTextStyle: boolean
+      textStyleZoom?: number
+      rtfTextZoom?: number
+    }) {
       this.setting.clipboard.enableTextStyle = enableTextStyle
+
+      if (textStyleZoom !== undefined) {
+        this.setting.clipboard.textStyleZoom = textStyleZoom
+      }
+
+      if (rtfTextZoom !== undefined) {
+        this.setting.clipboard.rtfTextZoom = rtfTextZoom
+      }
+
       sendToMain.updateConfigSetting(toRaw(this.setting), this.windowId)
     },
 

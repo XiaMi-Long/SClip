@@ -13,10 +13,14 @@ import { firstShowTransitionMotion } from '@renderer/util/common.fun'
 
 const props = defineProps<{
   enableTextStyle: boolean
+  textStyleZoom: number
+  rtfTextZoom: number
 }>()
 
 const emit = defineEmits<{
   (e: 'update:enableTextStyle', value: boolean): void
+  (e: 'update:textStyleZoom', value: number): void
+  (e: 'update:rtfTextZoom', value: number): void
 }>()
 
 // 是否启用文本样式
@@ -25,11 +29,29 @@ const enableTextStyleValue = computed({
   set: (value) => emit('update:enableTextStyle', value)
 })
 
+// 文本样式缩放
+const textStyleZoomValue = computed({
+  get: () => props.textStyleZoom,
+  set: (value) => emit('update:textStyleZoom', value)
+})
+
+// RTF文本缩放
+const rtfTextZoomValue = computed({
+  get: () => props.rtfTextZoom,
+  set: (value) => emit('update:rtfTextZoom', value)
+})
+
+// 预设的缩放值
+const zoomPresets = [0.3, 0.5, 0.7, 0.9, 1, 1.2, 1.4, 1.5]
+
 // 监听值的变化，当值变化时保存设置
 watch(
-  enableTextStyleValue,
+  [enableTextStyleValue, textStyleZoomValue, rtfTextZoomValue],
   () => {
     saveSettings()
+    if (textStyleZoomValue.value) {
+      initShadowDOM()
+    }
   },
   { deep: true }
 )
@@ -65,7 +87,9 @@ const htmlTextExample = {
 const saveSettings = (): void => {
   // 保存设置
   useConfigStore().setEnableTextStyle({
-    enableTextStyle: enableTextStyleValue.value
+    enableTextStyle: enableTextStyleValue.value,
+    textStyleZoom: textStyleZoomValue.value,
+    rtfTextZoom: rtfTextZoomValue.value
   })
 
   // 显示成功消息通知
@@ -123,6 +147,7 @@ const initShadowDOM = () => {
         font-size: 12px;
         line-height: 1.5;
         word-wrap: break-word;
+        zoom: ${textStyleZoomValue.value};
       }
     `
 
@@ -176,22 +201,57 @@ onMounted(() => {
 
     <!-- 设置选项 -->
     <div class="settings-container">
-      <div class="setting-toggle">
-        <div class="setting-info">
-          <div class="setting-title">启用文本样式</div>
-          <div class="setting-description">
-            启用后，复制的文本内容将保留原始格式，如粗体、斜体、颜色等
-          </div>
+      <!-- 启用文本样式 -->
+      <div class="setting-info setting-item">
+        <div class="setting-title">启用文本样式</div>
+        <div class="setting-description">
+          启用后，复制的文本内容将保留原始格式，如粗体、斜体、颜色等
         </div>
         <VSwitch v-model="enableTextStyleValue" />
       </div>
 
-      <VAlert
-        type="info"
-        title="提示"
-        message="启用文本样式后，从Word、网页等应用复制的文本将保留原始格式。禁用后，所有文本将以纯文本形式显示。"
-      />
+      <!-- 文本样式缩放 -->
+      <div class="setting-item zoom-section">
+        <div class="setting-title">文本样式缩放</div>
+        <div class="zoom-buttons">
+          <button
+            v-for="zoom in zoomPresets"
+            :key="zoom"
+            :class="['zoom-button', { active: textStyleZoomValue === zoom }]"
+            @click="textStyleZoomValue = zoom"
+          >
+            {{ zoom === 1 ? '100%' : zoom * 100 + '%' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- RTF文本缩放 -->
+      <div class="setting-item zoom-section">
+        <div class="setting-title">RTF文本缩放</div>
+        <div class="zoom-buttons">
+          <button
+            v-for="zoom in zoomPresets"
+            :key="zoom"
+            :class="['zoom-button', { active: rtfTextZoomValue === zoom }]"
+            @click="rtfTextZoomValue = zoom"
+          >
+            {{ zoom === 1 ? '100%' : zoom * 100 + '%' }}
+          </button>
+        </div>
+      </div>
     </div>
+
+    <VAlert
+      type="warning"
+      title="RTF格式说明"
+      message="RTF格式通常来自Word、Excel等Office应用程序的复制内容。调整RTF缩放可以优化此类富文本的显示效果，使其更易于阅读。"
+    />
+
+    <VAlert
+      type="info"
+      title="提示"
+      message="启用文本样式后，从Word、网页等应用复制的文本将保留原始格式。禁用后，所有文本将以纯文本形式显示。"
+    />
   </div>
 </template>
 
@@ -201,17 +261,6 @@ $border-radius: 10px;
 $transition-default: 0.5s ease;
 
 // 混合器
-@mixin toggle-base {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 15px;
-  background-color: var(--title-bar-bg);
-  transition: background-color $transition-default;
-  border-radius: $border-radius;
-  margin-bottom: 15px;
-}
-
 @mixin toggle-text {
   color: var(--text-color);
   opacity: 0.7;
@@ -240,7 +289,7 @@ $transition-default: 0.5s ease;
 
 // 演示区域样式
 .demo-area {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   padding: 20px;
   background-color: var(--title-bar-bg);
   border-radius: $border-radius;
@@ -319,23 +368,92 @@ $transition-default: 0.5s ease;
 
 // 设置选项样式
 .settings-container {
-  .setting-toggle {
-    @include toggle-base;
+  margin-bottom: 20px;
+  padding: 20px;
+  background-color: var(--title-bar-bg);
+  border-radius: $border-radius;
 
-    .setting-info {
-      flex: 1;
+  .setting-item {
+    margin-bottom: 20px;
+
+    &:last-child {
+      margin-bottom: 0;
     }
 
+    &:not(:last-child) {
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--container-bg);
+    }
+  }
+
+  .setting-info {
+    flex: 1;
+  }
+
+  .setting-title {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 5px;
+    color: var(--text-color);
+    flex: 1;
+  }
+
+  .setting-description {
+    font-size: 14px;
+    @include toggle-text;
+    flex: 1;
+  }
+
+  .zoom-section {
     .setting-title {
-      font-size: 16px;
-      font-weight: 500;
-      margin-bottom: 5px;
+      margin-bottom: 15px;
     }
+  }
 
-    .setting-description {
+  .zoom-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+
+    .zoom-button {
+      flex: 1;
+      min-width: 60px;
+      padding: 8px 0;
+      border-radius: 4px;
+      background-color: var(--container-bg);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.3s ease;
       font-size: 14px;
-      @include toggle-text;
+      color: var(--text-color);
+      margin: 0 4px;
+
+      &:first-child {
+        margin-left: 0;
+      }
+
+      &:last-child {
+        margin-right: 0;
+      }
+
+      &:hover {
+        background-color: rgba(var(--rgb-text-color, 0, 0, 0), 0.1);
+      }
+
+      &.active {
+        background-color: var(--button-primary-bg);
+        color: white;
+      }
     }
+  }
+}
+
+// 警告和提示信息
+VAlert {
+  margin-bottom: 15px;
+
+  &:last-child {
+    margin-bottom: 0;
   }
 }
 </style>
