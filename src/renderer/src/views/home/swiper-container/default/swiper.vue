@@ -1,9 +1,8 @@
 <!-- src/renderer/src/views/swiper-container/themes/default/swiper.vue -->
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed } from 'vue'
 import VClipboardCard from './card/index.vue'
-import StickyBadge from './card/badge-componet/StickyBadge.vue'
-import SelectBadge from './card/badge-componet/SelectBadge.vue'
+import CardBadge from './card/badge-componet/CardBadge.vue'
 import PaginationIndicator from './card/pagination-component/PaginationIndicator.vue'
 import { useCarousel } from './hooks'
 import { listenFromMain } from '@renderer/util/ipc.renderer.service'
@@ -56,6 +55,8 @@ const listStyle = computed(() => ({
 listenFromMain.onShowMainWindow(() => {
   actions.navigate.jumpToFirstPage()
 })
+
+console.log(getters.allCards.value)
 </script>
 
 <template>
@@ -104,15 +105,13 @@ listenFromMain.onShowMainWindow(() => {
         :key="card.id"
         :class="['card-wrapper', { active: index === getters.activeAbsoluteIndex.value }]"
         :style="{ width: PAGE_WIDTH + 'px' }"
-        :data-id="card.id"
       >
-        <StickyBadge :card="card" :card-id="card.id" />
-        <SelectBadge
-          v-if="index === getters.activeAbsoluteIndex.value"
+        <CardBadge
           :card="card"
-          :card-id="card.id"
+          :is-active="index === getters.activeAbsoluteIndex.value"
+          :show-type-indicator="getters.showTypeIndicator.value"
+          :show-long-content-tip="getters.showLongContentTip.value"
         />
-
         <VClipboardCard :clipboard-options="card" />
       </div>
     </div>

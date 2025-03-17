@@ -20,6 +20,7 @@ declare global {
     last_file_name_text: string // 上一次的文件名，用于判断是否重复
     isSticky: string // 是否固定
     meta: any
+    clipboardTypes: string[] // 所有拥有的类型
   }
 
   /**
@@ -45,9 +46,9 @@ declare global {
       rtfRenderType: 'rtf' | 'html' | 'text'
 
       /**
-       * 是否显示类型标识
+       * 是否启用文本样式，如果不启用，则默认展示纯文本
        */
-      showTypeIndicator: boolean
+      enableTextStyle: boolean
     }
 
     /**

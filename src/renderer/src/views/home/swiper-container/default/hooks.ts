@@ -5,6 +5,7 @@
 
 import { ref, computed, onMounted, watch, toRaw, type Ref, type ComputedRef } from 'vue'
 import { useClipboardStore } from '@renderer/store/useClipboardStore'
+import { useConfigStore } from '@renderer/store/useConfigStore'
 import { sendToMain } from '@renderer/util/ipc.renderer.service'
 
 /** 每页显示的卡片数量 */
@@ -34,6 +35,10 @@ interface CarouselGetters {
   currentPageLength: ComputedRef<number>
   /** 当前选中卡片的绝对索引（相对于所有卡片） */
   activeAbsoluteIndex: ComputedRef<number>
+  /** 是否显示类型标识 */
+  showTypeIndicator: ComputedRef<boolean>
+  /** 是否显示长内容提示 */
+  showLongContentTip: ComputedRef<boolean>
 }
 
 /**
@@ -104,6 +109,16 @@ export function useCarousel(): UseCarouselReturn {
   const getters: CarouselGetters = {
     /** 获取所有卡片数据并倒序排列 */
     allCards: computed(() => clipboardStore.getClipboard.slice().reverse()),
+
+    /** 是否显示类型标识 */
+    showTypeIndicator: computed(() => {
+      return useConfigStore().getSetting.appBehavior.showTypeIndicator
+    }),
+
+    /** 是否显示长内容提示 */
+    showLongContentTip: computed(() => {
+      return useConfigStore().getSetting.appBehavior.showLongContentTip
+    }),
 
     /** 计算总页数 */
     totalPages: computed(() => Math.ceil(getters.allCards.value.length / ITEMS_PER_PAGE)),

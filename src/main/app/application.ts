@@ -420,10 +420,8 @@ export class ApplicationRegister {
 
           // 监听主窗口关闭事件
           mainWindow.on('close', (event) => {
-            if (process.platform === 'darwin') {
-              event.preventDefault()
-              mainWindow.hide()
-            }
+            event.preventDefault()
+            mainWindow.hide()
           })
 
           // 监听主窗口失去焦点事件

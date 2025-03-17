@@ -138,8 +138,19 @@ export const useConfigStore = defineStore('config', {
       showTypeIndicator: boolean
       showLongContentTip: boolean
     }) {
+      console.log(showTypeIndicator, showLongContentTip)
       this.setting.appBehavior.showTypeIndicator = showTypeIndicator
       this.setting.appBehavior.showLongContentTip = showLongContentTip
+      sendToMain.updateConfigSetting(toRaw(this.setting), this.windowId)
+    },
+
+    /**
+     * 设置是否启用文本样式
+     * @param {boolean} enableTextStyle 是否启用文本样式
+     * @description 设置是否启用文本样式，并更新应用配置
+     */
+    setEnableTextStyle({ enableTextStyle }: { enableTextStyle: boolean }) {
+      this.setting.clipboard.enableTextStyle = enableTextStyle
       sendToMain.updateConfigSetting(toRaw(this.setting), this.windowId)
     },
 

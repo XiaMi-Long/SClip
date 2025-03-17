@@ -248,7 +248,7 @@ $accent-color: var(--button-primary-bg);
   align-items: center;
   justify-content: space-between;
   padding: 15px;
-  background-color: rgba(var(--rgb-text-color, 0, 0, 0), 0.03);
+  background-color: var(--title-bar-bg);
   transition: background-color $transition-default;
   border-radius: $border-radius;
   margin-bottom: 15px;
@@ -345,7 +345,7 @@ $accent-color: var(--button-primary-bg);
       .preset-button {
         padding: 6px 12px;
         border-radius: 6px;
-        background-color: var(--title-bar-bg);
+        background-color: var(--container-bg);
         color: var(--text-color);
         font-size: 14px;
         cursor: pointer;

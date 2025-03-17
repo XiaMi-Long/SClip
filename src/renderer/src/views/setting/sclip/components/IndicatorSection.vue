@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
-import { useMotions } from '@vueuse/motion'
+import { computed, watch } from 'vue'
 import { useConfigStore } from '@renderer/store/useConfigStore'
 import { Message } from '@renderer/components/VMessage'
 import VSwitch from '@renderer/components/VSwitch'
@@ -34,8 +33,14 @@ const showLongContentTipValue = computed({
   set: (value) => emit('update:showLongContentTip', value)
 })
 
-// 获取 motions 实例
-const motions = useMotions()
+// 监听值的变化，当值变化时保存设置
+watch(
+  [showTypeIndicatorValue, showLongContentTipValue],
+  () => {
+    saveSettings()
+  },
+  { deep: true }
+)
 
 // 首次显示动画
 const enableFirstShowTransition = firstShowTransitionMotion
@@ -65,17 +70,9 @@ const showTypeMotion = {
 }
 
 /**
- * 切换设置并保存
- * @param {string} key - 设置项的键名
- * @param {boolean} value - 设置值
+ * 保存设置并显示通知
  */
-const toggleSetting = (key: 'showTypeIndicator' | 'showLongContentTip', value: boolean): void => {
-  if (key === 'showTypeIndicator') {
-    showTypeIndicatorValue.value = value
-  } else {
-    showLongContentTipValue.value = value
-  }
-
+const saveSettings = (): void => {
   // 保存设置
   useConfigStore().setShowTypeIndicator({
     showTypeIndicator: showTypeIndicatorValue.value,
@@ -121,10 +118,7 @@ const toggleSetting = (key: 'showTypeIndicator' | 'showLongContentTip', value: b
           <div class="setting-title">内容类型标识</div>
           <div class="setting-description">在内容右下角显示类型图标，帮助快速识别内容类型</div>
         </div>
-        <VSwitch
-          v-model="showTypeIndicatorValue"
-          @change="(value) => toggleSetting('showTypeIndicator', value)"
-        />
+        <VSwitch v-model="showTypeIndicatorValue" />
       </div>
 
       <div class="setting-toggle">
@@ -132,10 +126,7 @@ const toggleSetting = (key: 'showTypeIndicator' | 'showLongContentTip', value: b
           <div class="setting-title">长内容提示</div>
           <div class="setting-description">当内容超出显示范围时，显示提示标记</div>
         </div>
-        <VSwitch
-          v-model="showLongContentTipValue"
-          @change="(value) => toggleSetting('showLongContentTip', value)"
-        />
+        <VSwitch v-model="showLongContentTipValue" />
       </div>
 
       <VAlert
@@ -160,7 +151,7 @@ $indicator-padding: 0.3em;
   align-items: center;
   justify-content: space-between;
   padding: 15px;
-  background-color: rgba(var(--rgb-text-color, 0, 0, 0), 0.03);
+  background-color: var(--title-bar-bg);
   transition: background-color $transition-default;
   border-radius: $border-radius;
   margin-bottom: 15px;
@@ -196,7 +187,7 @@ $indicator-padding: 0.3em;
 .demo-area {
   margin-bottom: 30px;
   padding: 20px;
-  background-color: rgba(var(--rgb-text-color, 0, 0, 0), 0.03);
+  background-color: var(--title-bar-bg);
   border-radius: $border-radius;
 
   display: flex;
@@ -225,7 +216,7 @@ $indicator-padding: 0.3em;
 
 // 剪贴板内容项样式
 .clipboard-item {
-  background-color: var(--bg-color);
+  background-color: var(--container-bg);
   border-radius: $border-radius;
   min-height: 100px;
   display: flex;

@@ -179,7 +179,7 @@ const selectDisplayMode = (modeId: 'auto' | 'contain' | 'cover'): void => {
 
 .display-mode-card {
   flex: 1;
-  background-color: rgba(var(--rgb-text-color, 0, 0, 0), 0.03);
+  background-color: var(--title-bar-bg);
   transition: background-color 0.5s ease;
   border-radius: 12px;
   overflow: hidden;
@@ -232,7 +232,7 @@ const selectDisplayMode = (modeId: 'auto' | 'contain' | 'cover'): void => {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background-color: var(--accent-color, #4285f4);
+    background-color: var(--button-primary-bg);
     transition: background-color 0.5s ease;
     color: white;
     display: flex;

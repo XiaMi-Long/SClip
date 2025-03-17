@@ -9,6 +9,7 @@ import WakeupSection from './components/WakeupSection.vue'
 import HistoryLimitSection from './components/HistoryLimitSection.vue'
 import FixedWindowSection from './components/FixedWindowSection.vue'
 import IndicatorSection from './components/IndicatorSection.vue'
+import TextStyleSection from './components/TextStyleSection.vue'
 
 /**
  * SClip设置组件
@@ -16,8 +17,6 @@ import IndicatorSection from './components/IndicatorSection.vue'
  */
 
 const setting = useConfigStore().getSetting
-
-console.log(setting)
 
 // 选中的图片显示模式
 const selectedDisplayMode = ref<'auto' | 'contain' | 'cover'>(setting.imageSettings.displayMode)
@@ -32,13 +31,16 @@ const jumpToFirstPage = ref(setting.appBehavior.jumpToFirstPage)
 const historyLimit = ref(setting.appBehavior.historyLimit || 50) // 默认值为50条
 
 // 是否固定窗口
-const isFixedWindow = ref(setting.appBehavior.isFixedWindow || false)
+const isFixedWindow = ref(setting.appBehavior.isFixedWindow)
 
 // 是否显示类型标识
-const showTypeIndicator = ref(setting.appBehavior.showTypeIndicator || false)
+const showTypeIndicator = ref(setting.appBehavior.showTypeIndicator)
 
 // 是否显示长内容提示
-const showLongContentTip = ref(setting.appBehavior.showLongContentTip || false)
+const showLongContentTip = ref(setting.appBehavior.showLongContentTip)
+
+// 是否启用文本样式
+const enableTextStyle = ref(setting.clipboard.enableTextStyle)
 </script>
 
 <template>
@@ -56,6 +58,12 @@ const showLongContentTip = ref(setting.appBehavior.showLongContentTip || false)
 
     <!-- 图片微动画设置区域 -->
     <AnimationSection v-model:enable-animation="enableImageAnimation" />
+
+    <!-- 分隔线 -->
+    <div class="divider"></div>
+
+    <!-- 文本样式设置区域 -->
+    <TextStyleSection v-model:enable-text-style="enableTextStyle" />
 
     <!-- 分隔线 -->
     <div class="divider"></div>

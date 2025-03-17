@@ -149,7 +149,7 @@ const toggleImageAnimation = (value: boolean): void => {
   align-items: center;
   justify-content: space-between;
   padding: 15px;
-  background-color: rgba(var(--rgb-text-color, 0, 0, 0), 0.03);
+  background-color: var(--title-bar-bg);
   transition: background-color 0.5s ease;
   border-radius: 10px;
   margin-bottom: 15px;

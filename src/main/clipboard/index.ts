@@ -30,7 +30,7 @@ const mimeTypes: { [key: string]: string } = {
 export class ClipboardManager {
   private static instance: ClipboardManager
   private lastState: ClipboardState
-  private execAsync: any
+  private execAsync: (command: string) => Promise<{ stdout: string; stderr: string }>
   private intervalId: NodeJS.Timeout | null
   private isSystemPasting: boolean = false
   private readonly SYSTEM_MARK = 'SClip-system-read-stop-luoqi' // 新增系统标记常量
@@ -46,8 +46,9 @@ export class ClipboardManager {
       contentHash: '',
       last_file_name_text: '',
       content: '',
-      meta: {},
-      isSticky: 'false'
+      meta: {} as Record<string, unknown>,
+      isSticky: 'false',
+      clipboardTypes: []
     }
     Logger.info('Clipboard', '正在监听剪贴板')
   }
@@ -102,7 +103,7 @@ export class ClipboardManager {
     if (this.lastState.contentHash === '') {
       const clipboardHistory = DBManager.getInstance().getClipboardHistory(1)
       if (clipboardHistory.length > 0) {
-        this.lastState = clipboardHistory[0]
+        this.lastState = clipboardHistory[0] as ClipboardState
       }
     }
 
@@ -114,22 +115,22 @@ export class ClipboardManager {
     const clipboardTypes = clipboard.availableFormats()
 
     if (clipboardTypes.includes('text/uri-list')) {
-      await this.handleUriList(text)
+      await this.handleUriList(text, clipboardTypes)
     } else if (clipboardTypes.includes('image/png')) {
-      await this.handleImage()
+      await this.handleImage(clipboardTypes)
     } else if (clipboardTypes.includes('text/rtf')) {
       const rtf = clipboard.readRTF()
       const html = clipboard.readHTML()
-      await this.handleRtf(text, rtf, html)
+      await this.handleRtf(text, rtf, html, clipboardTypes)
     } else if (clipboardTypes.includes('text/plain') || clipboardTypes.includes('text/html')) {
-      await this.handleText(text)
+      await this.handleText(text, clipboardTypes)
     }
   }
 
   /**
    * 处理URI列表类型的剪贴板内容
    */
-  private async handleUriList(text: string): Promise<void> {
+  private async handleUriList(text: string, clipboardTypes: string[]): Promise<void> {
     if (text === this.lastState.last_file_name_text) return
 
     this.lastState.last_file_name_text = text
@@ -138,9 +139,25 @@ export class ClipboardManager {
     const time = new Date().getTime()
 
     if (imageBase64) {
-      this.updateLastState('image', imageBase64, time, { origin: 'local-file', actualPath })
+      this.updateLastState({
+        type: 'image',
+        content: imageBase64,
+        timestamp: time,
+        meta: { origin: 'local-file', actualPath },
+        contentHash: '',
+        isSticky: 'false',
+        clipboardTypes
+      })
     } else {
-      this.updateLastState('text', text, time, { origin: 'local-file-no-image', actualPath })
+      this.updateLastState({
+        type: 'text',
+        content: text,
+        timestamp: time,
+        meta: { origin: 'local-file-no-image', actualPath },
+        contentHash: '',
+        isSticky: 'false',
+        clipboardTypes
+      })
       Logger.info('Clipboard', '文件不是支持的图片格式')
     }
   }
@@ -148,66 +165,98 @@ export class ClipboardManager {
   /**
    * 处理图片类型的剪贴板内容
    */
-  private async handleImage(): Promise<void> {
+  private async handleImage(clipboardTypes: string[]): Promise<void> {
     const imageBuffer = clipboard.readImage().toPNG()
     const contentHash = createHash('md5').update(imageBuffer.subarray(0, 1024)).digest('hex')
 
     if (contentHash === this.lastState.contentHash) return
 
-    this.updateLastState(
-      'image',
-      clipboard.readImage().toDataURL(),
-      new Date().getTime(),
-      {},
-      contentHash
-    )
+    this.updateLastState({
+      type: 'image',
+      content: clipboard.readImage().toDataURL(),
+      timestamp: new Date().getTime(),
+      meta: {},
+      contentHash,
+      isSticky: 'false',
+      clipboardTypes
+    })
   }
 
   /**
    * 处理rtf类型的剪贴板内容
    */
-  private async handleRtf(text: string, rtf: string, html: string): Promise<void> {
+  private async handleRtf(
+    text: string,
+    rtf: string,
+    html: string,
+    clipboardTypes: string[]
+  ): Promise<void> {
     const contentHash = createHash('md5').update(text).digest('hex')
 
     if (contentHash === this.lastState.contentHash) return
 
-    this.updateLastState(
-      'rtf',
-      rtf,
-      new Date().getTime(),
-      { rtf_text: text, rtf_html: html },
-      contentHash
-    )
+    this.updateLastState({
+      type: 'rtf',
+      content: rtf,
+      timestamp: new Date().getTime(),
+      meta: { rtf_text: text, rtf_html: html },
+      contentHash,
+      isSticky: 'false',
+      clipboardTypes
+    })
   }
 
   /**
    * 处理文本类型的剪贴板内容
    */
-  private async handleText(text: string): Promise<void> {
+  private async handleText(text: string, clipboardTypes: string[]): Promise<void> {
     const contentHash = createHash('md5').update(text).digest('hex')
 
     if (contentHash === this.lastState.contentHash) return
 
-    this.updateLastState('text', text, new Date().getTime(), {}, contentHash)
+    this.updateLastState({
+      type: 'text',
+      content: text,
+      timestamp: new Date().getTime(),
+      meta: {
+        htmlContent: clipboardTypes.includes('text/html') ? clipboard.readHTML() : ''
+      },
+      contentHash,
+      isSticky: 'false',
+      clipboardTypes
+    })
   }
 
   /**
    * 更新最后的状态并发送到渲染进程
-   * @param {ClipboardType} type - 剪贴板的类型
-   * @param {string} content - 剪贴板内容
-   * @param {number} timestamp - 时间戳
-   * @param {object} meta - 附加元数据
-   * @param {string} contentHash - 内容哈希值
-   * @param {string} isSticky - 是否固定（'true'/'false'）
+   * @param {Object} options - 更新选项
+   * @param {ClipboardType} options.type - 剪贴板的类型
+   * @param {string} options.content - 剪贴板内容
+   * @param {number} options.timestamp - 时间戳
+   * @param {Record<string, unknown>} [options.meta={}] - 附加元数据
+   * @param {string} [options.contentHash=''] - 内容哈希值
+   * @param {string} [options.isSticky='false'] - 是否固定（'true'/'false'）
+   * @param {string[]} [options.clipboardTypes=[]] - 剪贴板可用格式
    */
-  private updateLastState(
-    type: ClipboardType,
-    content: string,
-    timestamp: number,
-    meta: object = {},
-    contentHash: string = '',
-    isSticky: string = 'false'
-  ): void {
+  private updateLastState(options: {
+    type: ClipboardType
+    content: string
+    timestamp: number
+    meta?: Record<string, unknown>
+    contentHash?: string
+    isSticky?: string
+    clipboardTypes?: string[]
+  }): void {
+    const {
+      type,
+      content,
+      timestamp,
+      meta = {} as Record<string, unknown>,
+      contentHash = '',
+      isSticky = 'false',
+      clipboardTypes = []
+    } = options
+
     this.lastState = {
       ...this.lastState,
       type,
@@ -215,7 +264,8 @@ export class ClipboardManager {
       timestamp,
       meta,
       contentHash,
-      isSticky
+      isSticky,
+      clipboardTypes
     }
 
     // 在数据库中插入这条记录并获取新生成的 ID

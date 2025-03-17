@@ -136,7 +136,7 @@ $transition-default: 0.5s ease;
   align-items: center;
   justify-content: space-between;
   padding: 15px;
-  background-color: rgba(var(--rgb-text-color, 0, 0, 0), 0.03);
+  background-color: var(--title-bar-bg);
   transition: background-color $transition-default;
   border-radius: $border-radius;
   margin-bottom: 15px;

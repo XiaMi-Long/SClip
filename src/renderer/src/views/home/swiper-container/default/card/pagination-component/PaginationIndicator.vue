@@ -106,7 +106,7 @@ const getBarClass = (index: number) => ({
   overflow: visible; /* 修改为visible以显示伪元素溢出部分 */
   height: 4px; /* 明确设置高度 */
   z-index: 5; /* 确保分页指示器在磨砂背景上方 */
-  transition: background-color 0.5s ease;
+  // transition: background-color 0.5s ease;
 
   /* 添加磨砂质感伪元素 */
   &::before {
@@ -145,7 +145,7 @@ const getBarClass = (index: number) => ({
   display: flex;
   gap: 8px;
   /* 条形区域间隔 */
-  transition: transform 0.3s ease;
+  transition: transform 0.5s ease;
   /* 使用 will-change 提示浏览器优化 */
   will-change: transform;
 
@@ -162,7 +162,7 @@ const getBarClass = (index: number) => ({
   transition: background-color 0.5s ease;
 
   &.active {
-    background-color: var(--title-bar-bg);
+    background-color: var(--text-color);
   }
 }
 
@@ -215,7 +215,7 @@ const getBarClass = (index: number) => ({
 /* 应用动画 */
 .pagination-bar.animating {
   position: absolute;
-  transition: background-color 0.5s ease;
+  // transition: background-color 0.5s ease;
 
   &.forward {
     position: relative;
@@ -229,7 +229,7 @@ const getBarClass = (index: number) => ({
       width: 100%;
       height: 100%;
       border-radius: 2px;
-      background-color: var(--title-bar-bg);
+      background-color: var(--text-color);
       animation: expandForward 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     }
   }
@@ -246,7 +246,7 @@ const getBarClass = (index: number) => ({
       width: 100%;
       height: 100%;
       border-radius: 2px;
-      background-color: var(--title-bar-bg);
+      background-color: var(--text-color);
       animation: expandBackward 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     }
   }

@@ -46,7 +46,7 @@ export class DBManager {
    */
   private initTables(): void {
     try {
-      // 删除旧表（如果存在）
+      // // 删除旧表（如果存在）
       // this.db.exec(`
       //     DROP TABLE IF EXISTS clipboard_history;
       //     DROP TABLE IF EXISTS app_logs;
@@ -64,7 +64,8 @@ export class DBManager {
                     content TEXT NOT NULL,
                     meta TEXT,
                     last_file_name_text TEXT,
-                    isSticky TEXT
+                    isSticky TEXT,
+                    clipboard_types TEXT
                 )
             `)
 
@@ -117,9 +118,10 @@ export class DBManager {
                     content,
                     meta,
                     last_file_name_text,
-                    isSticky
+                    isSticky,
+                    clipboard_types
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             `)
 
       const result = stmt.run(
@@ -129,7 +131,8 @@ export class DBManager {
         data.content,
         JSON.stringify(data.meta),
         data.last_file_name_text,
-        data.isSticky
+        data.isSticky,
+        data.clipboardTypes.join(',')
       )
 
       return result.lastInsertRowid as number
@@ -155,7 +158,8 @@ export class DBManager {
                     content,
                     meta,
                     last_file_name_text,
-                    isSticky
+                    isSticky,
+                    clipboard_types as clipboardTypes
                 FROM clipboard_history
                 ORDER BY timestamp DESC
                 LIMIT ?
@@ -169,12 +173,14 @@ export class DBManager {
         meta: string
         last_file_name_text: string
         isSticky: string
+        clipboardTypes: string
       }>
 
       // 反转结果数组，使最早的记录在前，最新的记录在后
       return results.reverse().map((row) => ({
         ...row,
-        meta: JSON.parse(row.meta || '{}')
+        meta: JSON.parse(row.meta || '{}'),
+        clipboardTypes: row.clipboardTypes.split(',')
       })) as ClipboardState[]
     } catch (error) {
       Logger.error('DBManager', 'getClipboardHistory failed', error)
@@ -198,7 +204,8 @@ export class DBManager {
                     content = ?,
                     meta = ?,
                     last_file_name_text = ?,
-                    isSticky = ?
+                    isSticky = ?,
+                    clipboard_types = ?
                 WHERE id = ?
             `)
 
@@ -210,6 +217,7 @@ export class DBManager {
         JSON.stringify(data.meta),
         data.last_file_name_text,
         data.isSticky,
+        data.clipboardTypes.join(','),
         data.id
       )
 
