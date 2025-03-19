@@ -78,8 +78,6 @@ watch(
   { deep: true }
 )
 
-
-
 // 首次显示动画
 const enableFirstShowTransition = firstShowTransitionMotion
 
@@ -130,30 +128,30 @@ const saveSettings = (): void => {
  */
 const initShadowDOM = () => {
   if (htmlContentRef.value) {
-    let shadow: ShadowRoot;
+    let shadow: ShadowRoot
 
     // 检查是否已经有Shadow DOM
     if (htmlContentRef.value.shadowRoot) {
       // 如果已经有Shadow DOM，直接使用它
-      shadow = htmlContentRef.value.shadowRoot;
+      shadow = htmlContentRef.value.shadowRoot
 
       // 清除现有内容
       while (shadow.firstChild) {
-        shadow.removeChild(shadow.firstChild);
+        shadow.removeChild(shadow.firstChild)
       }
     } else {
       // 如果没有Shadow DOM，创建一个新的
       // 清除之前的内容
       while (htmlContentRef.value.firstChild) {
-        htmlContentRef.value.removeChild(htmlContentRef.value.firstChild);
+        htmlContentRef.value.removeChild(htmlContentRef.value.firstChild)
       }
 
       // 创建Shadow DOM
-      shadow = htmlContentRef.value.attachShadow({ mode: 'open' });
+      shadow = htmlContentRef.value.attachShadow({ mode: 'open' })
     }
 
     // 添加样式
-    const style = document.createElement('style');
+    const style = document.createElement('style')
     style.textContent = `
       :host {
         display: block;
@@ -188,16 +186,16 @@ const initShadowDOM = () => {
         word-wrap: break-word;
         zoom: ${textStyleZoomValue.value};
       }
-    `;
+    `
 
     // 创建内容容器
-    const content = document.createElement('div');
-    content.className = 'html-content';
-    content.innerHTML = htmlTextExample.content;
+    const content = document.createElement('div')
+    content.className = 'html-content'
+    content.innerHTML = htmlTextExample.content
 
     // 添加到Shadow DOM
-    shadow.appendChild(style);
-    shadow.appendChild(content);
+    shadow.appendChild(style)
+    shadow.appendChild(content)
   }
 }
 
@@ -302,8 +300,12 @@ onMounted(() => {
       <div class="setting-item zoom-section">
         <div class="setting-title">文本样式缩放</div>
         <div class="zoom-buttons">
-          <button v-for="zoom in zoomPresets" :key="zoom" :class="['zoom-button', { active: textStyleZoomValue === zoom }]"
-            @click="textStyleZoomValue = zoom">
+          <button
+            v-for="zoom in zoomPresets"
+            :key="zoom"
+            :class="['zoom-button', { active: textStyleZoomValue === zoom }]"
+            @click="textStyleZoomValue = zoom"
+          >
             {{ zoom === 1 ? '100%' : zoom * 100 + '%' }}
           </button>
         </div>
@@ -313,8 +315,12 @@ onMounted(() => {
       <div class="setting-item zoom-section">
         <div class="setting-title">RTF文本缩放</div>
         <div class="zoom-buttons">
-          <button v-for="zoom in zoomPresets" :key="zoom" :class="['zoom-button', { active: rtfTextZoomValue === zoom }]"
-            @click="rtfTextZoomValue = zoom">
+          <button
+            v-for="zoom in zoomPresets"
+            :key="zoom"
+            :class="['zoom-button', { active: rtfTextZoomValue === zoom }]"
+            @click="rtfTextZoomValue = zoom"
+          >
             {{ zoom === 1 ? '100%' : zoom * 100 + '%' }}
           </button>
         </div>
@@ -327,23 +333,41 @@ onMounted(() => {
         </div>
 
         <div class="text-limit-presets">
-          <button v-for="limit in textLimitPresets" :key="limit"
-            :class="['text-limit-button', { active: longTextLimitValue === limit }]" @click="selectTextLimitPreset(limit)">
+          <button
+            v-for="limit in textLimitPresets"
+            :key="limit"
+            :class="['text-limit-button', { active: longTextLimitValue === limit }]"
+            @click="selectTextLimitPreset(limit)"
+          >
             {{ limit }}
           </button>
 
           <div class="custom-input-container">
-            <input v-model="customValue" type="number" min="100" placeholder="自定义" class="custom-input"
-              @keydown="handleKeyDown" />
+            <input
+              v-model="customValue"
+              type="number"
+              min="100"
+              placeholder="自定义"
+              class="custom-input"
+              @keydown="handleKeyDown"
+            />
             <button class="apply-button" @click="applyCustomTextLimit">应用</button>
           </div>
         </div>
       </div>
     </div>
 
-    <VAlert type="warning" title="RTF格式说明" message="RTF格式通常来自Word、Excel等Office应用程序的复制内容。调整RTF缩放可以优化此类富文本的显示效果，使其更易于阅读。" />
+    <VAlert
+      type="warning"
+      title="RTF格式说明"
+      message="RTF格式通常来自Word、Excel等Office应用程序的复制内容。调整RTF缩放可以优化此类富文本的显示效果，使其更易于阅读。"
+    />
 
-    <VAlert type="info" title="提示" message="启用文本样式后，从Word、网页等应用复制的文本将保留原始格式。禁用后，所有文本将以纯文本形式显示。" />
+    <VAlert
+      type="info"
+      title="提示"
+      message="启用文本样式后，从Word、网页等应用复制的文本将保留原始格式。禁用后，所有文本将以纯文本形式显示。"
+    />
   </div>
 </template>
 
