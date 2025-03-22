@@ -1,0 +1,85 @@
+{
+  "appName": "SClip",
+  "common": {
+    "apply": "应用",
+    "cancel": "取消",
+    "confirm": "确认",
+    "save": "保存",
+    "edit": "编辑",
+    "delete": "删除",
+    "back": "返回",
+    "settings": "设置"
+  },
+  "setting": {
+    "language": {
+      "title": "语言设置",
+      "subtitle": "选择您偏好的应用界面语言",
+      "selectLanguage": "选择语言",
+      "applyButton": "应用"
+    },
+    "theme": {
+      "title": "外观设置",
+      "subtitle": "自定义应用的外观和主题",
+      "themeMode": "主题模式",
+      "dark": "深色",
+      "light": "浅色",
+      "system": "跟随系统",
+      "accentColor": "强调色",
+      "customAccentColor": "自定义强调色"
+    },
+    "keyboard": {
+      "title": "快捷键设置",
+      "subtitle": "设置应用的键盘快捷方式",
+      "appVisibleShortcut": "显示/隐藏主窗口",
+      "resetToDefault": "重置为默认值"
+    },
+    "sclip": {
+      "title": "SClip设置",
+      "subtitle": "自定义SClip的行为和外观",
+      "jumpToFirstPage": "显示主窗口时回到首页",
+      "historyLimit": "历史记录数量限制",
+      "fixedWindow": "固定窗口",
+      "showTypeIndicator": "显示类型标识",
+      "showLongContentTip": "显示长内容提示",
+      "textStyle": "文本样式",
+      "enableTextStyle": "启用文本样式",
+      "textStyleZoom": "文本样式缩放",
+      "rtfTextZoom": "富文本缩放",
+      "longTextLimit": "长文本字符限制"
+    },
+    "log": {
+      "title": "日志查看",
+      "subtitle": "查看应用运行日志",
+      "clear": "清除日志",
+      "refresh": "刷新",
+      "copy": "复制日志"
+    },
+    "fun": {
+      "title": "趣味设置",
+      "subtitle": "一些有趣的小功能",
+      "enable": "启用"
+    },
+    "about": {
+      "title": "关于",
+      "subtitle": "关于SClip应用",
+      "version": "版本",
+      "checkUpdate": "检查更新",
+      "copyright": "版权所有",
+      "license": "许可证"
+    },
+    "menu": {
+      "general": "系统设置",
+      "appearance": "外观设置",
+      "language": "语言设置",
+      "keyboard": "快捷键设置",
+      "sclip": "SClip设置",
+      "log": "日志查看",
+      "fun": "趣味设置",
+      "about": "关于"
+    }
+  },
+  "quote": {
+    "content": "千里之行，始于足下。",
+    "author": "老子"
+  }
+}

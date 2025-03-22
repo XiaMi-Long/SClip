@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useConfigStore } from '../../../store/useConfigStore'
+import { useI18nStore } from '../../../store/useI18nStore'
 
 /**
  * 主题设置组件
@@ -74,7 +75,6 @@ const solidColors: ColorOption[] = [
   { id: 'color16', type: 'solid', value: '#085f63' }
 ]
 
-
 const checkIconMotion = {
   initial: { opacity: 0, scale: 0.6 },
   enter: {
@@ -87,6 +87,9 @@ const checkIconMotion = {
   }
 }
 
+// 获取 i18n store
+const i18nStore = useI18nStore()
+
 // 当前选中的主题和强调色
 const selectedTheme = ref(useConfigStore().getSetting.applicationTheme)
 const selectedApplicationPrimaryColor = ref(useConfigStore().getSetting.applicationPrimaryColor)
@@ -97,7 +100,7 @@ const allColorOptions = computed(() => {
   const allColors = [...solidColors]
 
   // 找到当前选中的颜色
-  const selectedColorIndex = allColors.findIndex(color => {
+  const selectedColorIndex = allColors.findIndex((color) => {
     if (color.type === 'solid') {
       return color.value === selectedApplicationPrimaryColor.value
     }
@@ -139,7 +142,6 @@ const selectColor = (color: ColorOption): void => {
     selectedApplicationPrimaryColor.value = color.value
     useConfigStore().setApplicationPrimaryColor(color.value)
   }
-
 }
 
 /**
@@ -155,6 +157,17 @@ const isColorSelected = (color: ColorOption): boolean => {
   }
   return false
 }
+
+/**
+ * 处理颜色输入变化
+ * @param {Event} e - 输入事件
+ */
+const handleColorInput = (e: Event): void => {
+  const target = e.target as HTMLInputElement
+  if (target && target.value) {
+    selectColor({ id: 'custom', type: 'solid', value: target.value })
+  }
+}
 </script>
 
 <template>
@@ -168,8 +181,13 @@ const isColorSelected = (color: ColorOption): boolean => {
     <div class="theme-section">
       <div class="theme-options">
         <!-- 主题卡片 - 使用v-for循环渲染不同主题选项 -->
-        <div v-for="theme in themes" :key="theme.id" class="theme-card" :class="{ active: selectedTheme === theme.id }"
-          @click="selectTheme(theme.id)">
+        <div
+          v-for="theme in themes"
+          :key="theme.id"
+          class="theme-card"
+          :class="{ active: selectedTheme === theme.id }"
+          @click="selectTheme(theme.id)"
+        >
           <!-- 主题预览窗口 -->
           <div class="theme-preview" :class="theme.id">
             <!-- 仿Mac窗口控制按钮 -->
@@ -194,7 +212,11 @@ const isColorSelected = (color: ColorOption): boolean => {
 
           <!-- 主题信息和选择状态 -->
           <div class="theme-info">
-            <div v-if="selectedTheme === theme.id" v-motion="checkIconMotion" class="check-icon-wrapper">
+            <div
+              v-if="selectedTheme === theme.id"
+              v-motion="checkIconMotion"
+              class="check-icon-wrapper"
+            >
               <div class="check-icon">✓</div>
             </div>
             <div class="theme-text" :class="{ active: selectedTheme === theme.id }">
@@ -219,14 +241,34 @@ const isColorSelected = (color: ColorOption): boolean => {
       <div class="color-options-container">
         <transition-group name="color-move" tag="div" class="color-options-wrapper">
           <template v-for="(color, index) in allColorOptions" :key="color.id">
-            <div class="color-card" :class="{ active: isColorSelected(color) }" @click="selectColor(color)">
-              <div class="color-preview" :style="{ background: color.value }">
-              </div>
+            <div
+              class="color-card"
+              :class="{ active: isColorSelected(color) }"
+              @click="selectColor(color)"
+            >
+              <div class="color-preview" :style="{ background: color.value }"></div>
             </div>
             <!-- <div v-if="(index + 1) % 8 === 0 && index !== allColorOptions.length - 1" class="color-divider"
               :key="`divider-${index}`"></div> -->
           </template>
         </transition-group>
+      </div>
+
+      <div class="custom-color-section">
+        <h3>{{ i18nStore.t('setting.theme.customAccentColor') }}</h3>
+        <div class="color-picker-container">
+          <input
+            type="color"
+            class="color-input"
+            :value="selectedApplicationPrimaryColor"
+            @input="handleColorInput"
+          />
+          <div
+            class="color-preview-large"
+            :style="{ background: selectedApplicationPrimaryColor }"
+          ></div>
+          <div class="color-value">{{ selectedApplicationPrimaryColor }}</div>
+        </div>
       </div>
     </div>
   </div>
@@ -484,7 +526,7 @@ $text-font-size: 14px;
 
 .color-options-wrapper {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(46px, 1fr));
   gap: 16px;
   width: 100%;
 }
@@ -508,19 +550,15 @@ $text-font-size: 14px;
   border: 2px solid transparent;
   transition: all 0.3s ease;
   cursor: pointer;
-  background-color: var(--title-bar-bg);
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  }
-
-  &.active {
-    border-color: var(--button-primary-bg, #4285f4);
+    transform: translateY(5px);
   }
 
   .color-preview {
-    height: 100px;
+    width: 46px;
+    height: 46px;
+    border-radius: 23px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -611,6 +649,62 @@ $text-font-size: 14px;
       transform: translateX(22px);
     }
   }
+}
+
+// 自定义颜色选择器样式
+.custom-color-section {
+  margin-bottom: 40px;
+
+  h3 {
+    font-size: $section-title-font-size;
+    font-weight: 500;
+    margin-bottom: 15px;
+  }
+}
+
+.color-picker-container {
+  display: flex;
+  align-items: center;
+  background-color: var(--container-bg);
+  padding: 15px;
+  border-radius: 12px;
+  border: 1px solid rgba(128, 128, 128, 0.1);
+}
+
+.color-input {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: transparent;
+  margin-right: 15px;
+
+  &::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+
+  &::-webkit-color-swatch {
+    border: none;
+    border-radius: 6px;
+  }
+}
+
+.color-preview-large {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  margin-right: 15px;
+}
+
+.color-value {
+  font-family: monospace;
+  font-size: 14px;
+  background-color: rgba(128, 128, 128, 0.1);
+  padding: 5px 10px;
+  border-radius: 6px;
+  text-transform: uppercase;
 }
 
 // 响应式调整

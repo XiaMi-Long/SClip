@@ -208,6 +208,16 @@ export const useConfigStore = defineStore('config', {
     },
 
     /**
+     * 设置应用语言
+     * @param {string} language 应用语言，可选值为 'zh-CN' 或 'en-US'
+     * @description 设置应用语言，并更新应用配置
+     */
+    setAppLanguage(language: 'zh-CN' | 'en-US') {
+      this.setting.appLanguage = language
+      sendToMain.updateConfigSetting(toRaw(this.setting), this.windowId)
+    },
+
+    /**
      * 设置窗口ID
      * @param {string} windowId 窗口唯一标识ID
      * @description 设置当前窗口的唯一标识ID，用于多窗口场景下的窗口识别与管理

@@ -127,6 +127,11 @@ declare global {
        * 应用版本
        */
       version: string
+
+      /**
+       * 更新日志
+       */
+      updateLog: string[]
     }
 
     /**

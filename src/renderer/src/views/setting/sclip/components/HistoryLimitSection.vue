@@ -352,7 +352,8 @@ $accent-color: var(--button-primary-bg);
         transition: all $transition-default;
 
         &:hover {
-          background-color: var(--title-bar-bg);
+          background-color: var(--button-primary-bg);
+          opacity: 0.7;
         }
 
         &.active {

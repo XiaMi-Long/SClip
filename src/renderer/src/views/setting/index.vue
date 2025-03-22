@@ -5,11 +5,15 @@
  */
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useI18nStore } from '../../store/useI18nStore'
+
+// 获取i18n store
+const i18nStore = useI18nStore()
 
 // 子菜单项类型
 interface SubmenuItem {
   id: string
-  label: string
+  labelKey: string
   name: string
 }
 
@@ -17,7 +21,7 @@ interface SubmenuItem {
 interface MenuItem {
   id: string
   icon: string
-  label: string
+  labelKey: string
   children?: SubmenuItem[]
 }
 
@@ -26,15 +30,15 @@ const menuItems: MenuItem[] = [
   {
     id: 'general',
     icon: '&#9881;',
-    label: '系统设置',
+    labelKey: 'setting.menu.general',
     children: [
-      { id: 'Theme', label: '外观设置', name: 'Theme' },
-      { id: 'Language', label: '语言设置', name: 'Language' },
-      { id: 'Keyboard', label: '快捷键设置', name: 'Keyboard' },
-      { id: 'Sclip', label: 'SClip设置', name: 'Sclip' },
-      { id: 'Log', label: '日志查看', name: 'Log' },
-      { id: 'Fun', label: '趣味设置', name: 'Fun' },
-      { id: 'About', label: '关于', name: 'About' }
+      { id: 'Theme', labelKey: 'setting.menu.appearance', name: 'Theme' },
+      { id: 'Language', labelKey: 'setting.menu.language', name: 'Language' },
+      { id: 'Keyboard', labelKey: 'setting.menu.keyboard', name: 'Keyboard' },
+      { id: 'Sclip', labelKey: 'setting.menu.sclip', name: 'Sclip' },
+      { id: 'Log', labelKey: 'setting.menu.log', name: 'Log' },
+      { id: 'Fun', labelKey: 'setting.menu.fun', name: 'Fun' },
+      { id: 'About', labelKey: 'setting.menu.about', name: 'About' }
     ]
   }
 ]
@@ -93,21 +97,33 @@ updateSelectedFromRoute()
   <div class="settings-container">
     <!-- 左侧设置菜单 -->
     <div class="settings-sidebar">
-      <div class="settings-title">设置</div>
+      <div class="settings-title">{{ i18nStore.t('common.settings') }}</div>
 
       <div class="menu-container">
         <!-- 主菜单 -->
         <div v-for="item in menuItems" :key="item.id" class="menu-group">
-          <div class="menu-item" :class="{ active: selectedMenu === item.id }" @click="selectMenu(item.id)">
+          <div
+            class="menu-item"
+            :class="{ active: selectedMenu === item.id }"
+            @click="selectMenu(item.id)"
+          >
             <span class="menu-icon" v-html="item.icon"></span>
-            <span class="menu-label">{{ item.label }}</span>
+            <span class="menu-label">{{ i18nStore.t(item.labelKey) }}</span>
           </div>
 
           <!-- 子菜单 -->
-          <div v-if="item.id === selectedMenu && item.children && item.children.length" class="submenu">
-            <div v-for="subItem in item.children" :key="subItem.id" class="submenu-item"
-              :class="{ active: selectedSubmenu === subItem.id }" @click.stop="selectMenu(item.id, subItem.id, subItem.name)">
-              {{ subItem.label }}
+          <div
+            v-if="item.id === selectedMenu && item.children && item.children.length"
+            class="submenu"
+          >
+            <div
+              v-for="subItem in item.children"
+              :key="subItem.id"
+              class="submenu-item"
+              :class="{ active: selectedSubmenu === subItem.id }"
+              @click.stop="selectMenu(item.id, subItem.id, subItem.name)"
+            >
+              {{ i18nStore.t(subItem.labelKey) }}
             </div>
           </div>
         </div>

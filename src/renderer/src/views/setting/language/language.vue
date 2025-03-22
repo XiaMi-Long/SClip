@@ -4,6 +4,12 @@
  * 包含语言选择和预览区域
  */
 import { ref, computed } from 'vue'
+import { useI18nStore } from '../../../store/useI18nStore'
+import { useConfigStore } from '../../../store/useConfigStore'
+
+// 获取 i18n store
+const i18nStore = useI18nStore()
+const configStore = useConfigStore()
 
 // 语言类型
 interface Language {
@@ -11,13 +17,6 @@ interface Language {
   name: string
   code: string
   flagEmoji: string
-}
-
-// 名言名句数据
-interface Quote {
-  cn: string
-  en: string
-  author: string
 }
 
 // 语言选项
@@ -36,19 +35,17 @@ const languages: Language[] = [
   }
 ]
 
-// 示例名言
-const quote: Quote = {
-  cn: '千里之行，始于足下。',
-  en: 'A journey of a thousand miles begins with a single step.',
-  author: '老子'
-}
-
 // 当前选中的语言
-const selectedLanguage = ref('cn')
+const selectedLanguage = ref(configStore.setting.appLanguage === 'zh-CN' ? 'cn' : 'en')
 
 // 根据选择的语言获取当前显示的名言
 const currentQuote = computed(() => {
-  return selectedLanguage.value === 'cn' ? quote.cn : quote.en
+  return i18nStore.t('quote.content')
+})
+
+// 获取当前显示的作者
+const currentAuthor = computed(() => {
+  return i18nStore.t('quote.author')
 })
 
 /**
@@ -63,33 +60,38 @@ const selectLanguage = (langId: string): void => {
  * 应用语言设置
  */
 const applyLanguageSetting = (): void => {
-  console.log('应用语言设置:', selectedLanguage.value)
-  // 这里实际应用中需要调用相关API更新应用语言
+  const langCode = selectedLanguage.value === 'cn' ? 'zh-CN' : 'en-US'
+  configStore.setAppLanguage(langCode)
 }
 </script>
 
 <template>
   <div class="language-settings">
     <div class="settings-header">
-      <h2>语言设置</h2>
-      <p class="subtitle">选择您偏好的应用界面语言</p>
+      <h2>{{ i18nStore.t('setting.language.title') }}</h2>
+      <p class="subtitle">{{ i18nStore.t('setting.language.subtitle') }}</p>
     </div>
 
     <!-- 名言预览区域 -->
     <div class="quote-preview">
       <div class="quote-content">
         <p>"{{ currentQuote }}"</p>
-        <div class="quote-author">— {{ quote.author }}</div>
+        <div class="quote-author">— {{ currentAuthor }}</div>
       </div>
     </div>
 
     <!-- 语言选择区域 -->
     <div class="language-section">
-      <h3>选择语言</h3>
+      <h3>{{ i18nStore.t('setting.language.selectLanguage') }}</h3>
       <div class="language-options">
         <!-- 语言卡片 -->
-        <div v-for="language in languages" :key="language.id" class="language-card"
-          :class="{ active: selectedLanguage === language.id }" @click="selectLanguage(language.id)">
+        <div
+          v-for="language in languages"
+          :key="language.id"
+          class="language-card"
+          :class="{ active: selectedLanguage === language.id }"
+          @click="selectLanguage(language.id)"
+        >
           <div class="language-flag">{{ language.flagEmoji }}</div>
           <div class="language-info">
             <div class="language-name">{{ language.name }}</div>
@@ -102,7 +104,9 @@ const applyLanguageSetting = (): void => {
 
     <!-- 底部应用按钮 -->
     <div class="apply-section">
-      <button class="apply-button" @click="applyLanguageSetting">应用</button>
+      <button class="apply-button" @click="applyLanguageSetting">
+        {{ i18nStore.t('setting.language.applyButton') }}
+      </button>
     </div>
   </div>
 </template>

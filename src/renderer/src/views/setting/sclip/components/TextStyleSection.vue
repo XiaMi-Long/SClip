@@ -558,7 +558,8 @@ $transition-default: 0.5s ease;
       }
 
       &:hover {
-        background-color: rgba(var(--rgb-text-color, 0, 0, 0), 0.1);
+        background-color: var(--button-primary-bg);
+        opacity: 0.7;
       }
 
       &.active {
@@ -586,7 +587,8 @@ $transition-default: 0.5s ease;
         border: none;
 
         &:hover {
-          background-color: rgba(var(--rgb-text-color, 0, 0, 0), 0.1);
+          background-color: var(--button-primary-bg);
+          opacity: 0.7;
         }
 
         &.active {

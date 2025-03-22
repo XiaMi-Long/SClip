@@ -53,7 +53,8 @@ export class ConfigManager {
         isWindows: process.platform === 'win32',
         isLinux: process.platform === 'linux',
         appName: 'SClip',
-        version: app.getVersion()
+        version: app.getVersion(),
+        updateLog: ['#V1.0.0#发布1.0.0版本']
       }
     }
 

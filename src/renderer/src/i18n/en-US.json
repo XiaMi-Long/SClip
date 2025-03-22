@@ -1,0 +1,85 @@
+{
+  "appName": "SClip",
+  "common": {
+    "apply": "Apply",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "back": "Back",
+    "settings": "Settings"
+  },
+  "setting": {
+    "language": {
+      "title": "Language Settings",
+      "subtitle": "Choose your preferred interface language",
+      "selectLanguage": "Select Language",
+      "applyButton": "Apply"
+    },
+    "theme": {
+      "title": "Appearance",
+      "subtitle": "Customize the app's appearance and theme",
+      "themeMode": "Theme Mode",
+      "dark": "Dark",
+      "light": "Light",
+      "system": "System",
+      "accentColor": "Accent Color",
+      "customAccentColor": "Custom Accent Color"
+    },
+    "keyboard": {
+      "title": "Keyboard Shortcuts",
+      "subtitle": "Configure keyboard shortcuts for the application",
+      "appVisibleShortcut": "Show/Hide Main Window",
+      "resetToDefault": "Reset to Default"
+    },
+    "sclip": {
+      "title": "SClip Settings",
+      "subtitle": "Customize SClip's behavior and appearance",
+      "jumpToFirstPage": "Return to first page when showing main window",
+      "historyLimit": "History Limit",
+      "fixedWindow": "Fixed Window",
+      "showTypeIndicator": "Show Type Indicator",
+      "showLongContentTip": "Show Long Content Tip",
+      "textStyle": "Text Style",
+      "enableTextStyle": "Enable Text Style",
+      "textStyleZoom": "Text Style Zoom",
+      "rtfTextZoom": "Rich Text Zoom",
+      "longTextLimit": "Long Text Character Limit"
+    },
+    "log": {
+      "title": "Logs",
+      "subtitle": "View application logs",
+      "clear": "Clear Logs",
+      "refresh": "Refresh",
+      "copy": "Copy Logs"
+    },
+    "fun": {
+      "title": "Fun Features",
+      "subtitle": "Some fun little features",
+      "enable": "Enable"
+    },
+    "about": {
+      "title": "About",
+      "subtitle": "About SClip application",
+      "version": "Version",
+      "checkUpdate": "Check for Updates",
+      "copyright": "Copyright",
+      "license": "License"
+    },
+    "menu": {
+      "general": "System Settings",
+      "appearance": "Appearance",
+      "language": "Language",
+      "keyboard": "Keyboard Shortcuts",
+      "sclip": "SClip Settings",
+      "log": "Logs",
+      "fun": "Fun Features",
+      "about": "About"
+    }
+  },
+  "quote": {
+    "content": "A journey of a thousand miles begins with a single step.",
+    "author": "Lao Tzu"
+  }
+}
