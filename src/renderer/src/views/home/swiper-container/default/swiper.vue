@@ -48,7 +48,7 @@ const displayCardsIsEmptyData = computed(() => {
  */
 const listStyle = computed(() => ({
   transform: `translateX(-${state.currentPage.value * PAGE_WIDTH.value}px)`,
-  transition: 'transform 0.3s ease',
+  transition: 'transform 1s ease',
   width: `${totalPages.value * PAGE_WIDTH.value}px`
 }))
 
@@ -153,9 +153,10 @@ console.log(getters.allCards.value)
   position: relative;
   border-radius: 5px;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform 0.5s ease;
   will-change: transform;
   backface-visibility: hidden;
+  // background-color: red;
 }
 
 /* 空数据容器样式 */

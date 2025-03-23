@@ -3,7 +3,16 @@
  * @description 自定义轮播图逻辑钩子，整合状态与操作方法，并以聚合对象形式导出
  */
 
-import { ref, computed, onMounted, watch, toRaw, type Ref, type ComputedRef } from 'vue'
+import {
+  ref,
+  computed,
+  onMounted,
+  watch,
+  toRaw,
+  type Ref,
+  type ComputedRef,
+  onUnmounted
+} from 'vue'
 import { useClipboardStore } from '@renderer/store/useClipboardStore'
 import { useConfigStore } from '@renderer/store/useConfigStore'
 import { sendToMain } from '@renderer/util/ipc.renderer.service'
@@ -232,6 +241,7 @@ export function useCarousel(): UseCarouselReturn {
           }
         }
       },
+
       /** 将当前卡片内容写入系统剪贴板 */
       writeToClipboard: () => {
         const item = getters.allCards.value[getters.activeAbsoluteIndex.value]
@@ -265,9 +275,144 @@ export function useCarousel(): UseCarouselReturn {
     })
   }
 
+  // ===== 鼠标滑动处理 =====
+  /**
+   * 处理鼠标拖动事件
+   * @description 监听鼠标按下、移动和释放事件，实现左右滑动翻页功能
+   */
+  let isDragging = false
+  let startX = 0
+  const MIN_DRAG_DISTANCE = 50 // 最小拖动距离，小于这个距离不触发翻页
+
+  /**
+   * 鼠标按下事件处理
+   * @param {MouseEvent} event - 鼠标事件对象
+   */
+  const handleMouseDown = (event: MouseEvent) => {
+    isDragging = true
+    startX = event.clientX
+  }
+
+  /**
+   * 鼠标移动事件处理
+   * @param {MouseEvent} event - 鼠标事件对象
+   */
+  const handleMouseMove = (event: MouseEvent) => {
+    if (!isDragging) return
+
+    // 可以在这里添加拖动过程中的逻辑，如计算当前拖动距离
+    const currentX = event.clientX
+    // 计算当前拖动距离，可用于后续开发实时拖动效果
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const currentDelta = currentX - startX
+
+    // 防止在拖动过程中选择文本
+    event.preventDefault()
+  }
+
+  /**
+   * 鼠标释放事件处理
+   * @param {MouseEvent} event - 鼠标事件对象
+   */
+  const handleMouseUp = (event: MouseEvent) => {
+    if (!isDragging) return
+
+    const endX = event.clientX
+    const deltaX = endX - startX
+
+    // 判断是否达到触发翻页的最小距离
+    if (Math.abs(deltaX) >= MIN_DRAG_DISTANCE) {
+      if (deltaX > 0) {
+        // 向右滑动，触发上一页
+        actions.navigate.prevPage()
+      } else {
+        // 向左滑动，触发下一页
+        actions.navigate.nextPage()
+      }
+    }
+
+    isDragging = false
+  }
+
+  /**
+   * 鼠标离开元素范围处理
+   */
+  const handleMouseLeave = () => {
+    isDragging = false
+  }
+
+  // ===== 滚轮滑动处理 =====
+  /**
+   * 滚轮事件处理
+   * @param {WheelEvent} event - 滚轮事件对象
+   */
+  let wheelTimeout: number | null = null
+  const WHEEL_DEBOUNCE_TIME = 200 // 滚轮事件防抖时间（毫秒）
+
+  const handleWheel = (event: WheelEvent) => {
+    // 防止事件冒泡和默认行为
+    event.preventDefault()
+
+    // 如果已经有一个定时器在运行，则不处理新的滚轮事件
+    if (wheelTimeout !== null) return
+
+    // 判断滚动方向
+    if (event.deltaY > 0) {
+      // 向下滚动，触发下一页
+      actions.navigate.nextPage()
+    } else if (event.deltaY < 0) {
+      // 向上滚动，触发上一页
+      actions.navigate.prevPage()
+    }
+
+    // 设置防抖定时器
+    wheelTimeout = window.setTimeout(() => {
+      wheelTimeout = null
+    }, WHEEL_DEBOUNCE_TIME)
+  }
+
   // ===== 生命周期 =====
   onMounted(() => {
+    // 键盘事件监听
     window.addEventListener('keydown', handleKeyPress)
+
+    // 获取轮播容器元素
+    const carouselEl = document.querySelector('.all-cards') as HTMLElement
+    if (carouselEl) {
+      // 添加鼠标拖动事件监听
+      carouselEl.addEventListener('mousedown', handleMouseDown)
+      carouselEl.addEventListener('mousemove', handleMouseMove)
+      carouselEl.addEventListener('mouseup', handleMouseUp)
+      carouselEl.addEventListener('mouseleave', handleMouseLeave)
+
+      // 添加滚轮事件监听
+      carouselEl.addEventListener('wheel', handleWheel, { passive: false })
+    }
+  })
+
+  // 组件卸载时移除事件监听
+  onUnmounted(() => {
+    // 移除键盘事件监听
+    window.removeEventListener('keydown', handleKeyPress)
+
+    // 获取轮播容器元素
+    const carouselEl = document.querySelector('.all-cards') as HTMLElement
+    if (carouselEl) {
+      // 移除鼠标拖动事件监听
+      carouselEl.removeEventListener('mousedown', handleMouseDown)
+      carouselEl.removeEventListener('mousemove', handleMouseMove)
+      carouselEl.removeEventListener('mouseup', handleMouseUp)
+      carouselEl.removeEventListener('mouseleave', handleMouseLeave)
+
+      // 移除滚轮事件监听
+      carouselEl.removeEventListener('wheel', handleWheel)
+    }
+
+    // 清除可能存在的定时器
+    if (wheelTimeout !== null) {
+      clearTimeout(wheelTimeout)
+      wheelTimeout = null
+    }
   })
 
   return {

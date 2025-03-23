@@ -13,7 +13,9 @@ const isMainWindow = computed(() => configStore.getWindowId === 'main')
 // 是否固定窗口
 const isAffix = computed(() => configStore.getSetting.appBehavior.isFixedWindow)
 // 是否使用 Mac 风格状态栏（Windows 系统下）
-const useMacStyleOnWindows = computed(() => !isMac.value && configStore.getSetting.forceMacStatusBar)
+const useMacStyleOnWindows = computed(
+  () => !isMac.value && configStore.getSetting.forceMacStatusBar
+)
 // 是否显示 Mac 风格控制按钮
 const showMacControls = computed(() => isMac.value || useMacStyleOnWindows.value)
 // 是否显示 Windows 风格控制按钮
@@ -32,7 +34,10 @@ const handleAffix = () => configStore.setIsFixedWindow(!isAffix.value)
 </script>
 
 <template>
-  <div class="title-bar" :class="{ 'title-bar-mac': showMacControls, 'title-bar-win': !showMacControls }">
+  <div
+    class="title-bar"
+    :class="{ 'title-bar-mac': showMacControls, 'title-bar-win': !showMacControls }"
+  >
     <!-- Mac 风格控制按钮 (原生 Mac) -->
     <div v-if="isMac" class="mac-traffic-lights">
       <button class="mac-traffic-light mac-close" @click="handleClose"></button>
@@ -43,23 +48,36 @@ const handleAffix = () => configStore.setIsFixedWindow(!isAffix.value)
     <div v-if="useMacStyleOnWindows" class="win-mac-traffic-lights">
       <button class="win-mac-traffic-light win-mac-close" @click="handleClose"></button>
       <button class="win-mac-traffic-light win-mac-minimize" @click="handleMinimize"></button>
-      <button class="win-mac-traffic-light win-mac-maximize" :class="{ 'win-mac-disabled': isMainWindow }"
-        @click="handleMaximize"></button>
+      <button
+        class="win-mac-traffic-light win-mac-maximize"
+        :class="{ 'win-mac-disabled': isMainWindow }"
+        @click="handleMaximize"
+      ></button>
     </div>
 
     <!-- 工具区域 -->
-    <div class="tools-area" :class="{ 'mac-tools-area': showMacControls, 'win-tools-area': !showMacControls }">
+    <div
+      class="tools-area"
+      :class="{ 'mac-tools-area': showMacControls, 'win-tools-area': !showMacControls }"
+    >
       <!-- 固定按钮 -->
-      <button class="tool-button tool-button-affix" :class="[
-        isMainWindow ? 'setting-button-show' : 'setting-button-hidden',
-        isAffix ? 'affix-button-true' : 'affix-button-false'
-      ]" @click="handleAffix">
+      <button
+        class="tool-button tool-button-affix"
+        :class="[
+          isMainWindow ? 'setting-button-show' : 'setting-button-hidden',
+          isAffix ? 'affix-button-true' : 'affix-button-false'
+        ]"
+        @click="handleAffix"
+      >
         <img :src="affixImage" alt="固定" class="tool-icon affix-icon" />
       </button>
 
       <!-- 设置按钮 -->
-      <button class="tool-button tool-button-setting" :class="[isMainWindow ? 'setting-button-show' : 'setting-button-hidden']"
-        @click="handleSetting">
+      <button
+        class="tool-button tool-button-setting"
+        :class="[isMainWindow ? 'setting-button-show' : 'setting-button-hidden']"
+        @click="handleSetting"
+      >
         <img :src="settingImage" alt="设置" class="tool-icon setting-icon" />
       </button>
     </div>
@@ -75,14 +93,16 @@ const handleAffix = () => configStore.setIsFixedWindow(!isAffix.value)
         <svg width="8" height="8" viewBox="0 0 1024 1024">
           <path
             d="M936.8 87.2V936H87.2V87.2h849.6m4.8-79.2H81.6C40.8 8 8 40.8 8 81.6v860c0 40.8 32.8 73.6 73.6 73.6h860c40.8 0 73.6-32.8 73.6-73.6V82.4c0.8-41.6-32-74.4-73.6-74.4z"
-            fill="#666666" />
+            fill="#666666"
+          />
         </svg>
       </button>
       <button class="win-control-button win-close" @click="handleClose">
         <svg width="8" height="8" viewBox="0 0 11 11">
           <path
             d="M6.279 5.5L11 10.221l-.779.779L5.5 6.279.779 11 0 10.221 4.721 5.5 0 .779.779 0 5.5 4.721 10.221 0 11 .779 6.279 5.5z"
-            fill="currentColor" />
+            fill="currentColor"
+          />
         </svg>
       </button>
     </div>
@@ -124,7 +144,6 @@ $border-radius: 6px;
 // 主容器样式
 .title-bar {
   height: var(--title-bar-height);
-  backdrop-filter: blur(8px);
   @include flex-center;
   -webkit-app-region: drag;
   user-select: none;
@@ -347,7 +366,8 @@ $border-radius: 6px;
 
 // 设置按钮显示/隐藏
 .setting-button {
-  &-show {}
+  &-show {
+  }
 
   &-hidden {
     display: none;
@@ -362,7 +382,8 @@ $border-radius: 6px;
   }
 }
 
-.affix-button-false {}
+.affix-button-false {
+}
 
 // 工具区域反转
 .win-tools-area {

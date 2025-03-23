@@ -66,7 +66,6 @@ console.warn(props.clipboardOptions)
   height: 95%;
   width: 95%;
   background-color: var(--title-bar-bg);
-  backdrop-filter: blur(10px);
   border-radius: 5px;
   padding: 10px;
   box-sizing: border-box;

@@ -121,9 +121,6 @@ const getBarClass = (index: number) => ({
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     z-index: -1; /* 确保在分页指示器下方 */
     background: var(--container-bg);
-
-    -webkit-backdrop-filter: blur(50px);
-    backdrop-filter: blur(50px);
   }
 }
 
