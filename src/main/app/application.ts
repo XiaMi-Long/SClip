@@ -399,7 +399,7 @@ export class ApplicationRegister {
               mainWindow.show()
               mainWindow.maximizable = false
               mainWindow.resizable = false
-              mainWindow.setAlwaysOnTop(setting.appBehavior.isFixedWindow)
+              mainWindow.setAlwaysOnTop(setting.appBehavior.isFixedWindow, 'floating')
 
               MainIPCService.sendToRenderer.setClipboardToRenderer(clipboardHistory)
               MainIPCService.sendToRenderer.setSettingWindow(setting, 'main')
@@ -483,12 +483,14 @@ export class ApplicationRegister {
           keyMap = setting.shortcut.appVisibleShortcut.windows
         }
 
-        GlobalShortcut.registerShortcut(keyMap, async () => {
+        GlobalShortcut.registerShortcut(keyMap, () => {
           const window = BrowserWindowManager.getBrowserWindow('main')
           if (window) {
             if (window.isVisible()) {
               window.hide()
             } else {
+              const point = screen.getCursorScreenPoint()
+              window.setPosition(point.x, point.y + 20)
               window.show()
             }
           }

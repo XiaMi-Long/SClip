@@ -9,8 +9,6 @@ import { ConfigManager } from '../config/app.config'
 import { BrowserWindowManager } from '../window/window.manager'
 import robot from 'robotjs'
 import { ApplicationRegister } from '../app/application'
-import { WindowActivationService } from './window.activation.service'
-
 /**
  * 主进程IPC通信服务类
  */
@@ -35,7 +33,7 @@ export class MainIPCService {
     /**
      * 监听渲染进程通信-渲染进程通知主进程准备复制剪贴板的内容到用户输入区域
      */
-    ipcMain.on('clipboard:write-clipboard', async (event, clipboardState: ClipboardState) => {
+    ipcMain.on('clipboard:write-clipboard', (event, clipboardState: ClipboardState) => {
       Logger.info('Application', `主进程通信-获取到渲染进程剪贴板记录`)
       const window = BrowserWindow.getAllWindows()[0]
       if (!window) return
@@ -67,10 +65,11 @@ export class MainIPCService {
         // 根据窗口是否固定决定是否隐藏
         if (!window.isAlwaysOnTop()) {
           window.minimize()
+          // window.blur()
         }
         // 延迟执行粘贴操作
         setTimeout(() => {
-          window.hide()
+          // window.hide()
           robot.keyTap('v', process.platform === 'darwin' ? 'command' : 'control')
         }, 200)
       } catch (error) {
