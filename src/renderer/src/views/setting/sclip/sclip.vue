@@ -77,10 +77,10 @@ const longTextLimit = ref(setting.clipboard.longTextLimit || 400) // 默认值�
 
     <!-- 文本样式设置区域 -->
     <TextStyleSection
-      v-model:enableTextStyle="enableTextStyle"
-      v-model:textStyleZoom="textStyleZoom"
-      v-model:rtfTextZoom="rtfTextZoom"
-      v-model:longTextLimit="longTextLimit"
+      v-model:enable-text-style="enableTextStyle"
+      v-model:text-style-zoom="textStyleZoom"
+      v-model:rtf-text-zoom="rtfTextZoom"
+      v-model:long-text-limit="longTextLimit"
     />
 
     <!-- 分隔线 -->

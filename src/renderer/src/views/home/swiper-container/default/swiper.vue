@@ -48,7 +48,7 @@ const displayCardsIsEmptyData = computed(() => {
  */
 const listStyle = computed(() => ({
   transform: `translateX(-${state.currentPage.value * PAGE_WIDTH.value}px)`,
-  transition: 'transform 1s ease',
+  transition: 'transform .3s ease',
   width: `${totalPages.value * PAGE_WIDTH.value}px`
 }))
 
@@ -105,6 +105,7 @@ console.log(getters.allCards.value)
         :key="card.id"
         :class="['card-wrapper', { active: index === getters.activeAbsoluteIndex.value }]"
         :style="{ width: PAGE_WIDTH + 'px' }"
+        :data-index="index"
       >
         <CardBadge
           :card="card"

@@ -341,6 +341,37 @@ export function useCarousel(): UseCarouselReturn {
     isDragging = false
   }
 
+  // ===== 鼠标点击和双击事件 =====
+
+  /**
+   * 处理卡片点击事件
+   * @param {MouseEvent} event - 鼠标事件对象
+   */
+  const handleCardClick = (event: MouseEvent) => {
+    if (isDragging) return
+
+    // 找到最近的 card-wrapper 元素
+    const cardElement = (event.target as HTMLElement).closest('.card-wrapper') as HTMLElement
+
+    if (!cardElement) return
+
+    const cardIndex = cardElement.dataset.index
+
+    if (cardIndex !== undefined) {
+      const index = parseInt(cardIndex, 10)
+      const cardIndexInPage = index % 3
+      // 更新卡片索引
+      state.currentCardIndex.value = cardIndexInPage
+
+      // 可以在这里添加其他操作
+      // 例如：写入剪贴板
+      actions.itemActions.writeToClipboard()
+    }
+  }
+
+  const handleDoubleClick = (event: MouseEvent) => {
+    console.log(event)
+  }
   // ===== 滚轮滑动处理 =====
   /**
    * 滚轮事件处理
@@ -385,6 +416,11 @@ export function useCarousel(): UseCarouselReturn {
       carouselEl.addEventListener('mouseup', handleMouseUp)
       carouselEl.addEventListener('mouseleave', handleMouseLeave)
 
+      // 添加鼠标点击事件监听
+      carouselEl.addEventListener('click', handleCardClick)
+      // 添加鼠标双击事件监听
+      carouselEl.addEventListener('dblclick', handleDoubleClick)
+
       // 添加滚轮事件监听
       carouselEl.addEventListener('wheel', handleWheel, { passive: false })
     }
@@ -403,6 +439,11 @@ export function useCarousel(): UseCarouselReturn {
       carouselEl.removeEventListener('mousemove', handleMouseMove)
       carouselEl.removeEventListener('mouseup', handleMouseUp)
       carouselEl.removeEventListener('mouseleave', handleMouseLeave)
+
+      // 移除鼠标点击事件监听
+      carouselEl.removeEventListener('click', handleCardClick)
+      // 移除鼠标双击事件监听
+      carouselEl.removeEventListener('dblclick', handleDoubleClick)
 
       // 移除滚轮事件监听
       carouselEl.removeEventListener('wheel', handleWheel)

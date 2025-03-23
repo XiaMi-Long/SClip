@@ -73,6 +73,7 @@ export class ApplicationRegister {
       show: false,
       frame: false,
       transparent: process.platform === 'darwin' ? true : false,
+      skipTaskbar: process.platform === 'darwin' ? true : false, // 不在任务栏显示
       titleBarStyle: 'hidden',
       trafficLightPosition: { x: 12, y: 10 },
       autoHideMenuBar: true,
@@ -146,6 +147,10 @@ export class ApplicationRegister {
      * 注册应用级别的事件
      */
     registerEvent() {
+      if (process.platform === 'darwin') {
+        app.dock.hide() // 隐藏 Dock 图标
+      }
+
       // 监听浏览器窗口创建事件
       app.on('browser-window-created', (_, window) => {
         optimizer.watchWindowShortcuts(window)
@@ -478,7 +483,7 @@ export class ApplicationRegister {
           keyMap = setting.shortcut.appVisibleShortcut.windows
         }
 
-        GlobalShortcut.registerShortcut(keyMap, () => {
+        GlobalShortcut.registerShortcut(keyMap, async () => {
           const window = BrowserWindowManager.getBrowserWindow('main')
           if (window) {
             if (window.isVisible()) {
