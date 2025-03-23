@@ -7,6 +7,7 @@ import { ref, computed, onBeforeUnmount } from 'vue'
 import VAlert from '@renderer/components/VAlert'
 import { Message } from '@renderer/components/VMessage'
 import { useConfigStore } from '@renderer/store/useConfigStore'
+import { useI18nStore } from '@renderer/store/useI18nStore'
 import { firstShowTransitionMotion } from '@renderer/util/common.fun'
 
 // 快捷键类型
@@ -30,48 +31,51 @@ const shortcut = computed(() => {
   return useConfigStore().getSetting.shortcut
 })
 
+// 获取 i18n store
+const i18nStore = useI18nStore()
+
 // 不可更改的快捷键列表
 const fixedShortcuts: Shortcut[] = [
   {
     id: 'moveUp',
-    name: '标识上移',
+    name: i18nStore.t('setting.keyboard.moveUp'),
     keys: 'W/↑',
-    description: '将选择移动到上一个项目',
+    description: i18nStore.t('setting.keyboard.moveUpDesc'),
     editable: false
   },
   {
     id: 'moveDown',
-    name: '标识下移',
+    name: i18nStore.t('setting.keyboard.moveDown'),
     keys: 'S/↓',
-    description: '将选择移动到下一个项目',
+    description: i18nStore.t('setting.keyboard.moveDownDesc'),
     editable: false
   },
   {
     id: 'nextPage',
-    name: '下一页',
+    name: i18nStore.t('setting.keyboard.nextPage'),
     keys: 'D/→',
-    description: '查看下一页内容',
+    description: i18nStore.t('setting.keyboard.nextPageDesc'),
     editable: false
   },
   {
     id: 'prevPage',
-    name: '上一页',
+    name: i18nStore.t('setting.keyboard.prevPage'),
     keys: 'A/←',
-    description: '查看上一页内容',
+    description: i18nStore.t('setting.keyboard.prevPageDesc'),
     editable: false
   },
   {
     id: 'pin',
-    name: '固定',
+    name: i18nStore.t('setting.keyboard.pin'),
     keys: 'E',
-    description: '固定当前选中项目',
+    description: i18nStore.t('setting.keyboard.pinDesc'),
     editable: false
   },
   {
     id: 'delete',
-    name: '删除',
+    name: i18nStore.t('setting.keyboard.delete'),
     keys: 'Q',
-    description: '删除当前选中项目',
+    description: i18nStore.t('setting.keyboard.deleteDesc'),
     editable: false
   }
 ]
@@ -80,11 +84,11 @@ const fixedShortcuts: Shortcut[] = [
 const editableShortcuts = ref<Shortcut[]>([
   {
     id: 'toggleApp',
-    name: '应用显示/隐藏',
+    name: i18nStore.t('setting.keyboard.toggleApp'),
     keys: isMac.value
       ? shortcut.value.appVisibleShortcut.mac
       : shortcut.value.appVisibleShortcut.windows,
-    description: '显示或隐藏应用窗口',
+    description: i18nStore.t('setting.keyboard.toggleAppDesc'),
     editable: true
   }
 ])
@@ -176,8 +180,8 @@ const applyShortcutSettings = (): void => {
   useConfigStore().setShortcut(keys)
   // 显示成功消息通知
   Message.success({
-    title: '设置已保存',
-    message: '快捷键设置已成功应用',
+    title: i18nStore.t('common.save'),
+    message: i18nStore.t('setting.keyboard.saveSuccess'),
     duration: 2000
   })
 }
@@ -192,7 +196,7 @@ const resetToDefault = (): void => {
   useConfigStore().setShortcut(editableShortcuts.value[0].keys)
   // 显示信息消息通知
   Message.info({
-    message: '已重置为默认快捷键设置',
+    message: i18nStore.t('setting.keyboard.resetSuccess'),
     duration: 2000
   })
 }
@@ -244,14 +248,14 @@ const clearShortcut = (): void => {
 <template>
   <div class="keyboard-settings">
     <div class="settings-header">
-      <h2>快捷键设置</h2>
-      <p class="subtitle">自定义应用快捷键以提高工作效率</p>
+      <h2>{{ i18nStore.t('setting.keyboard.title') }}</h2>
+      <p class="subtitle">{{ i18nStore.t('setting.keyboard.subtitle') }}</p>
     </div>
 
     <!-- 不可更改的快捷键 -->
     <div class="shortcuts-section">
-      <h3>默认快捷键</h3>
-      <p class="section-description">这些是应用的默认快捷键，不可更改</p>
+      <h3>{{ i18nStore.t('setting.keyboard.defaultShortcuts') }}</h3>
+      <p class="section-description">{{ i18nStore.t('setting.keyboard.defaultShortcutsDesc') }}</p>
 
       <div class="shortcuts-container">
         <div v-for="shortcut in fixedShortcuts" :key="shortcut.id" class="shortcut-item">
@@ -282,8 +286,10 @@ const clearShortcut = (): void => {
           </div>
 
           <div class="shortcut-info">
-            <div class="shortcut-name">{{ shortcut.name }}</div>
-            <div class="shortcut-description">{{ shortcut.description }}</div>
+            <div class="shortcut-name">{{ i18nStore.t(`setting.keyboard.${shortcut.id}`) }}</div>
+            <div class="shortcut-description">
+              {{ i18nStore.t(`setting.keyboard.${shortcut.id}Desc`) }}
+            </div>
           </div>
 
           <div class="shortcut-keys-container">
@@ -298,19 +304,25 @@ const clearShortcut = (): void => {
 
     <!-- 可更改的快捷键 -->
     <div v-motion="enableFirstShowTransition" class="shortcuts-section">
-      <h3>自定义快捷键</h3>
-      <p class="section-description">点击快捷键进行自定义设置</p>
+      <h3>{{ i18nStore.t('setting.keyboard.customShortcuts') }}</h3>
+      <p class="section-description">{{ i18nStore.t('setting.keyboard.customShortcutsDesc') }}</p>
 
       <div class="shortcuts-container">
-        <div v-for="shortcut in editableShortcuts" :key="shortcut.id" class="shortcut-item custom-shortcut-item">
+        <div
+          v-for="shortcut in editableShortcuts"
+          :key="shortcut.id"
+          class="shortcut-item custom-shortcut-item"
+        >
           <div class="shortcut-info">
-            <div class="shortcut-name">{{ shortcut.name }}</div>
-            <div class="shortcut-description">{{ shortcut.description }}</div>
+            <div class="shortcut-name">{{ i18nStore.t(`setting.keyboard.${shortcut.id}`) }}</div>
+            <div class="shortcut-description">
+              {{ i18nStore.t(`setting.keyboard.${shortcut.id}Desc`) }}
+            </div>
           </div>
 
           <div v-if="editingShortcutId === shortcut.id" class="shortcut-edit-controls">
             <div class="edit-instructions">
-              先清除按键，再按下您想要使用的快捷键组合（先按下一个按键松开，再按下另一个按键即可组成快捷键组合）
+              {{ i18nStore.t('setting.keyboard.editInstructions') }}
             </div>
             <div class="key-recording-area">
               <template v-if="recordingKeys.length > 0">
@@ -320,12 +332,20 @@ const clearShortcut = (): void => {
                   </div>
                 </div>
               </template>
-              <div v-else class="recording-prompt">等待按键输入...</div>
+              <div v-else class="recording-prompt">
+                {{ i18nStore.t('setting.keyboard.waitingForInput') }}
+              </div>
             </div>
             <div class="edit-actions">
-              <button class="action-button cancel-button" @click="stopEditing">取消</button>
-              <button class="action-button clear-button" @click="clearShortcut">清除</button>
-              <button class="action-button save-button" @click="stopEditing">保存</button>
+              <button class="action-button cancel-button" @click="stopEditing">
+                {{ i18nStore.t('common.cancel') }}
+              </button>
+              <button class="action-button clear-button" @click="clearShortcut">
+                {{ i18nStore.t('setting.keyboard.clear') }}
+              </button>
+              <button class="action-button save-button" @click="stopEditing">
+                {{ i18nStore.t('common.save') }}
+              </button>
             </div>
           </div>
 
@@ -333,22 +353,32 @@ const clearShortcut = (): void => {
             <div v-if="shortcut.keys" class="key-badge">
               {{ shortcut.keys }}
             </div>
-            <div v-else class="no-shortcut">未设置</div>
-            <div class="edit-hint">点击编辑</div>
+            <div v-else class="no-shortcut">{{ i18nStore.t('setting.keyboard.notSet') }}</div>
+            <div class="edit-hint">{{ i18nStore.t('setting.keyboard.clickToEdit') }}</div>
           </div>
         </div>
 
         <!-- 提示信息 Alert -->
         <div v-if="!isMac" class="shortcut-alerts">
-          <VAlert :show-icon="true" type="warning" title="注意事项" message="设置更改，下次启动时生效。" class="clipboard-alert" />
+          <VAlert
+            :show-icon="true"
+            type="warning"
+            :title="i18nStore.t('setting.keyboard.noteTitle')"
+            :message="i18nStore.t('setting.keyboard.noteMessage')"
+            class="clipboard-alert"
+          />
         </div>
       </div>
     </div>
 
     <!-- 底部按钮区域 -->
     <div class="action-buttons">
-      <button class="reset-button" @click="resetToDefault">重置为默认值</button>
-      <button class="apply-button" @click="applyShortcutSettings">应用</button>
+      <button class="reset-button" @click="resetToDefault">
+        {{ i18nStore.t('setting.keyboard.resetToDefault') }}
+      </button>
+      <button class="apply-button" @click="applyShortcutSettings">
+        {{ i18nStore.t('common.apply') }}
+      </button>
     </div>
   </div>
 </template>
@@ -513,7 +543,6 @@ $animation-color: var(--button-primary-bg);
 }
 
 @keyframes moveUpAnimation {
-
   0%,
   100% {
     transform: translate(-50%, -50%);
@@ -525,7 +554,6 @@ $animation-color: var(--button-primary-bg);
 }
 
 @keyframes moveDownAnimation {
-
   0%,
   100% {
     transform: translate(-50%, -50%);
@@ -537,7 +565,6 @@ $animation-color: var(--button-primary-bg);
 }
 
 @keyframes moveLeftAnimation {
-
   0%,
   100% {
     transform: translate(-50%, -50%);
@@ -549,7 +576,6 @@ $animation-color: var(--button-primary-bg);
 }
 
 @keyframes moveRightAnimation {
-
   0%,
   100% {
     transform: translate(-50%, -50%);
@@ -561,7 +587,6 @@ $animation-color: var(--button-primary-bg);
 }
 
 @keyframes pinAnimation {
-
   0%,
   100% {
     transform: translate(-50%, -50%) scale(1);
@@ -573,7 +598,6 @@ $animation-color: var(--button-primary-bg);
 }
 
 @keyframes deleteAnimation {
-
   0%,
   100% {
     transform: translate(-50%, -50%) scale(1);

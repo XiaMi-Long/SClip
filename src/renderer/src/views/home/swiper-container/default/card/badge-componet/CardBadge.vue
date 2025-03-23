@@ -80,7 +80,11 @@ const typeIndicatorClass = computed(() => {
       </div>
 
       <!-- 类型指示器 -->
-      <div v-if="shouldShowTypeIndicator" class="badge type-indicator-badge" :class="typeIndicatorClass">
+      <div
+        v-if="shouldShowTypeIndicator"
+        class="badge type-indicator-badge"
+        :class="typeIndicatorClass"
+      >
         <span>{{ typeIndicatorText }}</span>
       </div>
 
@@ -167,10 +171,12 @@ const typeIndicatorClass = computed(() => {
 }
 
 // 长内容提示样式
-.long-content-badge {}
+.long-content-badge {
+}
 
 // 类型指示器样式
-.type-indicator-badge {}
+.type-indicator-badge {
+}
 
 // 固定标记的错误动画
 @keyframes tada {

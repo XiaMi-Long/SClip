@@ -8,6 +8,9 @@ import { useI18nStore } from '../../../store/useI18nStore'
  */
 import { ref, computed } from 'vue'
 
+// 获取 i18n store
+const i18nStore = useI18nStore()
+
 // 主题类型
 interface Theme {
   id: ThemeMode
@@ -31,18 +34,18 @@ interface ColorOption {
 const themes: Theme[] = [
   {
     id: 'light',
-    name: '亮色模式',
-    description: '明亮的界面主题'
+    name: i18nStore.t('setting.theme.light'),
+    description: i18nStore.t('setting.theme.lightDesc')
   },
   {
     id: 'dark',
-    name: '暗色模式',
-    description: '深色的界面主题'
+    name: i18nStore.t('setting.theme.dark'),
+    description: i18nStore.t('setting.theme.darkDesc')
   },
   {
     id: 'system',
-    name: '系统偏好',
-    description: '跟随系统设置自动切换'
+    name: i18nStore.t('setting.theme.system'),
+    description: i18nStore.t('setting.theme.systemDesc')
   }
 ]
 
@@ -86,9 +89,6 @@ const checkIconMotion = {
     }
   }
 }
-
-// 获取 i18n store
-const i18nStore = useI18nStore()
 
 // 当前选中的主题和强调色
 const selectedTheme = ref(useConfigStore().getSetting.applicationTheme)
@@ -173,8 +173,8 @@ const handleColorInput = (e: Event): void => {
 <template>
   <div class="theme-settings">
     <div class="settings-header">
-      <h2>主题</h2>
-      <p class="subtitle">选择您的风格或自定义主题</p>
+      <h2>{{ i18nStore.t('setting.theme.title') }}</h2>
+      <p class="subtitle">{{ i18nStore.t('setting.theme.subtitle') }}</p>
     </div>
 
     <!-- 主题选择区域 -->
@@ -233,14 +233,14 @@ const handleColorInput = (e: Event): void => {
     <!-- 强调色设置区域 -->
     <div class="accent-color-section">
       <div class="section-title">
-        <h3>系统强调色</h3>
-        <p class="subtitle">选择应用的主要颜色，影响按钮、选中状态等元素</p>
+        <h3>{{ i18nStore.t('setting.theme.accentColor') }}</h3>
+        <p class="subtitle">{{ i18nStore.t('setting.theme.accentColorDesc') }}</p>
       </div>
 
       <!-- 颜色选择区域 -->
       <div class="color-options-container">
         <transition-group name="color-move" tag="div" class="color-options-wrapper">
-          <template v-for="(color, index) in allColorOptions" :key="color.id">
+          <template v-for="color in allColorOptions" :key="color.id">
             <div
               class="color-card"
               :class="{ active: isColorSelected(color) }"
@@ -255,7 +255,9 @@ const handleColorInput = (e: Event): void => {
       </div>
 
       <div class="custom-color-section">
-        <h3>{{ i18nStore.t('setting.theme.customAccentColor') }}</h3>
+        <div class="section-title">
+          <h3>{{ i18nStore.t('setting.theme.customAccentColor') }}</h3>
+        </div>
         <div class="color-picker-container">
           <input
             type="color"

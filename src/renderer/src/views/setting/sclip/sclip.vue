@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { useConfigStore } from '@renderer/store/useConfigStore'
+import { useI18nStore } from '@renderer/store/useI18nStore'
 
 // 导入拆分后的组件
 import ImageDisplaySection from './components/ImageDisplaySection.vue'
@@ -15,6 +16,9 @@ import TextStyleSection from './components/TextStyleSection.vue'
  * SClip设置组件
  * 负责整合子组件并提供共享状态
  */
+
+// 获取 i18n store
+const i18nStore = useI18nStore()
 
 const setting = useConfigStore().getSetting
 
@@ -55,8 +59,8 @@ const longTextLimit = ref(setting.clipboard.longTextLimit || 400) // 默认值�
 <template>
   <div class="sclip-settings">
     <div class="settings-header">
-      <h2>SClip 内容显示</h2>
-      <p class="subtitle">定制您的剪贴板内容显示方式</p>
+      <h2>{{ i18nStore.t('setting.sclip.contentDisplay') }}</h2>
+      <p class="subtitle">{{ i18nStore.t('setting.sclip.customizeContentDisplay') }}</p>
     </div>
 
     <!-- 图片显示设置区域 -->
@@ -72,16 +76,20 @@ const longTextLimit = ref(setting.clipboard.longTextLimit || 400) // 默认值�
     <div class="divider"></div>
 
     <!-- 文本样式设置区域 -->
-    <TextStyleSection v-model:enableTextStyle="enableTextStyle" v-model:textStyleZoom="textStyleZoom"
-      v-model:rtfTextZoom="rtfTextZoom" v-model:longTextLimit="longTextLimit" />
+    <TextStyleSection
+      v-model:enableTextStyle="enableTextStyle"
+      v-model:textStyleZoom="textStyleZoom"
+      v-model:rtfTextZoom="rtfTextZoom"
+      v-model:longTextLimit="longTextLimit"
+    />
 
     <!-- 分隔线 -->
     <div class="divider"></div>
 
     <!-- 应用行为设置区域标题 -->
     <div class="settings-header">
-      <h2>应用行为设置</h2>
-      <p class="subtitle">自定义应用的操作逻辑</p>
+      <h2>{{ i18nStore.t('setting.sclip.behaviorSettings') }}</h2>
+      <p class="subtitle">{{ i18nStore.t('setting.sclip.customizeBehavior') }}</p>
     </div>
 
     <!-- 唤醒回到首页设置 -->
@@ -103,7 +111,10 @@ const longTextLimit = ref(setting.clipboard.longTextLimit || 400) // 默认值�
     <div class="divider"></div>
 
     <!-- 标识和提示设置 -->
-    <IndicatorSection v-model:show-type-indicator="showTypeIndicator" v-model:show-long-content-tip="showLongContentTip" />
+    <IndicatorSection
+      v-model:show-type-indicator="showTypeIndicator"
+      v-model:show-long-content-tip="showLongContentTip"
+    />
   </div>
 </template>
 

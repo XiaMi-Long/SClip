@@ -2,12 +2,16 @@
 import { computed, ref, watch } from 'vue'
 import { firstShowTransitionMotion } from '@renderer/util/common.fun'
 import { useConfigStore } from '@renderer/store/useConfigStore'
+import { useI18nStore } from '@renderer/store/useI18nStore'
 import { Message } from '@renderer/components/VMessage'
 
 /**
  * 历史记录限制组件
  * 负责管理应用历史记录的限制设置
  */
+
+// 获取 i18n store
+const i18nStore = useI18nStore()
 
 const props = defineProps<{
   historyLimit: number
@@ -116,8 +120,8 @@ const applyCustomValue = (): void => {
   const value = parseInt(customValue.value)
   if (isNaN(value) || value <= 0) {
     Message.error({
-      title: '输入错误',
-      message: '请输入有效的正整数',
+      title: i18nStore.t('common.inputError'),
+      message: i18nStore.t('setting.sclip.history.validPositiveNumber'),
       duration: 2000
     })
     return
@@ -125,8 +129,8 @@ const applyCustomValue = (): void => {
 
   if (value < 10) {
     Message.warning({
-      title: '输入错误',
-      message: '请输入大于10的正整数',
+      title: i18nStore.t('common.inputError'),
+      message: i18nStore.t('setting.sclip.history.minValue'),
       duration: 2000
     })
     return
@@ -144,8 +148,8 @@ const saveHistoryLimit = (value: number): void => {
   useConfigStore().setHistoryLimit(value)
   // 显示成功消息通知
   Message.success({
-    title: '设置已保存',
-    message: '历史记录限制设置已成功应用，下次启动时生效',
+    title: i18nStore.t('common.save'),
+    message: i18nStore.t('setting.sclip.history.saveSuccess'),
     duration: 2000
   })
 }
@@ -173,8 +177,8 @@ function formatToOneDecimal(value: number): string {
 <template>
   <div v-motion="enableFirstShowTransition" class="history-limit-section">
     <div class="section-title">
-      <h3>历史记录限制</h3>
-      <p class="subtitle">设置应用启动时加载的历史记录数量</p>
+      <h3>{{ i18nStore.t('setting.sclip.history.title') }}</h3>
+      <p class="subtitle">{{ i18nStore.t('setting.sclip.history.subtitle') }}</p>
     </div>
 
     <!-- 历史记录限制功能区 -->
@@ -184,7 +188,11 @@ function formatToOneDecimal(value: number): string {
           <div class="history-limit__preview__content">
             <div class="history-limit__preview__number">{{ animatedNumber }}</div>
             <div class="history-limit__preview__text">
-              当前历史记录设置占用内存约 {{ formatToOneDecimal(animatedMemory) }}MB
+              {{
+                i18nStore
+                  .t('setting.sclip.history.memoryUsage')
+                  .replace('{memory}', formatToOneDecimal(animatedMemory))
+              }}
             </div>
           </div>
         </div>
@@ -192,8 +200,12 @@ function formatToOneDecimal(value: number): string {
 
       <div class="history-limit__toggle">
         <div class="history-limit__toggle__info">
-          <div class="history-limit__toggle__title">历史记录数量</div>
-          <div class="history-limit__toggle__description">设置应用启动时加载的历史记录条数</div>
+          <div class="history-limit__toggle__title">
+            {{ i18nStore.t('setting.sclip.history.recordCount') }}
+          </div>
+          <div class="history-limit__toggle__description">
+            {{ i18nStore.t('setting.sclip.history.recordCountDesc') }}
+          </div>
 
           <div class="history-limit__toggle__presets">
             <div
@@ -211,11 +223,13 @@ function formatToOneDecimal(value: number): string {
                 v-model="customValue"
                 type="number"
                 min="1"
-                placeholder="自定义"
+                :placeholder="i18nStore.t('setting.sclip.history.custom')"
                 class="custom-input"
                 @keydown="handleKeyDown"
               />
-              <button class="apply-button" @click="applyCustomValue">应用</button>
+              <button class="apply-button" @click="applyCustomValue">
+                {{ i18nStore.t('common.apply') }}
+              </button>
             </div>
           </div>
         </div>

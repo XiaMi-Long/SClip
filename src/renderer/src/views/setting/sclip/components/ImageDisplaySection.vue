@@ -1,15 +1,18 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { isDarkMode } from '../../../../util/system.theme'
-import SettingPreviewLight from '../../../../assets/image/setting-preview-light.jpg'
 import SettingPreviewDark from '../../../../assets/image/setting-preview-dark.jpg'
 import { useConfigStore } from '@renderer/store/useConfigStore'
+import { useI18nStore } from '@renderer/store/useI18nStore'
 import { Message } from '@renderer/components/VMessage'
 
 /**
  * 图片显示设置组件
  * 负责管理图片在卡片中的显示方式
  */
+
+// 获取 i18n store
+const i18nStore = useI18nStore()
 
 const props = defineProps<{
   displayMode: 'auto' | 'contain' | 'cover'
@@ -35,18 +38,18 @@ const displayModeImage = computed(() => {
 const displayModes: ImageDisplayMode[] = [
   {
     id: 'auto',
-    name: '自动选择',
-    description: '根据图片比例自动选择最佳显示方式，兼顾美观和清晰度'
+    name: i18nStore.t('setting.sclip.image.autoSelect'),
+    description: i18nStore.t('setting.sclip.image.autoSelectDesc')
   },
   {
     id: 'contain',
-    name: '完整显示',
-    description: '确保图片完整显示，可能留有空白，方便快速定位所需内容'
+    name: i18nStore.t('setting.sclip.image.fullDisplay'),
+    description: i18nStore.t('setting.sclip.image.fullDisplayDesc')
   },
   {
     id: 'cover',
-    name: '裁剪填充',
-    description: '填满区域，可能裁剪部分图片内容，保持图片清晰度'
+    name: i18nStore.t('setting.sclip.image.cropFill'),
+    description: i18nStore.t('setting.sclip.image.cropFillDesc')
   }
 ]
 
@@ -93,8 +96,8 @@ const selectDisplayMode = (modeId: 'auto' | 'contain' | 'cover'): void => {
   })
   // 显示成功消息通知
   Message.success({
-    title: '设置已保存',
-    message: '图片显示模式设置已成功应用，下次打开应用时生效',
+    title: i18nStore.t('common.save'),
+    message: i18nStore.t('setting.sclip.image.saveSuccess'),
     duration: 2000
   })
 }
@@ -103,23 +106,37 @@ const selectDisplayMode = (modeId: 'auto' | 'contain' | 'cover'): void => {
 <template>
   <div class="image-display-section">
     <div class="section-title">
-      <h3>图片显示方式</h3>
-      <p class="subtitle">选择如何在卡片中显示图片内容</p>
+      <h3>{{ i18nStore.t('setting.sclip.image.displayMode') }}</h3>
+      <p class="subtitle">{{ i18nStore.t('setting.sclip.image.displayModeDesc') }}</p>
     </div>
 
     <div class="display-mode-options">
       <!-- 显示模式预览卡片 -->
-      <div v-for="mode in displayModes" :key="mode.id" class="display-mode-card"
-        :class="{ active: selectedDisplayMode === mode.id }" @click="selectDisplayMode(mode.id)">
+      <div
+        v-for="mode in displayModes"
+        :key="mode.id"
+        class="display-mode-card"
+        :class="{ active: selectedDisplayMode === mode.id }"
+        @click="selectDisplayMode(mode.id)"
+      >
         <!-- 显示模式预览 -->
         <div class="display-preview">
-          <img class="preview-image" :class="'preview-image-' + mode.id" :src="displayModeImage" :alt="'预览图-' + mode.name"
-            :style="{ objectFit: getDisplayModeFit(mode.id) }" />
+          <img
+            class="preview-image"
+            :class="'preview-image-' + mode.id"
+            :src="displayModeImage"
+            :alt="`${mode.name} ${i18nStore.t('setting.sclip.image.preview')}`"
+            :style="{ objectFit: getDisplayModeFit(mode.id) }"
+          />
         </div>
 
         <!-- 显示模式信息和选择状态 -->
         <div class="mode-info">
-          <div v-if="selectedDisplayMode === mode.id" v-motion="checkIconMotion" class="check-icon-wrapper">
+          <div
+            v-if="selectedDisplayMode === mode.id"
+            v-motion="checkIconMotion"
+            class="check-icon-wrapper"
+          >
             <div class="check-icon">✓</div>
           </div>
           <div class="mode-text" :class="{ active: selectedDisplayMode === mode.id }">

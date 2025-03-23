@@ -8,6 +8,10 @@ import Avatar1 from '@renderer/assets/image/avatar1.jpeg'
 import Avatar2 from '@renderer/assets/image/avatar2.jpeg'
 import Eye from '@renderer/assets/image/eye.png'
 import { useConfigStore } from '@renderer/store/useConfigStore'
+import { useI18nStore } from '@renderer/store/useI18nStore'
+
+// 获取 i18n store
+const i18nStore = useI18nStore()
 
 /**
  * 获取当前版本号
@@ -43,14 +47,14 @@ const getUpdateLogs = computed(() => {
   return reversedLogs.map((log) => {
     if (typeof log !== 'string') {
       console.warn('日志项不是字符串格式', log)
-      return { version: '未知版本', items: [] }
+      return { version: i18nStore.t('setting.about.unknownVersion'), items: [] }
     }
 
     // 按照#符号分割日志内容
     const parts = log.split('#').filter((item) => item.trim() !== '')
 
     // 第一项通常是版本信息
-    const version = parts[0] || '未知版本'
+    const version = parts[0] || i18nStore.t('setting.about.unknownVersion')
 
     // 其余的项是功能点
     const items = parts.slice(1).map((item) => item.trim())
@@ -155,19 +159,19 @@ const checkUpdate = () => {
 <template>
   <div class="about-container">
     <div class="section">
-      <h2 class="section-title">关于 SClip</h2>
+      <h2 class="section-title">{{ i18nStore.t('setting.about.title') }}</h2>
       <div class="version-info">
-        <div class="version-label">当前版本</div>
+        <div class="version-label">{{ i18nStore.t('setting.about.version') }}</div>
         <div class="version-number">{{ getCurrentVersion() }}</div>
         <button :disabled="isCheckingUpdate" class="update-btn" @click="checkUpdate">
-          <span v-if="!isCheckingUpdate">检查更新</span>
-          <span v-else class="loading">检查中...</span>
+          <span v-if="!isCheckingUpdate">{{ i18nStore.t('setting.about.checkUpdate') }}</span>
+          <span v-else class="loading">{{ i18nStore.t('setting.about.checking') }}</span>
         </button>
       </div>
     </div>
 
     <div class="section">
-      <h2 class="section-title">贡献者</h2>
+      <h2 class="section-title">{{ i18nStore.t('setting.about.contributors') }}</h2>
       <div class="contributors-container">
         <div v-for="contributor in contributors" :key="contributor.name" class="contributor">
           <div
@@ -185,7 +189,7 @@ const checkUpdate = () => {
 
     <!-- 更新日志区域 -->
     <div class="section">
-      <h2 class="section-title">更新日志</h2>
+      <h2 class="section-title">{{ i18nStore.t('setting.about.updateLogs') }}</h2>
       <div class="update-logs-container">
         <div v-for="(log, index) in getUpdateLogs" :key="index" class="update-log">
           <div class="version-header">{{ log.version }}</div>

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, watch } from 'vue'
 import { useConfigStore } from '@renderer/store/useConfigStore'
+import { useI18nStore } from '@renderer/store/useI18nStore'
 import { Message } from '@renderer/components/VMessage'
 import VSwitch from '@renderer/components/VSwitch'
 import VAlert from '@renderer/components/VAlert'
@@ -10,6 +11,9 @@ import { firstShowTransitionMotion } from '@renderer/util/common.fun'
  * 标识和提示设置组件
  * 负责管理内容类型标识和长内容提示的显示
  */
+
+// 获取 i18n store
+const i18nStore = useI18nStore()
 
 const props = defineProps<{
   showTypeIndicator: boolean
@@ -81,8 +85,8 @@ const saveSettings = (): void => {
 
   // 显示成功消息通知
   Message.success({
-    title: '设置已保存',
-    message: '显示设置已成功应用，下次启动时生效',
+    title: i18nStore.t('common.save'),
+    message: i18nStore.t('setting.sclip.indicator.saveSuccess'),
     duration: 2000
   })
 }
@@ -91,15 +95,15 @@ const saveSettings = (): void => {
 <template>
   <div v-motion="enableFirstShowTransition" class="indicator-section">
     <div class="section-title">
-      <h3>内容标识与提示</h3>
-      <p class="subtitle">自定义剪贴板内容的标识和提示显示方式</p>
+      <h3>{{ i18nStore.t('setting.sclip.indicator.title') }}</h3>
+      <p class="subtitle">{{ i18nStore.t('setting.sclip.indicator.subtitle') }}</p>
     </div>
 
     <!-- 演示区域 -->
     <div class="demo-area">
       <div class="demo-content">
         <div class="clipboard-item">
-          <div class="item-content">这是一段示例文本内容，用于展示标识和提示的效果</div>
+          <div class="item-content">{{ i18nStore.t('setting.sclip.indicator.sampleText') }}</div>
           <div v-if="showTypeIndicatorValue" v-motion="showTypeMotion" class="type-indicator">
             Doc
           </div>
@@ -108,31 +112,39 @@ const saveSettings = (): void => {
           </div>
         </div>
       </div>
-      <p class="demo-description">实时预览标识和提示的显示效果</p>
+      <p class="demo-description">{{ i18nStore.t('setting.sclip.indicator.previewDesc') }}</p>
     </div>
 
     <!-- 设置选项 -->
     <div class="settings-container">
       <div class="setting-toggle">
         <div class="setting-info">
-          <div class="setting-title">内容类型标识</div>
-          <div class="setting-description">在内容右下角显示类型图标，帮助快速识别内容类型</div>
+          <div class="setting-title">
+            {{ i18nStore.t('setting.sclip.indicator.typeIndicator') }}
+          </div>
+          <div class="setting-description">
+            {{ i18nStore.t('setting.sclip.indicator.typeIndicatorDesc') }}
+          </div>
         </div>
         <VSwitch v-model="showTypeIndicatorValue" />
       </div>
 
       <div class="setting-toggle">
         <div class="setting-info">
-          <div class="setting-title">长内容提示</div>
-          <div class="setting-description">当内容超出显示范围时，显示提示标记</div>
+          <div class="setting-title">
+            {{ i18nStore.t('setting.sclip.indicator.longContentTip') }}
+          </div>
+          <div class="setting-description">
+            {{ i18nStore.t('setting.sclip.indicator.longContentTipDesc') }}
+          </div>
         </div>
         <VSwitch v-model="showLongContentTipValue" />
       </div>
 
       <VAlert
         type="info"
-        title="提示"
-        message="Max表示内容长度超出显示范围，Doc表示内容类型为文档（Word、Excel、PPT等），txt表示内容类型为文本"
+        :title="i18nStore.t('setting.sclip.indicator.tipTitle')"
+        :message="i18nStore.t('setting.sclip.indicator.tipMessage')"
       />
     </div>
   </div>

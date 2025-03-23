@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, watch, ref, onMounted } from 'vue'
 import { useConfigStore } from '@renderer/store/useConfigStore'
+import { useI18nStore } from '@renderer/store/useI18nStore'
 import { Message } from '@renderer/components/VMessage'
 import VSwitch from '@renderer/components/VSwitch'
 import VAlert from '@renderer/components/VAlert'
@@ -10,6 +11,9 @@ import { firstShowTransitionMotion } from '@renderer/util/common.fun'
  * 文本样式设置组件
  * 负责管理是否启用文本样式的设置
  */
+
+// 获取 i18n store
+const i18nStore = useI18nStore()
 
 const props = defineProps<{
   enableTextStyle: boolean
@@ -117,8 +121,8 @@ const saveSettings = (): void => {
 
   // 显示成功消息通知
   Message.success({
-    title: '设置已保存',
-    message: '文本样式设置已成功应用，下次启动时生效',
+    title: i18nStore.t('common.save'),
+    message: i18nStore.t('setting.sclip.textStyle.saveSuccess'),
     duration: 2000
   })
 }
@@ -217,8 +221,8 @@ const applyCustomTextLimit = (): void => {
   const value = parseInt(customValue.value)
   if (isNaN(value) || value <= 0) {
     Message.error({
-      title: '输入错误',
-      message: '请输入有效的正整数',
+      title: i18nStore.t('common.inputError'),
+      message: i18nStore.t('setting.sclip.textStyle.validPositiveNumber'),
       duration: 2000
     })
     return
@@ -226,8 +230,8 @@ const applyCustomTextLimit = (): void => {
 
   if (value < 100) {
     Message.warning({
-      title: '输入错误',
-      message: '请输入大于100的正整数',
+      title: i18nStore.t('common.inputError'),
+      message: i18nStore.t('setting.sclip.textStyle.minValue'),
       duration: 2000
     })
     return
@@ -255,8 +259,8 @@ onMounted(() => {
 <template>
   <div v-motion="enableFirstShowTransition" class="text-style-section">
     <div class="section-title">
-      <h3>文本样式设置</h3>
-      <p class="subtitle">自定义文本内容的显示样式</p>
+      <h3>{{ i18nStore.t('setting.sclip.textStyle.title') }}</h3>
+      <p class="subtitle">{{ i18nStore.t('setting.sclip.textStyle.subtitle') }}</p>
     </div>
 
     <!-- 演示区域 -->
@@ -265,7 +269,9 @@ onMounted(() => {
         <div class="comparison-container">
           <!-- 左侧：纯文本 -->
           <div class="clipboard-item">
-            <div class="item-header">纯文本</div>
+            <div class="item-header">
+              {{ i18nStore.t('setting.sclip.textStyle.plainTextTitle') }}
+            </div>
             <div class="item-content plain-text">
               {{ plainTextExample.content }}
             </div>
@@ -273,14 +279,16 @@ onMounted(() => {
 
           <!-- 右侧：富文本 -->
           <div class="clipboard-item">
-            <div class="item-header">文本样式</div>
+            <div class="item-header">
+              {{ i18nStore.t('setting.sclip.textStyle.richTextTitle') }}
+            </div>
             <div class="item-content html-text">
               <div ref="htmlContentRef"></div>
             </div>
           </div>
         </div>
       </div>
-      <p class="demo-description">左侧为纯文本效果，右侧为启用文本样式效果</p>
+      <p class="demo-description">{{ i18nStore.t('setting.sclip.textStyle.compareDesc') }}</p>
     </div>
 
     <!-- 设置选项 -->
@@ -288,9 +296,9 @@ onMounted(() => {
       <!-- 启用文本样式 -->
       <div class="setting-info setting-item">
         <div class="setting-title-area">
-          <div class="setting-title">启用文本样式</div>
+          <div class="setting-title">{{ i18nStore.t('setting.sclip.textStyle.enableTitle') }}</div>
           <div class="setting-description">
-            启用后，复制的文本内容将保留原始格式，如粗体、斜体、颜色等
+            {{ i18nStore.t('setting.sclip.textStyle.enableDesc') }}
           </div>
         </div>
         <VSwitch v-model="enableTextStyleValue" />
@@ -298,7 +306,7 @@ onMounted(() => {
 
       <!-- 文本样式缩放 -->
       <div class="setting-item zoom-section">
-        <div class="setting-title">文本样式缩放</div>
+        <div class="setting-title">{{ i18nStore.t('setting.sclip.textStyle.zoomTitle') }}</div>
         <div class="zoom-buttons">
           <button
             v-for="zoom in zoomPresets"
@@ -313,7 +321,7 @@ onMounted(() => {
 
       <!-- RTF文本缩放 -->
       <div class="setting-item zoom-section">
-        <div class="setting-title">RTF文本缩放</div>
+        <div class="setting-title">{{ i18nStore.t('setting.sclip.textStyle.rtfZoomTitle') }}</div>
         <div class="zoom-buttons">
           <button
             v-for="zoom in zoomPresets"
@@ -327,9 +335,11 @@ onMounted(() => {
       </div>
 
       <div class="setting-item length-section">
-        <div class="setting-title">超长文本显示上限</div>
+        <div class="setting-title">
+          {{ i18nStore.t('setting.sclip.textStyle.longTextLimitTitle') }}
+        </div>
         <div class="setting-description">
-          设置文本内容显示的最大字符数，超过此限制将被截断并显示"..."按钮
+          {{ i18nStore.t('setting.sclip.textStyle.longTextLimitDesc') }}
         </div>
 
         <div class="text-limit-presets">
@@ -347,11 +357,13 @@ onMounted(() => {
               v-model="customValue"
               type="number"
               min="100"
-              placeholder="自定义"
+              :placeholder="i18nStore.t('setting.sclip.textStyle.custom')"
               class="custom-input"
               @keydown="handleKeyDown"
             />
-            <button class="apply-button" @click="applyCustomTextLimit">应用</button>
+            <button class="apply-button" @click="applyCustomTextLimit">
+              {{ i18nStore.t('common.apply') }}
+            </button>
           </div>
         </div>
       </div>
@@ -359,14 +371,14 @@ onMounted(() => {
 
     <VAlert
       type="warning"
-      title="RTF格式说明"
-      message="RTF格式通常来自Word、Excel等Office应用程序的复制内容。调整RTF缩放可以优化此类富文本的显示效果，使其更易于阅读。"
+      :title="i18nStore.t('setting.sclip.textStyle.rtfNoteTitle')"
+      :message="i18nStore.t('setting.sclip.textStyle.rtfNoteMessage')"
     />
 
     <VAlert
       type="info"
-      title="提示"
-      message="启用文本样式后，从Word、网页等应用复制的文本将保留原始格式。禁用后，所有文本将以纯文本形式显示。"
+      :title="i18nStore.t('setting.sclip.textStyle.noteTitle')"
+      :message="i18nStore.t('setting.sclip.textStyle.noteMessage')"
     />
   </div>
 </template>

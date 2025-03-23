@@ -7,6 +7,10 @@
 import { ref, reactive, onMounted } from 'vue'
 import { invokeMain } from '@renderer/util/ipc.renderer.service'
 import { formatDateTime } from '@renderer/util/common.fun'
+import { useI18nStore } from '@renderer/store/useI18nStore'
+
+// 获取 i18n store
+const i18nStore = useI18nStore()
 
 interface LogData {
   id?: number
@@ -65,34 +69,47 @@ onMounted(() => {
 <template>
   <div class="log-viewer">
     <div class="log-viewer-header">
-      <h2>系统日志记录</h2>
-      <div class="log-viewer-subtitle">仅显示警告和错误级别的日志</div>
+      <h2>{{ i18nStore.t('setting.log.title') }}</h2>
+      <div class="log-viewer-subtitle">{{ i18nStore.t('setting.log.subtitle') }}</div>
     </div>
 
     <div class="log-container">
       <!-- 加载状态 -->
       <div v-if="loading && logs.length === 0" class="log-loading">
         <div class="loading-indicator"></div>
-        <span>加载中...</span>
+        <span>{{ i18nStore.t('setting.log.loading') }}</span>
       </div>
 
       <!-- 空状态 -->
       <div v-else-if="logs.length === 0" class="log-empty">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor"
-          stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width="48"
+          height="48"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
           <path d="M21 6h-4a2 2 0 0 1-2-2V0" />
           <path d="M15 2H3a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-4" />
           <line x1="9" y1="14" x2="15" y2="14" />
         </svg>
-        <p>暂无警告或错误日志</p>
-        <span>系统运行正常，没有异常情况</span>
+        <p>{{ i18nStore.t('setting.log.noLogs') }}</p>
+        <span>{{ i18nStore.t('setting.log.systemNormal') }}</span>
       </div>
 
       <!-- 日志列表 -->
       <div v-else class="log-list">
         <div v-for="log in logs" :key="log.id" class="log-item" :class="log.level">
           <div class="log-item-header">
-            <span class="log-level">{{ log.level === 'warn' ? '警告' : '错误' }}</span>
+            <span class="log-level">{{
+              log.level === 'warn'
+                ? i18nStore.t('setting.log.warning')
+                : i18nStore.t('setting.log.error')
+            }}</span>
             <span class="log-module">{{ log.module }}</span>
             <span class="log-time">{{ formatDateTime(log.created_at) }}</span>
           </div>

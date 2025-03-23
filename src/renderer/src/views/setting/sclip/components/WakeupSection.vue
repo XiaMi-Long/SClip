@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { useConfigStore } from '@renderer/store/useConfigStore'
+import { useI18nStore } from '@renderer/store/useI18nStore'
 import { Message } from '@renderer/components/VMessage'
 import VSwitch from '@renderer/components/VSwitch'
 import { firstShowTransitionMotion } from '@renderer/util/common.fun'
@@ -9,6 +10,9 @@ import { firstShowTransitionMotion } from '@renderer/util/common.fun'
  * 唤醒回到首页功能组件
  * 负责管理应用唤醒时的页面跳转行为
  */
+
+// 获取 i18n store
+const i18nStore = useI18nStore()
 
 const props = defineProps<{
   jumpToFirstPage: boolean
@@ -68,8 +72,8 @@ const toggleJumpToFirstPage = (value: boolean): void => {
   useConfigStore().setJumpToFirstPage(value)
   // 显示成功消息通知
   Message.success({
-    title: '设置已保存',
-    message: '唤醒回到首页设置已成功应用，已经生效',
+    title: i18nStore.t('common.save'),
+    message: i18nStore.t('setting.sclip.wakeup.saveSuccess'),
     duration: 2000
   })
 }
@@ -78,8 +82,8 @@ const toggleJumpToFirstPage = (value: boolean): void => {
 <template>
   <div v-motion="enableFirstShowTransition" class="wakeup-section">
     <div class="section-title">
-      <h3>唤醒回到首页</h3>
-      <p class="subtitle">自定义应用唤醒时的页面行为</p>
+      <h3>{{ i18nStore.t('setting.sclip.wakeup.title') }}</h3>
+      <p class="subtitle">{{ i18nStore.t('setting.sclip.wakeup.subtitle') }}</p>
     </div>
 
     <!-- 唤醒回到首页功能区 -->
@@ -89,12 +93,24 @@ const toggleJumpToFirstPage = (value: boolean): void => {
           <div class="wakeup__preview__container__cards">
             <!-- 使用v-motion指令代替CSS动画 -->
             <div v-motion="cardScrollMotion" class="wakeup__preview__container__cards__list">
-              <div class="wakeup__preview__container__cards__list__item">春风拂面</div>
-              <div class="wakeup__preview__container__cards__list__item">月光如水</div>
-              <div class="wakeup__preview__container__cards__list__item">花开有声</div>
-              <div class="wakeup__preview__container__cards__list__item">云淡风轻</div>
-              <div class="wakeup__preview__container__cards__list__item">静听雨落</div>
-              <div class="wakeup__preview__container__cards__list__item">星河璀璨</div>
+              <div class="wakeup__preview__container__cards__list__item">
+                {{ i18nStore.t('setting.sclip.wakeup.example1') }}
+              </div>
+              <div class="wakeup__preview__container__cards__list__item">
+                {{ i18nStore.t('setting.sclip.wakeup.example2') }}
+              </div>
+              <div class="wakeup__preview__container__cards__list__item">
+                {{ i18nStore.t('setting.sclip.wakeup.example3') }}
+              </div>
+              <div class="wakeup__preview__container__cards__list__item">
+                {{ i18nStore.t('setting.sclip.wakeup.example4') }}
+              </div>
+              <div class="wakeup__preview__container__cards__list__item">
+                {{ i18nStore.t('setting.sclip.wakeup.example5') }}
+              </div>
+              <div class="wakeup__preview__container__cards__list__item">
+                {{ i18nStore.t('setting.sclip.wakeup.example6') }}
+              </div>
             </div>
           </div>
         </div>
@@ -102,8 +118,12 @@ const toggleJumpToFirstPage = (value: boolean): void => {
 
       <div class="wakeup__toggle">
         <div class="wakeup__toggle__info">
-          <div class="wakeup__toggle__title">唤醒回到首页</div>
-          <div class="wakeup__toggle__description">每次唤醒应用时自动回到第一页</div>
+          <div class="wakeup__toggle__title">
+            {{ i18nStore.t('setting.sclip.wakeup.jumpToFirstPage') }}
+          </div>
+          <div class="wakeup__toggle__description">
+            {{ i18nStore.t('setting.sclip.wakeup.jumpToFirstPageDesc') }}
+          </div>
         </div>
         <VSwitch v-model="jumpToFirstPageValue" @change="toggleJumpToFirstPage" />
       </div>

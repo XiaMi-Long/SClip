@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { useConfigStore } from '@renderer/store/useConfigStore'
+import { useI18nStore } from '@renderer/store/useI18nStore'
 import { Message } from '@renderer/components/VMessage'
 import VSwitch from '@renderer/components/VSwitch'
 import { firstShowTransitionMotion } from '@renderer/util/common.fun'
@@ -9,6 +10,9 @@ import { firstShowTransitionMotion } from '@renderer/util/common.fun'
  * 固定窗口设置组件
  * 负责管理应用窗口固定状态
  */
+
+// 获取 i18n store
+const i18nStore = useI18nStore()
 
 const props = defineProps<{
   isFixedWindow: boolean
@@ -37,8 +41,8 @@ const toggleFixedWindow = (value: boolean): void => {
   useConfigStore().setIsFixedWindow(value)
   // 显示成功消息通知
   Message.success({
-    title: '设置已保存',
-    message: '窗口固定设置已成功应用',
+    title: i18nStore.t('common.save'),
+    message: i18nStore.t('setting.sclip.fixedWindow.saveSuccess'),
     duration: 2000
   })
 }
@@ -47,15 +51,17 @@ const toggleFixedWindow = (value: boolean): void => {
 <template>
   <div v-motion="enableFirstShowTransition" class="fixed-window-section">
     <div class="section-title">
-      <h3>固定窗口</h3>
-      <p class="subtitle">设置应用主窗口是否固定在屏幕上</p>
+      <h3>{{ i18nStore.t('setting.sclip.fixedWindow.title') }}</h3>
+      <p class="subtitle">{{ i18nStore.t('setting.sclip.fixedWindow.subtitle') }}</p>
     </div>
 
     <div class="fixed-window__toggle">
       <div class="fixed-window__toggle__info">
-        <div class="fixed-window__toggle__title">固定窗口</div>
+        <div class="fixed-window__toggle__title">
+          {{ i18nStore.t('setting.sclip.fixedWindow.toggleTitle') }}
+        </div>
         <div class="fixed-window__toggle__description">
-          启用后主窗口将固定在屏幕上，不会自动隐藏
+          {{ i18nStore.t('setting.sclip.fixedWindow.toggleDesc') }}
         </div>
       </div>
       <VSwitch v-model="isFixedWindowValue" @change="toggleFixedWindow" />

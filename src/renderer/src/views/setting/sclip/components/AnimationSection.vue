@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import SettingPreviewDark from '../../../../assets/image/setting-preview-dark.jpg'
 import { useConfigStore } from '@renderer/store/useConfigStore'
+import { useI18nStore } from '@renderer/store/useI18nStore'
 import { Message } from '@renderer/components/VMessage'
 import VSwitch from '@renderer/components/VSwitch'
 import { firstShowTransitionMotion } from '@renderer/util/common.fun'
@@ -10,6 +11,9 @@ import { firstShowTransitionMotion } from '@renderer/util/common.fun'
  * 图片微动画设置组件
  * 负责管理图片微动画效果
  */
+
+// 获取 i18n store
+const i18nStore = useI18nStore()
 
 const props = defineProps<{
   enableAnimation: boolean
@@ -63,8 +67,8 @@ const toggleImageAnimation = (value: boolean): void => {
   })
   // 显示成功消息通知
   Message.success({
-    title: '设置已保存',
-    message: '图片微动画设置已成功应用，下次打开应用时生效',
+    title: i18nStore.t('common.save'),
+    message: i18nStore.t('setting.sclip.animation.saveSuccess'),
     duration: 2000
   })
 }
@@ -73,8 +77,8 @@ const toggleImageAnimation = (value: boolean): void => {
 <template>
   <div v-motion="enableFirstShowTransition" class="animation-section">
     <div class="section-title">
-      <h3>图片微动画</h3>
-      <p class="subtitle">为图片添加微妙的动态效果</p>
+      <h3>{{ i18nStore.t('setting.sclip.animation.title') }}</h3>
+      <p class="subtitle">{{ i18nStore.t('setting.sclip.animation.subtitle') }}</p>
     </div>
 
     <!-- 添加预览区域 -->
@@ -83,7 +87,7 @@ const toggleImageAnimation = (value: boolean): void => {
         <img
           v-motion="imgMotion"
           :src="SettingPreviewDark"
-          alt="动画预览"
+          :alt="i18nStore.t('setting.sclip.animation.preview')"
           class="preview-image-animation"
         />
       </div>
@@ -91,8 +95,10 @@ const toggleImageAnimation = (value: boolean): void => {
 
     <div class="toggle-option">
       <div class="option-info">
-        <div class="option-title">启用图片微动画</div>
-        <div class="option-description">为图片卡片添加轻微的动态效果，增强视觉体验</div>
+        <div class="option-title">{{ i18nStore.t('setting.sclip.animation.enableAnimation') }}</div>
+        <div class="option-description">
+          {{ i18nStore.t('setting.sclip.animation.enableAnimationDesc') }}
+        </div>
       </div>
       <VSwitch v-model="enableImageAnimation" @change="toggleImageAnimation" />
     </div>
