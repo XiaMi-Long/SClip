@@ -1,0 +1,1154 @@
+@charset "UTF-8";
+/*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
+/* Document
+   ========================================================================== */
+/**
+ * 1. Correct the line height in all browsers.
+ * 2. Prevent adjustments of font size after orientation changes in iOS.
+ */
+html {
+  line-height: 1.15;
+  /* 1 */
+  -webkit-text-size-adjust: 100%;
+  /* 2 */
+}
+
+/* Sections
+   ========================================================================== */
+/**
+ * Remove the margin in all browsers.
+ */
+body {
+  margin: 0;
+}
+
+/**
+ * Render the `main` element consistently in IE.
+ */
+main {
+  display: block;
+}
+
+/**
+ * Correct the font size and margin on `h1` elements within `section` and
+ * `article` contexts in Chrome, Firefox, and Safari.
+ */
+h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+
+/* Grouping content
+   ========================================================================== */
+/**
+ * 1. Add the correct box sizing in Firefox.
+ * 2. Show the overflow in Edge and IE.
+ */
+hr {
+  box-sizing: content-box;
+  /* 1 */
+  height: 0;
+  /* 1 */
+  overflow: visible;
+  /* 2 */
+}
+
+/**
+ * 1. Correct the inheritance and scaling of font size in all browsers.
+ * 2. Correct the odd `em` font sizing in all browsers.
+ */
+pre {
+  font-family: monospace, monospace;
+  /* 1 */
+  font-size: 1em;
+  /* 2 */
+}
+
+/* Text-level semantics
+   ========================================================================== */
+/**
+ * Remove the gray background on active links in IE 10.
+ */
+a {
+  background-color: transparent;
+}
+
+/**
+ * 1. Remove the bottom border in Chrome 57-
+ * 2. Add the correct text decoration in Chrome, Edge, IE, Opera, and Safari.
+ */
+abbr[title] {
+  border-bottom: none;
+  /* 1 */
+  text-decoration: underline;
+  /* 2 */
+  text-decoration: underline dotted;
+  /* 2 */
+}
+
+/**
+ * Add the correct font weight in Chrome, Edge, and Safari.
+ */
+b,
+strong {
+  font-weight: bolder;
+}
+
+/**
+ * 1. Correct the inheritance and scaling of font size in all browsers.
+ * 2. Correct the odd `em` font sizing in all browsers.
+ */
+code,
+kbd,
+samp {
+  font-family: monospace, monospace;
+  /* 1 */
+  font-size: 1em;
+  /* 2 */
+}
+
+/**
+ * Add the correct font size in all browsers.
+ */
+small {
+  font-size: 80%;
+}
+
+/**
+ * Prevent `sub` and `sup` elements from affecting the line height in
+ * all browsers.
+ */
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+sup {
+  top: -0.5em;
+}
+
+/* Embedded content
+   ========================================================================== */
+/**
+ * Remove the border on images inside links in IE 10.
+ */
+img {
+  border-style: none;
+}
+
+/* Forms
+   ========================================================================== */
+/**
+ * 1. Change the font styles in all browsers.
+ * 2. Remove the margin in Firefox and Safari.
+ */
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: inherit;
+  /* 1 */
+  font-size: 100%;
+  /* 1 */
+  line-height: 1.15;
+  /* 1 */
+  margin: 0;
+  /* 2 */
+}
+
+/**
+ * Show the overflow in IE.
+ * 1. Show the overflow in Edge.
+ */
+button,
+input {
+  /* 1 */
+  overflow: visible;
+}
+
+/**
+ * Remove the inheritance of text transform in Edge, Firefox, and IE.
+ * 1. Remove the inheritance of text transform in Firefox.
+ */
+button,
+select {
+  /* 1 */
+  text-transform: none;
+}
+
+/**
+ * Correct the inability to style clickable types in iOS and Safari.
+ */
+button,
+[type=button],
+[type=reset],
+[type=submit] {
+  -webkit-appearance: button;
+}
+
+/**
+ * Remove the inner border and padding in Firefox.
+ */
+button::-moz-focus-inner,
+[type=button]::-moz-focus-inner,
+[type=reset]::-moz-focus-inner,
+[type=submit]::-moz-focus-inner {
+  border-style: none;
+  padding: 0;
+}
+
+/**
+ * Restore the focus styles unset by the previous rule.
+ */
+button:-moz-focusring,
+[type=button]:-moz-focusring,
+[type=reset]:-moz-focusring,
+[type=submit]:-moz-focusring {
+  outline: 1px dotted ButtonText;
+}
+
+/**
+ * Correct the padding in Firefox.
+ */
+fieldset {
+  padding: 0.35em 0.75em 0.625em;
+}
+
+/**
+ * 1. Correct the text wrapping in Edge and IE.
+ * 2. Correct the color inheritance from `fieldset` elements in IE.
+ * 3. Remove the padding so developers are not caught out when they zero out
+ *    `fieldset` elements in all browsers.
+ */
+legend {
+  box-sizing: border-box;
+  /* 1 */
+  color: inherit;
+  /* 2 */
+  display: table;
+  /* 1 */
+  max-width: 100%;
+  /* 1 */
+  padding: 0;
+  /* 3 */
+  white-space: normal;
+  /* 1 */
+}
+
+/**
+ * Add the correct vertical alignment in Chrome, Firefox, and Opera.
+ */
+progress {
+  vertical-align: baseline;
+}
+
+/**
+ * Remove the default vertical scrollbar in IE 10+.
+ */
+textarea {
+  overflow: auto;
+}
+
+/**
+ * 1. Add the correct box sizing in IE 10.
+ * 2. Remove the padding in IE 10.
+ */
+[type=checkbox],
+[type=radio] {
+  box-sizing: border-box;
+  /* 1 */
+  padding: 0;
+  /* 2 */
+}
+
+/**
+ * Correct the cursor style of increment and decrement buttons in Chrome.
+ */
+[type=number]::-webkit-inner-spin-button,
+[type=number]::-webkit-outer-spin-button {
+  height: auto;
+}
+
+/**
+ * 1. Correct the odd appearance in Chrome and Safari.
+ * 2. Correct the outline style in Safari.
+ */
+[type=search] {
+  -webkit-appearance: textfield;
+  /* 1 */
+  outline-offset: -2px;
+  /* 2 */
+}
+
+/**
+ * Remove the inner padding in Chrome and Safari on macOS.
+ */
+[type=search]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/**
+ * 1. Correct the inability to style clickable types in iOS and Safari.
+ * 2. Change font properties to `inherit` in Safari.
+ */
+::-webkit-file-upload-button {
+  -webkit-appearance: button;
+  /* 1 */
+  font: inherit;
+  /* 2 */
+}
+
+/* Interactive
+   ========================================================================== */
+/*
+ * Add the correct display in Edge, IE 10+, and Firefox.
+ */
+details {
+  display: block;
+}
+
+/*
+ * Add the correct display in all browsers.
+ */
+summary {
+  display: list-item;
+}
+
+/* Misc
+   ========================================================================== */
+/**
+ * Add the correct display in IE 10+.
+ */
+template {
+  display: none;
+}
+
+/**
+ * Add the correct display in IE 10.
+ */
+[hidden] {
+  display: none;
+}
+
+/* 剪贴板卡片背景 */
+:root {
+  /** 标题栏高度 */
+  --title-bar-height: 40px;
+  --title-bar-bg: #ecedef;
+  --container-bg: #fdfcfb;
+}
+
+@keyframes pageEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}.title-bar[data-v-cc2bf191] {
+  height: var(--title-bar-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-app-region: drag;
+  user-select: none;
+  position: relative;
+  border-bottom: 1px solid var(--title-bar-bg);
+  background-color: var(--title-bar-bg);
+  transition: all 0.5s;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+.title-bar-mac[data-v-cc2bf191] {
+  justify-content: start;
+}
+.title-bar-win[data-v-cc2bf191] {
+  justify-content: end;
+}
+.mac-traffic-lights[data-v-cc2bf191] {
+  position: absolute;
+  top: 12px;
+  left: 13px;
+  z-index: 100;
+  -webkit-app-region: no-drag;
+}
+.mac-traffic-light[data-v-cc2bf191] {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 0.5px solid rgba(0, 0, 0, 0.1);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: background-color 0.2s;
+}
+.mac-traffic-light[data-v-cc2bf191]:focus {
+  outline: none;
+}
+.mac-traffic-light[data-v-cc2bf191]:focus-visible {
+  outline: none;
+}
+.mac-traffic-light.mac-close[data-v-cc2bf191] {
+  left: 0;
+  background: transparent;
+}
+.mac-traffic-light.mac-minimize[data-v-cc2bf191] {
+  left: 20px;
+  background: transparent;
+}
+.mac-traffic-light svg[data-v-cc2bf191] {
+  width: 12px;
+  height: 12px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.mac-traffic-light:hover svg[data-v-cc2bf191] {
+  opacity: 0.4;
+}
+.mac-tools-area[data-v-cc2bf191] {
+  right: 0;
+}
+.win-mac-traffic-lights[data-v-cc2bf191] {
+  position: absolute;
+  top: 12px;
+  left: 13px;
+  z-index: 100;
+  display: flex;
+  gap: 8px;
+  -webkit-app-region: no-drag;
+}
+.win-mac-traffic-light[data-v-cc2bf191] {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: background-color 0.2s;
+  transition: all 0.2s ease;
+}
+.win-mac-traffic-light[data-v-cc2bf191]:focus {
+  outline: none;
+}
+.win-mac-traffic-light[data-v-cc2bf191]:focus-visible {
+  outline: none;
+}
+.win-mac-traffic-light.win-mac-close[data-v-cc2bf191] {
+  background-color: #ff5f57;
+}
+.win-mac-traffic-light.win-mac-close[data-v-cc2bf191]:hover {
+  background-color: #ff3b30;
+}
+.win-mac-traffic-light.win-mac-minimize[data-v-cc2bf191] {
+  background-color: #ffbd2e;
+}
+.win-mac-traffic-light.win-mac-minimize[data-v-cc2bf191]:hover {
+  background-color: #ffb700;
+}
+.win-mac-traffic-light.win-mac-maximize[data-v-cc2bf191] {
+  background-color: #28c940;
+}
+.win-mac-traffic-light.win-mac-maximize[data-v-cc2bf191]:hover {
+  background-color: #1db934;
+}
+.win-mac-traffic-light.win-mac-maximize.win-mac-disabled[data-v-cc2bf191] {
+  background-color: #8e8e8e;
+  cursor: not-allowed;
+}
+.win-mac-traffic-light.win-mac-maximize.win-mac-disabled[data-v-cc2bf191]:hover {
+  background-color: #8e8e8e;
+}
+.win-controls[data-v-cc2bf191] {
+  display: flex;
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  -webkit-app-region: no-drag;
+  gap: 0;
+  color: var(--text-color);
+  transition: color 0.5s;
+}
+.win-control-button[data-v-cc2bf191] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: background-color 0.2s;
+  width: 46px;
+  height: 100%;
+  border-radius: 0;
+  flex: 0 0 auto;
+  color: inherit;
+}
+.win-control-button[data-v-cc2bf191]:focus {
+  outline: none;
+}
+.win-control-button[data-v-cc2bf191]:focus-visible {
+  outline: none;
+}
+.win-control-button svg[data-v-cc2bf191] {
+  opacity: 0.7;
+  width: 10px;
+  height: 10px;
+}
+.win-control-button[data-v-cc2bf191]:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+.win-control-button.win-minimize[data-v-cc2bf191]:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+.win-control-button.win-maximize[data-v-cc2bf191] {
+  cursor: not-allowed;
+}
+.win-control-button.win-maximize[data-v-cc2bf191]:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+.win-control-button.win-close[data-v-cc2bf191]:hover {
+  background-color: #e81123;
+}
+.win-control-button.win-close:hover svg[data-v-cc2bf191] {
+  opacity: 1;
+  fill: white;
+}
+.win-tools-area[data-v-cc2bf191] {
+  left: 0;
+}
+.tools-area[data-v-cc2bf191] {
+  height: 100%;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  -webkit-app-region: no-drag;
+}
+.tool-button[data-v-cc2bf191] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: background-color 0.2s;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+}
+.tool-button[data-v-cc2bf191]:focus {
+  outline: none;
+}
+.tool-button[data-v-cc2bf191]:focus-visible {
+  outline: none;
+}
+.tool-button[data-v-cc2bf191]:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+.tool-icon[data-v-cc2bf191] {
+  width: 16px;
+  height: 16px;
+  opacity: 0.7;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.affix-icon[data-v-cc2bf191] {
+  transform: rotate(315deg);
+}
+.tool-button:hover .setting-icon[data-v-cc2bf191] {
+  opacity: 1;
+  transform: rotate(30deg);
+}
+.setting-button-hidden[data-v-cc2bf191] {
+  display: none;
+}
+.affix-button-true .tool-icon[data-v-cc2bf191] {
+  opacity: 1;
+  filter: brightness(2);
+}
+.win-tools-area[data-v-cc2bf191] {
+  flex-direction: row-reverse;
+}
+.app-container {
+  width: 100vw;
+  height: 100vh;
+}
+#app {
+  border-radius: 8px;
+  overflow: hidden;
+  height: 100vh;
+  background: var(--container-bg);
+  /* 使用你的主题背景色 */
+}
+
+/* Windows下特殊处理 */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+#app {
+    border: 1px solid transparent;
+    /* 防止Windows下边缘锯齿 */
+}
+}.clipboard-card-text-container[data-v-028c1e20] {
+  height: 90%;
+  overflow: hidden;
+}
+.plain-text[data-v-028c1e20] {
+  white-space: pre;
+  word-wrap: break-word;
+  user-select: none;
+}.clipboard-card-image-container[data-v-7e330bc6] {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.clipboard-card-image[data-v-7e330bc6] {
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  will-change: transform;
+}.clipboard-card-text-container[data-v-f238e6e9] {
+  height: 90%;
+  overflow: hidden;
+}.clipboard-card-container[data-v-4639ccbf] {
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  cursor: pointer;
+  color: #3c3c43;
+  font-size: 12px;
+  border-radius: 5px;
+  justify-content: center;
+  align-items: center;
+}
+.clipboard-card[data-v-4639ccbf] {
+  height: 95%;
+  width: 95%;
+  background-color: var(--title-bar-bg);
+  border-radius: 5px;
+  padding: 10px;
+  box-sizing: border-box;
+  color: var(--text-color);
+  transition: color 0.5s ease, background-color 0.5s ease;
+}
+/**
+ * @description 标记组件的基础样式
+ */
+.badge-container[data-v-465c8d9e] {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+.right-bottom-badges[data-v-465c8d9e] {
+  position: absolute;
+  right: 5%;
+  bottom: 5%;
+  display: flex;
+  gap: 0.3em;
+  flex-direction: row-reverse;
+}
+.badge[data-v-465c8d9e] {
+  position: relative;
+  box-sizing: border-box;
+  width: 1.5em;
+  height: 1.5em;
+  padding: 0.3em;
+  background-color: var(--sticky-badge-bg);
+  transition: background-color 0.5s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+}
+.badge img[data-v-465c8d9e] {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+.badge span[data-v-465c8d9e] {
+  font-size: 0.6em;
+  font-weight: bold;
+  color: white;
+  text-transform: uppercase;
+}
+.sticky-badge[data-v-465c8d9e] {
+  position: absolute;
+  left: 5%;
+  bottom: 5%;
+}
+.sticky-badge.error[data-v-465c8d9e] {
+  animation-name: tada-465c8d9e;
+  animation-duration: 1.5s;
+  animation-fill-mode: both;
+}
+.select-badge .pulse-circle[data-v-465c8d9e] {
+  width: 0.6em;
+  height: 0.6em;
+  background-color: var(--button-primary-bg);
+  border-radius: 50%;
+  animation: pulse-465c8d9e 1.5s ease-in-out infinite;
+}
+@keyframes tada-465c8d9e {
+0% {
+    transform: scale3d(1, 1, 1);
+}
+10%, 20% {
+    transform: scale3d(0.9, 0.9, 0.9) rotate3d(0, 0, 1, -3deg);
+}
+30%, 50%, 70%, 90% {
+    transform: scale3d(1.2, 1.2, 1.2) rotate3d(0, 0, 1, 3deg);
+    background-color: var(--sticky-badge-error-bg);
+}
+40%, 60%, 80% {
+    transform: scale3d(1.4, 1.4, 1.4) rotate3d(0, 0, 1, -3deg);
+}
+100% {
+    transform: scale3d(1, 1, 1);
+}
+}
+@keyframes pulse-465c8d9e {
+0% {
+    transform: scale(0.9);
+    opacity: 0.8;
+}
+50% {
+    transform: scale(1);
+    opacity: 1;
+}
+100% {
+    transform: scale(0.9);
+    opacity: 0.8;
+}
+}
+.pagination-container[data-v-b5f8a9f4] {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 65px;
+  /* (15px * 3) + (8px * 2) = 65px，刚好容纳3个条形区域 */
+  overflow: visible; /* 修改为visible以显示伪元素溢出部分 */
+  height: 4px; /* 明确设置高度 */
+  z-index: 5; /* 确保分页指示器在磨砂背景上方 */
+  /* 添加磨砂质感伪元素 */
+}
+.pagination-container[data-v-b5f8a9f4]::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -3px; /* 位于区域下方 */
+  transform: translateX(-50%);
+  width: calc(100% + 20px); /* 比容器宽20px */
+  height: 12px; /* 比容器高 */
+  border-radius: 5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: -1; /* 确保在分页指示器下方 */
+  background: var(--container-bg);
+}
+.pagination-wrapper[data-v-b5f8a9f4] {
+  position: relative;
+  width: 100%;
+  height: 4px;
+  overflow: hidden;
+  /* 条形区域高度 */
+}
+.pagination-wrapper.flex[data-v-b5f8a9f4] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pagination-bars[data-v-b5f8a9f4] {
+  position: absolute;
+  display: flex;
+  gap: 8px;
+  /* 条形区域间隔 */
+  transition: transform 0.5s ease;
+  /* 使用 will-change 提示浏览器优化 */
+  will-change: transform;
+  /* 强制开启硬件加速 */
+  backface-visibility: hidden;
+}
+.pagination-bar[data-v-b5f8a9f4] {
+  width: 15px;
+  /* 条形区域宽度 */
+  height: 4px;
+  border-radius: 2px;
+  background-color: rgba(0, 0, 0, 0.2);
+  transition: background-color 0.5s ease;
+}
+.pagination-bar.active[data-v-b5f8a9f4] {
+  background-color: var(--text-color);
+}
+
+/* 前进动画 */
+@keyframes expandForward-b5f8a9f4 {
+0% {
+    transform: translateX(0);
+}
+20% {
+    transform: translateX(6px);
+}
+40% {
+    transform: translateX(12px);
+}
+60% {
+    transform: translateX(12px);
+}
+100% {
+    transform: translateX(23px);
+}
+}
+/* 后退动画 */
+@keyframes expandBackward-b5f8a9f4 {
+0% {
+    transform: translateX(23px);
+}
+40% {
+    transform: translateX(12px);
+}
+60% {
+    transform: translateX(12px);
+}
+80% {
+    transform: translateX(6px);
+}
+100% {
+    transform: translateX(0px);
+}
+}
+/* 应用动画 */
+.pagination-bar.animating[data-v-b5f8a9f4] {
+  position: absolute;
+}
+.pagination-bar.animating.forward[data-v-b5f8a9f4] {
+  position: relative;
+}
+.pagination-bar.animating.forward[data-v-b5f8a9f4]::before {
+  content: "";
+  position: absolute;
+  transform-origin: left center;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+  background-color: var(--text-color);
+  animation: expandForward-b5f8a9f4 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+.pagination-bar.animating.backward[data-v-b5f8a9f4] {
+  position: relative;
+}
+.pagination-bar.animating.backward[data-v-b5f8a9f4]::before {
+  content: "";
+  position: absolute;
+  transform-origin: left center;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+  background-color: var(--text-color);
+  animation: expandBackward-b5f8a9f4 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+/* 容器样式：设置溢出隐藏和全屏高度 */
+.carousel-container[data-v-830af35d] {
+  box-sizing: border-box;
+  overflow: hidden;
+  height: 100%;
+}
+
+/* 内层列表：垂直排列所有卡片，设置间距和内边距 */
+.all-cards[data-v-830af35d] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px 0px;
+  height: 100%;
+  background-color: var(--container-bg);
+  transition: background-color 0.5s ease;
+  will-change: transform; /* 提示浏览器优化变换性能 */
+}
+
+/* 卡片样式：设置基础样式和过渡效果 */
+.card-wrapper[data-v-830af35d] {
+  box-sizing: border-box;
+  height: calc((100% - 6px - 2.5px) / 3);
+  position: relative;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform 0.5s ease;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* 空数据容器样式 */
+.no-data-container[data-v-830af35d] {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.no-data-container .no-data-content[data-v-830af35d] {
+  text-align: center;
+  color: var(--text-color, #8c8c8c);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  animation: fadeIn-830af35d 0.5s ease-in-out;
+}
+.no-data-container .no-data-icon[data-v-830af35d] {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 8px;
+}
+.no-data-container .no-data-icon svg[data-v-830af35d] {
+  width: 100%;
+  height: 100%;
+  color: var(--text-color, #8c8c8c);
+  animation: floatAnimation 3s ease-in-out infinite;
+}
+.no-data-container h3[data-v-830af35d] {
+  font-size: 18px;
+  margin: 0;
+  font-weight: 500;
+}
+.no-data-container p[data-v-830af35d] {
+  font-size: 14px;
+  margin: 0;
+  opacity: 0.8;
+}
+@keyframes fadeIn-830af35d {
+from {
+    opacity: 0;
+}
+to {
+    opacity: 1;
+}
+}.swiper-container[data-v-2454d254] {
+  height: 100%;
+}.home-container[data-v-cb1cbda3] {
+  width: 100%;
+  height: calc(100% - var(--title-bar-height));
+}.settings-container[data-v-10c9256b] {
+  display: flex;
+  height: calc(100vh - var(--title-bar-height, 38px));
+  width: 100%;
+  background-color: var(--container-bg, #f5f5f7);
+  transition: background-color 0.5s;
+  color: var(--text-color, #333);
+  overflow: hidden;
+}
+.settings-sidebar[data-v-10c9256b] {
+  width: 250px;
+  border-right: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
+  display: flex;
+  flex-direction: column;
+  color: var(--text-color);
+  transition: color 0.5s;
+  padding: 20px 0;
+}
+.settings-title[data-v-10c9256b] {
+  font-size: 24px;
+  font-weight: 600;
+  padding: 0 20px 20px;
+}
+.menu-container[data-v-10c9256b] {
+  flex: 1;
+  overflow-y: auto;
+}
+.menu-group[data-v-10c9256b] {
+  margin-bottom: 8px;
+}
+.menu-item[data-v-10c9256b] {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 8px;
+  margin: 0 10px;
+  position: relative;
+  transition: background-color 0.5s;
+}
+.menu-item[data-v-10c9256b]:hover {
+  background-color: var(--title-bar-bg);
+}
+.menu-item.active[data-v-10c9256b] {
+  background-color: var(--title-bar-bg);
+  font-weight: 500;
+}
+.menu-icon[data-v-10c9256b] {
+  margin-right: 12px;
+  font-size: 18px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.menu-label[data-v-10c9256b] {
+  flex: 1;
+}
+.submenu[data-v-10c9256b] {
+  margin: 4px 0 8px 20px;
+}
+.submenu-item[data-v-10c9256b] {
+  padding: 8px 20px;
+  cursor: pointer;
+  border-radius: 6px;
+  margin: 2px 10px;
+  font-size: 14px;
+  transition: background-color 0.5s;
+}
+.submenu-item[data-v-10c9256b]:hover {
+  background-color: var(--title-bar-bg);
+}
+.submenu-item.active[data-v-10c9256b] {
+  background-color: var(--title-bar-bg);
+  font-weight: 500;
+}
+.settings-content[data-v-10c9256b] {
+  flex: 1;
+  overflow-y: auto;
+  padding: 30px;
+  color: var(--text-color);
+  transition: color 0.5s;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+.fade-enter-active[data-v-10c9256b],
+.fade-leave-active[data-v-10c9256b] {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.fade-enter-from[data-v-10c9256b],
+.fade-leave-to[data-v-10c9256b] {
+  opacity: 0;
+  transform: translateY(15px);
+}.v-message-wrapper[data-v-19d3309a] {
+  position: fixed;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+}
+.v-message[data-v-19d3309a] {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 400px;
+  min-width: 240px;
+  pointer-events: auto;
+  backdrop-filter: blur(8px);
+}
+.v-message.v-message--success[data-v-19d3309a] {
+  background-color: rgba(52, 168, 83, 0.7);
+  border: 1px solid rgba(52, 168, 83, 0.3);
+  color: #fff;
+}
+.v-message.v-message--success .v-message-icon[data-v-19d3309a] {
+  color: #fff;
+}
+.v-message.v-message--success .v-message-title[data-v-19d3309a] {
+  color: #fff;
+}
+.v-message.v-message--info[data-v-19d3309a] {
+  background-color: rgba(66, 133, 244, 0.7);
+  border: 1px solid rgba(66, 133, 244, 0.3);
+  color: #fff;
+}
+.v-message.v-message--info .v-message-icon[data-v-19d3309a] {
+  color: #fff;
+}
+.v-message.v-message--info .v-message-title[data-v-19d3309a] {
+  color: #fff;
+}
+.v-message.v-message--warning[data-v-19d3309a] {
+  background-color: rgba(251, 188, 5, 0.7);
+  border: 1px solid rgba(251, 188, 5, 0.3);
+  color: #fff;
+}
+.v-message.v-message--warning .v-message-icon[data-v-19d3309a] {
+  color: #fff;
+}
+.v-message.v-message--warning .v-message-title[data-v-19d3309a] {
+  color: #fff;
+}
+.v-message.v-message--error[data-v-19d3309a] {
+  background-color: rgba(234, 67, 53, 0.7);
+  border: 1px solid rgba(234, 67, 53, 0.3);
+  color: #fff;
+}
+.v-message.v-message--error .v-message-icon[data-v-19d3309a] {
+  color: #fff;
+}
+.v-message.v-message--error .v-message-title[data-v-19d3309a] {
+  color: #fff;
+}
+.v-message-icon[data-v-19d3309a] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+}
+.v-message-icon .icon[data-v-19d3309a] {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+}
+.v-message-content[data-v-19d3309a] {
+  flex: 1;
+  min-width: 0;
+}
+.v-message-title[data-v-19d3309a] {
+  font-weight: 600;
+  margin-bottom: 4px;
+  font-size: 15px;
+}
+.v-message-text[data-v-19d3309a] {
+  opacity: 0.95;
+}
+.message-fade-enter-active[data-v-19d3309a],
+.message-fade-leave-active[data-v-19d3309a] {
+  transition: all 0.3s ease;
+}
+.message-fade-enter-from[data-v-19d3309a],
+.message-fade-leave-to[data-v-19d3309a] {
+  opacity: 0;
+  transform: translate(-50%, calc(-50% - 30px));
+}

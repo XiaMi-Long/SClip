@@ -1,0 +1,152 @@
+.log-viewer[data-v-3ba680ec] {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  color: var(--text-color);
+  transition: color 0.5s ease;
+  padding: 0;
+}
+.log-viewer .log-viewer-header[data-v-3ba680ec] {
+  margin-bottom: 20px;
+}
+.log-viewer .log-viewer-header h2[data-v-3ba680ec] {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0;
+  margin-bottom: 8px;
+}
+.log-viewer .log-viewer-header .log-viewer-subtitle[data-v-3ba680ec] {
+  font-size: 14px;
+  color: var(--text-color);
+  transition: color 0.5s ease;
+  opacity: 0.7;
+}
+.log-viewer .log-container[data-v-3ba680ec] {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  scrollbar-width: none;
+}
+.log-viewer .log-loading[data-v-3ba680ec] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+  color: var(--text-color);
+  transition: color 0.5s ease;
+}
+.log-viewer .log-loading .loading-indicator[data-v-3ba680ec] {
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-top-color: var(--button-primary-bg);
+  border-radius: 50%;
+  animation: spin-3ba680ec 0.8s linear infinite;
+  margin-bottom: 12px;
+}
+.log-viewer .log-empty[data-v-3ba680ec] {
+  text-align: center;
+  padding: 40px 0;
+  color: var(--text-color);
+  transition: color 0.5s ease;
+}
+.log-viewer .log-empty svg[data-v-3ba680ec] {
+  opacity: 0.4;
+  margin-bottom: 16px;
+}
+.log-viewer .log-empty p[data-v-3ba680ec] {
+  font-size: 16px;
+  margin: 0 0 8px 0;
+}
+.log-viewer .log-empty span[data-v-3ba680ec] {
+  font-size: 14px;
+  opacity: 0.7;
+}
+.log-viewer .log-list[data-v-3ba680ec] {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.log-viewer .log-item[data-v-3ba680ec] {
+  background-color: var(--title-bar-bg);
+  transition: background-color 0.5s ease, box-shadow 0.2s;
+  border-radius: 8px;
+  padding: 14px 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+.log-viewer .log-item[data-v-3ba680ec]:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+.log-viewer .log-item[data-v-3ba680ec]::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: #faad14;
+}
+.log-viewer .log-item.error[data-v-3ba680ec]::before {
+  background-color: #ff4d4f;
+}
+.log-viewer .log-item-header[data-v-3ba680ec] {
+  display: flex;
+  margin-bottom: 8px;
+  font-size: 13px;
+  align-items: center;
+}
+.log-viewer .log-level[data-v-3ba680ec] {
+  font-weight: 500;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-right: 8px;
+}
+.log-item.warn .log-viewer .log-level[data-v-3ba680ec] {
+  background-color: rgba(250, 173, 20, 0.1);
+  color: #faad14;
+}
+.log-item.error .log-viewer .log-level[data-v-3ba680ec] {
+  background-color: rgba(255, 77, 79, 0.1);
+  color: #ff4d4f;
+}
+.log-viewer .log-module[data-v-3ba680ec] {
+  font-weight: 500;
+  color: var(--text-color);
+  transition: color 0.5s ease;
+  margin-right: auto;
+}
+.log-viewer .log-time[data-v-3ba680ec] {
+  color: var(--text-color);
+  transition: color 0.5s ease;
+  font-size: 12px;
+}
+.log-viewer .log-message[data-v-3ba680ec] {
+  font-size: 14px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+.log-viewer .log-data[data-v-3ba680ec] {
+  margin-top: 8px;
+  background-color: var(--container-bg);
+  transition: background-color 0.5s ease;
+  border-radius: 4px;
+  padding: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.log-viewer .log-data pre[data-v-3ba680ec] {
+  margin: 0;
+  font-family: "SF Mono", SFMono-Regular, Consolas, monospace;
+  font-size: 12px;
+  white-space: pre-wrap;
+}
+@keyframes spin-3ba680ec {
+to {
+    transform: rotate(360deg);
+}
+}
