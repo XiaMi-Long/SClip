@@ -277,13 +277,13 @@ export class ApplicationRegister {
           ]
         }
       ]
-      if (is.dev) {
-        ;(template[1].submenu as MenuItemConstructorOptions[]).unshift({
-          role: 'toggleDevTools',
-          label: '开发者工具',
-          id: 'toggle-dev-tools'
-        })
-      }
+      // if (is.dev) {
+      ;(template[1].submenu as MenuItemConstructorOptions[]).unshift({
+        role: 'toggleDevTools',
+        label: '开发者工具',
+        id: 'toggle-dev-tools'
+      })
+      // }
 
       const menu = Menu.buildFromTemplate(template)
       Menu.setApplicationMenu(menu)
@@ -392,6 +392,7 @@ export class ApplicationRegister {
         const clipboardHistory = DBManager.getInstance().getClipboardHistory(
           setting.appBehavior.historyLimit
         )
+        mainWindow?.webContents.openDevTools({ mode: 'detach' })
 
         if (mainWindow) {
           mainWindow.on('ready-to-show', () => {
@@ -406,9 +407,9 @@ export class ApplicationRegister {
               MainIPCService.sendToRenderer.setWindowId('main', 'main')
 
               // 在开发环境下打开 DevTools
-              if (is.dev) {
-                mainWindow.webContents.openDevTools({ mode: 'detach' })
-              }
+              // if (is.dev) {
+              mainWindow.webContents.openDevTools({ mode: 'detach' })
+              // }
               // mainWindow.setAlwaysOnTop(true, 'screen-saver')
 
               // 监听显示器变化事件
@@ -452,7 +453,7 @@ export class ApplicationRegister {
           if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
             mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
           } else {
-            mainWindow.loadFile(join(__dirname, '../../renderer/index.html'))
+            mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
           }
         } else {
           console.error('主窗口未创建')
@@ -550,7 +551,7 @@ export class ApplicationRegister {
           if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
             settingWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/#/setting`)
           } else {
-            settingWindow.loadFile(join(__dirname, '../../renderer/index.html'), {
+            settingWindow.loadFile(join(__dirname, '../renderer/index.html'), {
               hash: '/setting'
             })
           }
