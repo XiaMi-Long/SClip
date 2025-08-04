@@ -21,7 +21,7 @@ export class MainIPCService {
     // 注册接收渲染进程消息的事件
     this.registerMainProcessReceivers()
 
-    // 注册需要返回数据给渲染进程的事件
+    // 注册需要返回数据给渲染进程的事件生成内容区域
     this.registerMainProcessHandlers()
   }
 

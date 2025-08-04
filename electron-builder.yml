@@ -11,8 +11,12 @@ files:
   - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
 asarUnpack:
   - resources/**
+# 添加图标配置
+icon: resources/images/icons/icon.png
 win:
   executableName: clipboard
+  # Windows特定图标配置
+  icon: resources/images/icons/icon.ico
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
@@ -20,6 +24,8 @@ nsis:
   createDesktopShortcut: always
 mac:
   entitlementsInherit: build/entitlements.mac.plist
+  # macOS特定图标配置
+  icon: resources/images/icons/icon.icns
   extendInfo:
     - NSCameraUsageDescription: Application requests access to the device's camera.
     - NSMicrophoneUsageDescription: Application requests access to the device's microphone.
@@ -35,6 +41,8 @@ linux:
     - deb
   maintainer: electronjs.org
   category: Utility
+  # Linux特定图标配置
+  icon: resources/images/icons/icon.png
 appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
