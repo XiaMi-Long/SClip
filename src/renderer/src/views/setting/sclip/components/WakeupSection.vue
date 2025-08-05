@@ -132,6 +132,8 @@ const toggleJumpToFirstPage = (value: boolean): void => {
 </template>
 
 <style lang="scss" scoped>
+@use '../common.scss';
+
 // 定义变量
 $card-width: 250px;
 $card-height: 380px;
@@ -171,21 +173,6 @@ $transition-default: 0.5s ease;
 // 整体部分样式
 .wakeup-section {
   margin-bottom: 30px;
-
-  .section-title {
-    margin-bottom: 20px;
-
-    h3 {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 5px;
-    }
-
-    .subtitle {
-      font-size: 14px;
-      @include toggle-text;
-    }
-  }
 }
 
 // 唤醒回到首页功能区样式

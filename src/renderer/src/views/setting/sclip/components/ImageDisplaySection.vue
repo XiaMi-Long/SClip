@@ -150,25 +150,10 @@ const selectDisplayMode = (modeId: 'auto' | 'contain' | 'cover'): void => {
 </template>
 
 <style lang="scss" scoped>
+@use '../common.scss';
+
 .image-display-section {
   margin-bottom: 30px;
-}
-
-.section-title {
-  margin-bottom: 20px;
-
-  h3 {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 5px;
-  }
-
-  .subtitle {
-    font-size: 14px;
-    color: var(--text-color);
-    opacity: 0.7;
-    transition: color 0.5s ease;
-  }
 }
 
 .display-mode-options {

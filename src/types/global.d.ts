@@ -178,6 +178,11 @@ declare global {
        */
       showLongContentTip: boolean
     }
+
+    /**
+     * 是否开启数据去重
+     */
+    enableDataDeduplication: boolean
   }
 }
 

@@ -11,6 +11,7 @@ import HistoryLimitSection from './components/HistoryLimitSection.vue'
 import FixedWindowSection from './components/FixedWindowSection.vue'
 import IndicatorSection from './components/IndicatorSection.vue'
 import TextStyleSection from './components/TextStyleSection.vue'
+import DataDeduplication from './components/DataDeduplication.vue'
 
 /**
  * SClip设置组件
@@ -54,6 +55,9 @@ const rtfTextZoom = ref(setting.clipboard.rtfTextZoom || 1)
 
 // 超长文本显示上限
 const longTextLimit = ref(setting.clipboard.longTextLimit || 400) // 默认值为400个字符
+
+// 是否开启数据去重
+const enableDataDeduplication = ref(setting.enableDataDeduplication)
 </script>
 
 <template>
@@ -115,6 +119,12 @@ const longTextLimit = ref(setting.clipboard.longTextLimit || 400) // 默认值�
       v-model:show-type-indicator="showTypeIndicator"
       v-model:show-long-content-tip="showLongContentTip"
     />
+
+    <!-- 分隔线 -->
+    <div class="divider"></div>
+
+    <!-- 数据去重 -->
+    <DataDeduplication v-model:endenable-data-deduplication="enableDataDeduplication" />
   </div>
 </template>
 

@@ -4,23 +4,26 @@ buildDependenciesFromSource: true
 directories:
   buildResources: build
   output: dist
+  app: .
 files:
-  - 'dist/main/**/*'
-  - 'dist/preload/**/*'
-  - 'dist/renderer/**/*'
-  - 'node_modules/robotjs/build/Release/robotjs.node'
-  - 'node_modules/better-sqlite3/build/Release/better_sqlite3.node'
-  - '!**/.vscode/**'
-  - '!**/.history/**'
-  - '!src/**'
+  - 'resources/**'
+  - 'dist/main/index.js'
+  - 'dist/preload/index.js'
+  - 'dist/renderer/**'
+  - '!**/.vscode/*'
+  - '!src/*'
   - '!electron.vite.config.{js,ts,mjs,cjs}'
   - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
   - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
   - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
-asarUnpack:
-  - resources/**
-  - node_modules/robotjs/build/Release/robotjs.node
-  - node_modules/better-sqlite3/build/Release/better_sqlite3.node
+# asarUnpack:
+#   - 'resources/**'
+#   - 'resources/images/**'
+#   - 'resources/images/icons/**'
+#   - 'node_modules/robotjs/build/Release/robotjs.node'
+#   - 'node_modules/better-sqlite3/build/Release/better_sqlite3.node'
+#   - 'node_modules/sqlite3'
+#   - 'dist/main/chunks/*.node'
 # 添加图标配置
 icon: resources/images/icons/icon.png
 win:

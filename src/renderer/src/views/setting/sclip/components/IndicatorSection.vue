@@ -151,6 +151,8 @@ const saveSettings = (): void => {
 </template>
 
 <style lang="scss" scoped>
+@use '../common.scss';
+
 // 定义变量
 $border-radius: 10px;
 $transition-default: 0.5s ease;
@@ -178,21 +180,6 @@ $indicator-padding: 0.3em;
 // 整体部分样式
 .indicator-section {
   margin-bottom: 30px;
-
-  .section-title {
-    margin-bottom: 20px;
-
-    h3 {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 5px;
-    }
-
-    .subtitle {
-      font-size: 14px;
-      @include toggle-text;
-    }
-  }
 }
 
 // 演示区域样式

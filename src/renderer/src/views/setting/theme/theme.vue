@@ -549,7 +549,7 @@ $text-font-size: 14px;
 .color-card {
   border-radius: 8px;
   overflow: hidden;
-  border: 2px solid transparent;
+  // border: 2px solid transparent;
   transition: all 0.3s ease;
   cursor: pointer;
 

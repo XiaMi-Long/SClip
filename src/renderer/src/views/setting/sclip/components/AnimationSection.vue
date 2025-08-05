@@ -106,6 +106,8 @@ const toggleImageAnimation = (value: boolean): void => {
 </template>
 
 <style lang="scss" scoped>
+@use '../common.scss';
+
 .animation-section {
   margin-bottom: 30px;
 }

@@ -85,7 +85,7 @@ export class ApplicationRegister {
         preload: join(__dirname, '../preload/index.js'),
         sandbox: true,
         scrollBounce: true,
-        devTools: is.dev ? true : false
+        devTools: true
       }
     }
   }
@@ -112,7 +112,7 @@ export class ApplicationRegister {
         preload: join(__dirname, '../preload/index.js'),
         sandbox: true,
         scrollBounce: true,
-        devTools: is.dev ? true : false
+        devTools: true
       }
     }
   }
@@ -277,13 +277,13 @@ export class ApplicationRegister {
           ]
         }
       ]
-      // if (is.dev) {
-      ;(template[1].submenu as MenuItemConstructorOptions[]).unshift({
-        role: 'toggleDevTools',
-        label: '开发者工具',
-        id: 'toggle-dev-tools'
-      })
-      // }
+      if (is.dev) {
+        ;(template[1].submenu as MenuItemConstructorOptions[]).unshift({
+          role: 'toggleDevTools',
+          label: '开发者工具',
+          id: 'toggle-dev-tools'
+        })
+      }
 
       const menu = Menu.buildFromTemplate(template)
       Menu.setApplicationMenu(menu)
@@ -407,9 +407,9 @@ export class ApplicationRegister {
               MainIPCService.sendToRenderer.setWindowId('main', 'main')
 
               // 在开发环境下打开 DevTools
-              // if (is.dev) {
-              mainWindow.webContents.openDevTools({ mode: 'detach' })
-              // }
+              if (is.dev) {
+                mainWindow.webContents.openDevTools({ mode: 'detach' })
+              }
               // mainWindow.setAlwaysOnTop(true, 'screen-saver')
 
               // 监听显示器变化事件

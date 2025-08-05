@@ -239,6 +239,8 @@ function formatToOneDecimal(value: number): string {
 </template>
 
 <style lang="scss" scoped>
+@use '../common.scss';
+
 // 定义变量
 $border-radius: 10px;
 $transition-default: 0.5s ease;
@@ -277,21 +279,6 @@ $accent-color: var(--button-primary-bg);
 // 整体部分样式
 .history-limit-section {
   margin-bottom: 30px;
-
-  .section-title {
-    margin-bottom: 20px;
-
-    h3 {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 5px;
-    }
-
-    .subtitle {
-      font-size: 14px;
-      @include toggle-text;
-    }
-  }
 }
 
 // 历史记录限制功能区样式

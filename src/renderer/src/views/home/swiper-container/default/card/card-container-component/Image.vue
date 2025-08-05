@@ -122,5 +122,7 @@ onMounted(() => {
   height: 100%;
   border-radius: 5px;
   will-change: transform; // 优化动画性能
+  -webkit-user-drag: none;
+  user-drag: none;
 }
 </style>

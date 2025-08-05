@@ -55,7 +55,8 @@ export class ConfigManager {
         appName: 'SClip',
         version: app.getVersion(),
         updateLog: ['#V1.0.0#发布1.0.0版本']
-      }
+      },
+      enableDataDeduplication: true
     }
 
     // 尝试从数据库加载配置
