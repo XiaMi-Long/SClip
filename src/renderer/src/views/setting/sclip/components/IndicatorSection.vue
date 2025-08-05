@@ -117,24 +117,24 @@ const saveSettings = (): void => {
 
     <!-- 设置选项 -->
     <div class="settings-container">
-      <div class="setting-toggle">
-        <div class="setting-info">
-          <div class="setting-title">
+      <div class="toggle-option">
+        <div class="option-info">
+          <div class="option-title">
             {{ i18nStore.t('setting.sclip.indicator.typeIndicator') }}
           </div>
-          <div class="setting-description">
+          <div class="option-description">
             {{ i18nStore.t('setting.sclip.indicator.typeIndicatorDesc') }}
           </div>
         </div>
         <VSwitch v-model="showTypeIndicatorValue" />
       </div>
 
-      <div class="setting-toggle">
-        <div class="setting-info">
-          <div class="setting-title">
+      <div class="toggle-option">
+        <div class="option-info">
+          <div class="option-title">
             {{ i18nStore.t('setting.sclip.indicator.longContentTip') }}
           </div>
-          <div class="setting-description">
+          <div class="option-description">
             {{ i18nStore.t('setting.sclip.indicator.longContentTipDesc') }}
           </div>
         </div>
@@ -158,18 +158,6 @@ $border-radius: 10px;
 $transition-default: 0.5s ease;
 $indicator-size: 1.5em;
 $indicator-padding: 0.3em;
-
-// 混合器
-@mixin toggle-base {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 15px;
-  background-color: var(--title-bar-bg);
-  transition: background-color $transition-default;
-  border-radius: $border-radius;
-  margin-bottom: 15px;
-}
 
 @mixin toggle-text {
   color: var(--text-color);
@@ -261,23 +249,5 @@ $indicator-padding: 0.3em;
 
 // 设置选项样式
 .settings-container {
-  .setting-toggle {
-    @include toggle-base;
-
-    .setting-info {
-      flex: 1;
-    }
-
-    .setting-title {
-      font-size: 16px;
-      font-weight: 500;
-      margin-bottom: 5px;
-    }
-
-    .setting-description {
-      font-size: 14px;
-      @include toggle-text;
-    }
-  }
 }
 </style>

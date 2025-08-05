@@ -198,12 +198,12 @@ function formatToOneDecimal(value: number): string {
         </div>
       </div>
 
-      <div class="history-limit__toggle">
-        <div class="history-limit__toggle__info">
-          <div class="history-limit__toggle__title">
+      <div class="toggle-option">
+        <div class="option-info">
+          <div class="option-title">
             {{ i18nStore.t('setting.sclip.history.recordCount') }}
           </div>
-          <div class="history-limit__toggle__description">
+          <div class="option-description">
             {{ i18nStore.t('setting.sclip.history.recordCountDesc') }}
           </div>
 
@@ -259,17 +259,6 @@ $accent-color: var(--button-primary-bg);
   border-radius: $border-radius;
 }
 
-@mixin toggle-base {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 15px;
-  background-color: var(--title-bar-bg);
-  transition: background-color $transition-default;
-  border-radius: $border-radius;
-  margin-bottom: 15px;
-}
-
 @mixin toggle-text {
   color: var(--text-color);
   opacity: 0.7;
@@ -318,26 +307,8 @@ $accent-color: var(--button-primary-bg);
     }
   }
 
-  &__toggle {
-    @include toggle-base;
-
-    &__info {
-      flex: 1;
-    }
-
-    &__title {
-      font-size: 16px;
-      font-weight: 500;
-      margin-bottom: 5px;
-    }
-
-    &__description {
-      font-size: 14px;
-      @include toggle-text;
-      margin-bottom: 15px;
-    }
-
-    &__presets {
+  .toggle-option {
+    .history-limit__toggle__presets {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;

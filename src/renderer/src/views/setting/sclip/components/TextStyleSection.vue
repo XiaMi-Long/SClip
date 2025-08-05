@@ -534,9 +534,9 @@ $transition-default: 0.5s ease;
     display: flex;
     flex-wrap: wrap;
     width: 100%;
+    gap: 10px;
 
     .zoom-button {
-      flex: 1;
       min-width: 60px;
       padding: 8px 0;
       border-radius: 4px;

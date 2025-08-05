@@ -116,12 +116,12 @@ const toggleJumpToFirstPage = (value: boolean): void => {
         </div>
       </div>
 
-      <div class="wakeup__toggle">
-        <div class="wakeup__toggle__info">
-          <div class="wakeup__toggle__title">
+      <div class="toggle-option">
+        <div class="option-info">
+          <div class="option-title">
             {{ i18nStore.t('setting.sclip.wakeup.jumpToFirstPage') }}
           </div>
-          <div class="wakeup__toggle__description">
+          <div class="option-description">
             {{ i18nStore.t('setting.sclip.wakeup.jumpToFirstPageDesc') }}
           </div>
         </div>
@@ -215,25 +215,6 @@ $transition-default: 0.5s ease;
           }
         }
       }
-    }
-  }
-
-  &__toggle {
-    @include toggle-base;
-
-    &__info {
-      flex: 1;
-    }
-
-    &__title {
-      font-size: 16px;
-      font-weight: 500;
-      margin-bottom: 5px;
-    }
-
-    &__description {
-      font-size: 14px;
-      @include toggle-text;
     }
   }
 }

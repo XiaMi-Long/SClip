@@ -55,12 +55,12 @@ const toggleFixedWindow = (value: boolean): void => {
       <p class="subtitle">{{ i18nStore.t('setting.sclip.fixedWindow.subtitle') }}</p>
     </div>
 
-    <div class="fixed-window__toggle">
-      <div class="fixed-window__toggle__info">
-        <div class="fixed-window__toggle__title">
+    <div class="toggle-option">
+      <div class="option-info">
+        <div class="option-title">
           {{ i18nStore.t('setting.sclip.fixedWindow.toggleTitle') }}
         </div>
-        <div class="fixed-window__toggle__description">
+        <div class="option-description">
           {{ i18nStore.t('setting.sclip.fixedWindow.toggleDesc') }}
         </div>
       </div>
@@ -76,46 +76,8 @@ const toggleFixedWindow = (value: boolean): void => {
 $border-radius: 10px;
 $transition-default: 0.5s ease;
 
-// 混合器
-@mixin toggle-base {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 15px;
-  background-color: var(--title-bar-bg);
-  transition: background-color $transition-default;
-  border-radius: $border-radius;
-  margin-bottom: 15px;
-}
-
-@mixin toggle-text {
-  color: var(--text-color);
-  opacity: 0.7;
-  transition: color $transition-default;
-}
-
 // 整体部分样式
 .fixed-window-section {
   margin-bottom: 30px;
-}
-
-// 固定窗口功能区样式
-.fixed-window__toggle {
-  @include toggle-base;
-
-  &__info {
-    flex: 1;
-  }
-
-  &__title {
-    font-size: 16px;
-    font-weight: 500;
-    margin-bottom: 5px;
-  }
-
-  &__description {
-    font-size: 14px;
-    @include toggle-text;
-  }
 }
 </style>

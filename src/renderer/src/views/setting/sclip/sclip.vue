@@ -67,6 +67,9 @@ const enableDataDeduplication = ref(setting.enableDataDeduplication)
       <p class="subtitle">{{ i18nStore.t('setting.sclip.customizeContentDisplay') }}</p>
     </div>
 
+    <!-- 分隔线 -->
+    <div class="divider"></div>
+
     <!-- 图片显示设置区域 -->
     <ImageDisplaySection v-model:display-mode="selectedDisplayMode" />
 
