@@ -3,6 +3,7 @@ import { createHash } from 'crypto'
 import { Logger } from '../services/logger.service'
 import { exec } from 'child_process'
 import { promisify } from 'util'
+import { ConfigManager } from '../config/app.config'
 import fs from 'fs'
 import { DBManager } from '../database/database.manager'
 import { MainIPCService } from '../services/ipc.main.service'
@@ -144,7 +145,7 @@ export class ClipboardManager {
         content: imageBase64,
         timestamp: time,
         meta: { origin: 'local-file', actualPath },
-        contentHash: '',
+        contentHash: createHash('md5').update(imageBase64.slice(0, 1024)).digest('hex'),
         isSticky: 'false',
         clipboardTypes
       })
@@ -154,7 +155,7 @@ export class ClipboardManager {
         content: text,
         timestamp: time,
         meta: { origin: 'local-file-no-image', actualPath },
-        contentHash: '',
+        contentHash: createHash('md5').update(text).digest('hex'),
         isSticky: 'false',
         clipboardTypes
       })
@@ -256,6 +257,16 @@ export class ClipboardManager {
       isSticky = 'false',
       clipboardTypes = []
     } = options
+
+    // 在插入前,检查数据库最近20条中是否有相同内容的数据,如果有,则取消插入
+    const setting = ConfigManager.getInstance().getSetting()
+    if (setting.enableDataDeduplication && contentHash) {
+      const exists = DBManager.getInstance().checkContentHashExists(contentHash)
+      if (exists) {
+        Logger.warn('Clipboard', '检测到重复内容，跳过插入', { contentHash })
+        return
+      }
+    }
 
     this.lastState = {
       ...this.lastState,

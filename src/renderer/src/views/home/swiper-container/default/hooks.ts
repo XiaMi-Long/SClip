@@ -48,6 +48,8 @@ interface CarouselGetters {
   showTypeIndicator: ComputedRef<boolean>
   /** 是否显示长内容提示 */
   showLongContentTip: ComputedRef<boolean>
+  /** 当前系统是不是mac */
+  isMac: ComputedRef<boolean>
 }
 
 /**
@@ -141,7 +143,12 @@ export function useCarousel(): UseCarouselReturn {
     /** 计算当前选中卡片的绝对索引（相对于所有卡片） */
     activeAbsoluteIndex: computed(
       () => state.currentPage.value * ITEMS_PER_PAGE + state.currentCardIndex.value
-    )
+    ),
+
+    /** 当前系统是不是mac */
+    isMac: computed(() => {
+      return useConfigStore().getSetting.system.isMac
+    })
   }
 
   // ===== 操作方法 =====
@@ -347,7 +354,7 @@ export function useCarousel(): UseCarouselReturn {
    * 处理卡片点击事件
    * @param {MouseEvent} event - 鼠标事件对象
    */
-  const handleCardClick = (event: MouseEvent) => {
+  const handleDoubleClick = (event: MouseEvent) => {
     if (isDragging) return
 
     // 找到最近的 card-wrapper 元素
@@ -369,9 +376,6 @@ export function useCarousel(): UseCarouselReturn {
     }
   }
 
-  const handleDoubleClick = (event: MouseEvent) => {
-    console.log(event)
-  }
   // ===== 滚轮滑动处理 =====
   /**
    * 滚轮事件处理
@@ -381,6 +385,7 @@ export function useCarousel(): UseCarouselReturn {
   const WHEEL_DEBOUNCE_TIME = 200 // 滚轮事件防抖时间（毫秒）
 
   const handleWheel = (event: WheelEvent) => {
+    debugger
     // 防止事件冒泡和默认行为
     event.preventDefault()
 
@@ -390,10 +395,19 @@ export function useCarousel(): UseCarouselReturn {
     // 判断滚动方向
     if (event.deltaY > 0) {
       // 向下滚动，触发下一页
-      actions.navigate.nextPage()
+      // 这里需要判断不同系统对于滚轮的方向
+      if (getters.isMac.value) {
+        actions.navigate.prevPage()
+      } else {
+        actions.navigate.nextPage()
+      }
     } else if (event.deltaY < 0) {
       // 向上滚动，触发上一页
-      actions.navigate.prevPage()
+      if (getters.isMac.value) {
+        actions.navigate.nextPage()
+      } else {
+        actions.navigate.prevPage()
+      }
     }
 
     // 设置防抖定时器
@@ -417,7 +431,7 @@ export function useCarousel(): UseCarouselReturn {
       carouselEl.addEventListener('mouseleave', handleMouseLeave)
 
       // 添加鼠标点击事件监听
-      carouselEl.addEventListener('click', handleCardClick)
+      // carouselEl.addEventListener('click', handleCardClick)
       // 添加鼠标双击事件监听
       carouselEl.addEventListener('dblclick', handleDoubleClick)
 
@@ -441,7 +455,7 @@ export function useCarousel(): UseCarouselReturn {
       carouselEl.removeEventListener('mouseleave', handleMouseLeave)
 
       // 移除鼠标点击事件监听
-      carouselEl.removeEventListener('click', handleCardClick)
+      // carouselEl.removeEventListener('click', handleCardClick)
       // 移除鼠标双击事件监听
       carouselEl.removeEventListener('dblclick', handleDoubleClick)
 

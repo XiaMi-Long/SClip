@@ -406,6 +406,29 @@ export class DBManager {
   }
 
   /**
+   * 检查前20条数据中是否存在相同的contentHash
+   * @param {string} contentHash - 要检查的内容哈希值
+   * @returns {boolean} 如果存在相同的contentHash则返回true，否则返回false
+   */
+  public checkContentHashExists(contentHash: string): boolean {
+    try {
+      const stmt = this.db.prepare(`
+        SELECT COUNT(*) as count
+        FROM clipboard_history
+        WHERE content_hash = ?
+        ORDER BY timestamp DESC
+        LIMIT 20
+      `)
+
+      const result = stmt.get(contentHash) as { count: number }
+      return result.count > 0
+    } catch (error) {
+      Logger.error('DBManager', '检查contentHash是否存在失败', error)
+      return false
+    }
+  }
+
+  /**
    * 获取应用配置
    * @returns {Setting | null} 应用配置对象，如果不存在则返回null
    */

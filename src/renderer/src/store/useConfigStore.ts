@@ -227,6 +227,16 @@ export const useConfigStore = defineStore('config', {
      */
     setWindowId(windowId: string) {
       this.windowId = windowId
+    },
+
+    /**
+     * 设置是否启用数据去重
+     * @param {boolean} endenableDataDeduplication 是否启用数据去重
+     * @description 设置是否启用数据去重，并更新应用配置
+     */
+    setEndenableDataDeduplication(endenableDataDeduplication: boolean) {
+      this.setting.enableDataDeduplication = endenableDataDeduplication
+      sendToMain.updateConfigSetting(toRaw(this.setting), this.windowId)
     }
   }
 })

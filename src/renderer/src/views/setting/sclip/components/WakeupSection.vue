@@ -153,23 +153,6 @@ $transition-default: 0.5s ease;
   border-radius: $border-radius;
 }
 
-@mixin toggle-base {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 15px;
-  background-color: var(--title-bar-bg);
-  transition: background-color $transition-default;
-  border-radius: $border-radius;
-  margin-bottom: 15px;
-}
-
-@mixin toggle-text {
-  color: var(--text-color);
-  opacity: 0.7;
-  transition: color $transition-default;
-}
-
 // 整体部分样式
 .wakeup-section {
   margin-bottom: 30px;
