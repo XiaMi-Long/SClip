@@ -72,8 +72,7 @@ const isShowTitleBar = computed(() => useConfigStore().getSetting.system)
 }
 
 /* Windows下特殊处理 */
-@media screen and (-ms-high-contrast: active),
-(-ms-high-contrast: none) {
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
   #app {
     border: 1px solid transparent;
     /* 防止Windows下边缘锯齿 */

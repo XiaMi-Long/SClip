@@ -16,6 +16,7 @@ import {
 import { useClipboardStore } from '@renderer/store/useClipboardStore'
 import { useConfigStore } from '@renderer/store/useConfigStore'
 import { sendToMain } from '@renderer/util/ipc.renderer.service'
+import throttle from 'lodash/throttle'
 
 /** 每页显示的卡片数量 */
 const ITEMS_PER_PAGE = 3
@@ -381,40 +382,33 @@ export function useCarousel(): UseCarouselReturn {
    * 滚轮事件处理
    * @param {WheelEvent} event - 滚轮事件对象
    */
-  let wheelTimeout: number | null = null
-  const WHEEL_DEBOUNCE_TIME = 200 // 滚轮事件防抖时间（毫秒）
+  const WHEEL_THROTTLE_TIME = 40 // 滚轮事件节流时间（毫秒）
 
-  const handleWheel = (event: WheelEvent) => {
-    debugger
-    // 防止事件冒泡和默认行为
-    event.preventDefault()
+  const handleWheel = throttle(
+    (event: WheelEvent) => {
+      // 防止事件冒泡和默认行为（需要 passive: false）
+      event.preventDefault()
+      const deltaY = event.deltaY
+      const isMac = getters.isMac.value
 
-    // 如果已经有一个定时器在运行，则不处理新的滚轮事件
-    if (wheelTimeout !== null) return
-
-    // 判断滚动方向
-    if (event.deltaY > 0) {
-      // 向下滚动，触发下一页
-      // 这里需要判断不同系统对于滚轮的方向
-      if (getters.isMac.value) {
-        actions.navigate.prevPage()
+      // Mac: 负值上一页，正值下一页；Windows: 相反
+      if (isMac) {
+        if (deltaY < 0) {
+          actions.navigate.prevPage()
+        } else if (deltaY > 0) {
+          actions.navigate.nextPage()
+        }
       } else {
-        actions.navigate.nextPage()
+        if (deltaY > 0) {
+          actions.navigate.prevPage()
+        } else if (deltaY < 0) {
+          actions.navigate.nextPage()
+        }
       }
-    } else if (event.deltaY < 0) {
-      // 向上滚动，触发上一页
-      if (getters.isMac.value) {
-        actions.navigate.nextPage()
-      } else {
-        actions.navigate.prevPage()
-      }
-    }
-
-    // 设置防抖定时器
-    wheelTimeout = window.setTimeout(() => {
-      wheelTimeout = null
-    }, WHEEL_DEBOUNCE_TIME)
-  }
+    },
+    WHEEL_THROTTLE_TIME,
+    { leading: true, trailing: false }
+  )
 
   // ===== 生命周期 =====
   onMounted(() => {
@@ -434,7 +428,6 @@ export function useCarousel(): UseCarouselReturn {
       // carouselEl.addEventListener('click', handleCardClick)
       // 添加鼠标双击事件监听
       carouselEl.addEventListener('dblclick', handleDoubleClick)
-
       // 添加滚轮事件监听
       carouselEl.addEventListener('wheel', handleWheel, { passive: false })
     }
@@ -463,11 +456,8 @@ export function useCarousel(): UseCarouselReturn {
       carouselEl.removeEventListener('wheel', handleWheel)
     }
 
-    // 清除可能存在的定时器
-    if (wheelTimeout !== null) {
-      clearTimeout(wheelTimeout)
-      wheelTimeout = null
-    }
+    // 取消可能存在的等待中的节流
+    handleWheel.cancel()
   })
 
   return {
