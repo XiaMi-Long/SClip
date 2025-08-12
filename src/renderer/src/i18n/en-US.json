@@ -166,6 +166,16 @@
         "noteTitle": "Note",
         "noteMessage": "With text style enabled, text copied from Word, web pages and other applications will retain original formatting. When disabled, all text will be displayed as plain text.",
         "saveSuccess": "Text style settings have been successfully applied, effective after restart"
+      },
+      "deduplication": {
+        "title": "Data Deduplication",
+        "subtitle": "Ensure no duplicates in the first 20 items of the copy list",
+        "saveSuccess": "Data deduplication settings have been successfully applied, effective after next use",
+        "example1": "Data duplicate with item 3",
+        "example2": "Gothic Extravagance",
+        "example3": "Data duplicate with item 1",
+        "enable": "Enable Data Deduplication",
+        "enableDesc": "When enabled, the first 20 items in the copy list will not have duplicates"
       }
     },
     "log": {

@@ -6,7 +6,6 @@
 import { ref, computed } from 'vue'
 import Avatar1 from '@renderer/assets/image/avatar1.jpeg'
 import Avatar2 from '@renderer/assets/image/avatar2.jpeg'
-import Eye from '@renderer/assets/image/eye.png'
 import { useConfigStore } from '@renderer/store/useConfigStore'
 import { useI18nStore } from '@renderer/store/useI18nStore'
 
@@ -54,7 +53,7 @@ const getUpdateLogs = computed(() => {
     const parts = log.split('#').filter((item) => item.trim() !== '')
 
     // 第一项通常是版本信息
-    const version = parts[0] || i18nStore.t('setting.about.unknownVersion')
+    const version = parts[0].replace(',', '') || i18nStore.t('setting.about.unknownVersion')
 
     // 其余的项是功能点
     const items = parts.slice(1).map((item) => item.trim())
@@ -90,52 +89,6 @@ const contributors = ref<Contributor[]>([
     url: 'https://github.com/XiaMi-Long'
   }
 ])
-
-/**
- * 记录每个贡献者头像的旋转状态
- */
-const avatarRotations = ref<{ [key: string]: boolean }>({})
-
-/**
- * 头像旋转定时器
- */
-const rotationTimers = ref<{ [key: string]: number }>({})
-
-/**
- * 处理鼠标进入头像
- * @param {string} name - 贡献者名称
- */
-const handleMouseEnter = (name: string) => {
-  // 设置一秒延迟后开始旋转
-  rotationTimers.value[name] = window.setTimeout(() => {
-    avatarRotations.value[name] = true
-
-    setTimeout(() => {
-      if (avatarRotations.value[name] && name !== '万花筒写轮眼') {
-        contributors.value.push({
-          name: '万花筒写轮眼',
-          avatar: Eye,
-          url: ''
-        })
-      }
-    }, 10000)
-  }, 1000)
-}
-
-/**
- * 处理鼠标离开头像
- * @param {string} name - 贡献者名称
- */
-const handleMouseLeave = (name: string) => {
-  // 清除定时器
-  if (rotationTimers.value[name]) {
-    clearTimeout(rotationTimers.value[name])
-    delete rotationTimers.value[name]
-  }
-
-  // 停止旋转
-  avatarRotations.value[name] = false
-}
 
 /**
  * 检查更新状态
@@ -174,12 +127,7 @@ const checkUpdate = () => {
       <h2 class="section-title">{{ i18nStore.t('setting.about.contributors') }}</h2>
       <div class="contributors-container">
         <div v-for="contributor in contributors" :key="contributor.name" class="contributor">
-          <div
-            class="avatar-container"
-            :class="{ 'rotate-avatar': avatarRotations[contributor.name] }"
-            @mouseenter="handleMouseEnter(contributor.name)"
-            @mouseleave="handleMouseLeave(contributor.name)"
-          >
+          <div class="avatar-container">
             <img :src="contributor.avatar" :alt="contributor.name" class="avatar" />
           </div>
           <div class="contributor-name">{{ contributor.name }}</div>
@@ -215,11 +163,6 @@ const checkUpdate = () => {
     padding: 24px;
     margin-bottom: 24px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
-
-    &:hover {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    }
   }
 
   .section-title {
@@ -301,17 +244,6 @@ const checkUpdate = () => {
       overflow: hidden;
       margin-bottom: 8px;
       border: 2px solid var(--button-primary-bg);
-      transition:
-        scale 0.3s ease,
-        rotate 3s infinite;
-
-      &:hover {
-        transform: scale(1.05);
-      }
-
-      &.rotate-avatar {
-        animation: rotateAvatar 10s infinite;
-      }
     }
 
     .avatar {
@@ -363,41 +295,7 @@ const checkUpdate = () => {
       line-height: 1.5;
       color: var(--text-color);
       position: relative;
-
-      &::before {
-        content: '';
-        position: absolute;
-        left: -12px;
-        top: 8px;
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background-color: var(--button-primary-bg);
-      }
     }
-  }
-}
-
-@keyframes dots {
-  0%,
-  20% {
-    content: '.';
-  }
-  40% {
-    content: '..';
-  }
-  60%,
-  100% {
-    content: '...';
-  }
-}
-
-@keyframes rotateAvatar {
-  0% {
-    transform: scale(1.05) rotate(0deg);
-  }
-  100% {
-    transform: scale(1.05) rotate(7200deg);
   }
 }
 </style>
