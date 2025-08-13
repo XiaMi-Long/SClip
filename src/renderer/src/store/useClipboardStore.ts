@@ -22,8 +22,15 @@ export const useClipboardStore = defineStore('clipboard', {
      * @param {Array} list 剪贴板列表
      */
     pushClipboard(list: ClipboardState[]): void {
-      console.log(list)
+      console.log('pushClipboard', list)
       this.clipboardList.push(...list)
+    },
+
+    /**
+     * 清空剪贴板列表
+     */
+    clearClipboard(): void {
+      this.clipboardList = []
     },
 
     /**

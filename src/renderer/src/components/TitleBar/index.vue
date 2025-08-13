@@ -3,9 +3,12 @@ import { computed } from 'vue'
 import { useConfigStore } from '@renderer/store/useConfigStore'
 import settingImage from '@renderer/assets/image/setting.png'
 import affixImage from '@renderer/assets/image/affix.png'
+import clearImage from '@renderer/assets/image/clear.png'
 import { sendToMain } from '@renderer/util/ipc.renderer.service'
+import { useClipboardStore } from '@renderer/store/useClipboardStore'
 
 const configStore = useConfigStore()
+const clipboardStore = useClipboardStore()
 // 是否是mac系统
 const isMac = computed(() => configStore.getSetting.system.platform === 'darwin')
 // 是否是主窗口，如果不是主窗口，则不显示设置相关按钮
@@ -31,6 +34,12 @@ const handleMaximize = () => {
 const handleClose = () => sendToMain.close()
 const handleSetting = () => sendToMain.openSetting()
 const handleAffix = () => configStore.setIsFixedWindow(!isAffix.value)
+const handleClear = async () => {
+  const result = await sendToMain.clearClipboard()
+  if (typeof result === 'number') {
+    clipboardStore.clearClipboard()
+  }
+}
 </script>
 
 <template>
@@ -60,6 +69,15 @@ const handleAffix = () => configStore.setIsFixedWindow(!isAffix.value)
       class="tools-area"
       :class="{ 'mac-tools-area': showMacControls, 'win-tools-area': !showMacControls }"
     >
+      <!-- 清除按钮 -->
+      <button
+        class="tool-button tool-button-clear"
+        :class="[isMainWindow ? 'setting-button-show' : 'setting-button-hidden']"
+        @click="handleClear"
+      >
+        <img :src="clearImage" alt="清除" class="tool-icon clear-icon" />
+      </button>
+
       <!-- 固定按钮 -->
       <button
         class="tool-button tool-button-affix"

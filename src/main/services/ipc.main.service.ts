@@ -226,7 +226,21 @@ export class MainIPCService {
         return result
       } catch (error) {
         Logger.error('IPC', '清空日志失败', error)
-        return 0
+        return false
+      }
+    })
+
+    /**
+     * 监听渲染进程通信-清除剪贴板数据
+     */
+    ipcMain.handle('mainWindow:clear-clipboard', async () => {
+      Logger.warn('Application', '接收到清除剪贴板数据请求')
+      try {
+        const result = DBManager.getInstance().clearAllClipboardHistory()
+        return result
+      } catch (error) {
+        Logger.error('IPC', '清空剪贴板数据失败', error)
+        return false
       }
     })
   }

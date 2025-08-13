@@ -37,6 +37,13 @@ export const sendToMain = {
   },
 
   /**
+   * 清除剪贴板数据
+   */
+  clearClipboard: (): Promise<number | boolean> => {
+    return window.mainWindow.clearClipboard()
+  },
+
+  /**
    * 删除剪贴板数据
    * @param {ClipboardState} clipboardData - 剪贴板数据
    */

@@ -126,7 +126,12 @@ if (process.contextIsolated) {
        * @param {string} windowId - 窗口ID
        */
       setIsFixedWindow: (isFixedWindow: boolean, windowId: string) =>
-        ipcRenderer.send('mainWindow:set-is-fixed-window', isFixedWindow, windowId)
+        ipcRenderer.send('mainWindow:set-is-fixed-window', isFixedWindow, windowId),
+
+      /**
+       * 清除剪贴板数据
+       */
+      clearClipboard: () => ipcRenderer.invoke('mainWindow:clear-clipboard')
     })
   } catch (error) {
     console.error(error)
