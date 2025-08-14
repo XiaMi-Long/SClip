@@ -183,6 +183,25 @@ declare global {
      * 是否开启数据去重
      */
     enableDataDeduplication: boolean
+
+    /**
+     * 卡片样式
+     */
+    currentCardStyle: 'default' | 'effects'
+
+    /**
+     * 剪贴板卡片样式
+     */
+    clipboardCardStyle: {
+      default: {
+        windowWidth: number
+        windowHeight: number
+      }
+      effects: {
+        windowWidth: number
+        windowHeight: number
+      }
+    }
   }
 }
 

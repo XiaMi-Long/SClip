@@ -10,12 +10,16 @@ const configStore = useConfigStore()
 const isShow = computed(() => {
   return configStore.getSetting?.applicationTheme
 })
+
+const currentCardStyle = computed(() => {
+  return configStore.getSetting?.currentCardStyle
+})
 </script>
 
 <template>
   <div class="swiper-container">
-    <DefaultSwiper v-if="isShow" />
-    <!-- <EffectsSwiper v-if="isShow" /> -->
+    <DefaultSwiper v-if="currentCardStyle === 'default' && isShow" />
+    <EffectsSwiper v-if="currentCardStyle === 'effects' && isShow" />
   </div>
 </template>
 

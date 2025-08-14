@@ -56,7 +56,18 @@ export class ConfigManager {
         version: app.getVersion(),
         updateLog: ['#V1.0.0#发布1.0.0版本']
       },
-      enableDataDeduplication: true
+      enableDataDeduplication: true,
+      currentCardStyle: 'default',
+      clipboardCardStyle: {
+        default: {
+          windowWidth: 300,
+          windowHeight: 450
+        },
+        effects: {
+          windowWidth: 300,
+          windowHeight: 300
+        }
+      }
     }
 
     // 尝试从数据库加载配置

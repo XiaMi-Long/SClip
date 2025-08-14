@@ -132,32 +132,5 @@ const enableDataDeduplication = ref(setting.enableDataDeduplication)
 </template>
 
 <style lang="scss" scoped>
-.sclip-settings {
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.settings-header {
-  margin-bottom: 30px;
-
-  h2 {
-    font-size: 24px;
-    font-weight: 600;
-    margin-bottom: 8px;
-  }
-
-  .subtitle {
-    font-size: 14px;
-    color: var(--text-color);
-    transition: color 0.5s ease;
-    opacity: 0.7;
-  }
-}
-
-.divider {
-  height: 1px;
-  background-color: var(--title-bar-bg);
-  transition: background-color 0.5s;
-  margin: 30px 0;
-}
+@use '../base.scss';
 </style>

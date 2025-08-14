@@ -112,34 +112,11 @@ const applyLanguageSetting = (): void => {
 </template>
 
 <style lang="scss" scoped>
+@use '../base.scss';
 $title-font-size: 20px;
 $subtitle-font-size: 13px;
 $section-title-font-size: 16px;
 $text-font-size: 14px;
-
-.language-settings {
-  color: var(--text-color);
-  transition: color 0.5s;
-  font-size: $text-font-size;
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.settings-header {
-  margin-bottom: 25px;
-
-  h2 {
-    font-size: $title-font-size;
-    font-weight: 600;
-    margin-bottom: 4px;
-  }
-
-  .subtitle {
-    font-size: $subtitle-font-size;
-    color: var(--text-color);
-    opacity: 0.8;
-  }
-}
 
 // 名言预览区域样式
 .quote-preview {

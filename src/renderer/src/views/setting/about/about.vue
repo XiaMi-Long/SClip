@@ -4,8 +4,8 @@
  * 包含软件版本信息、检查更新按钮和贡献者展示
  */
 import { ref, computed } from 'vue'
-import Avatar1 from '@renderer/assets/image/avatar1.jpeg'
-import Avatar2 from '@renderer/assets/image/avatar2.jpeg'
+// import Avatar1 from '@renderer/assets/image/avatar1.jpeg'
+// import Avatar2 from '@renderer/assets/image/avatar2.jpeg'
 import { useConfigStore } from '@renderer/store/useConfigStore'
 import { useI18nStore } from '@renderer/store/useI18nStore'
 
@@ -77,18 +77,18 @@ interface Contributor {
 /**
  * 贡献者列表
  */
-const contributors = ref<Contributor[]>([
-  {
-    name: 'Aclles',
-    avatar: Avatar2,
-    url: 'https://github.com/Aclles'
-  },
-  {
-    name: 'XiaMi-Long',
-    avatar: Avatar1,
-    url: 'https://github.com/XiaMi-Long'
-  }
-])
+// const contributors = ref<Contributor[]>([
+//   {
+//     name: 'Aclles',
+//     avatar: Avatar2,
+//     url: 'https://github.com/Aclles'
+//   },
+//   {
+//     name: 'XiaMi-Long',
+//     avatar: Avatar1,
+//     url: 'https://github.com/XiaMi-Long'
+//   }
+// ])
 
 /**
  * 检查更新状态
@@ -123,7 +123,7 @@ const checkUpdate = () => {
       </div>
     </div>
 
-    <div class="section">
+    <!-- <div class="section">
       <h2 class="section-title">{{ i18nStore.t('setting.about.contributors') }}</h2>
       <div class="contributors-container">
         <div v-for="contributor in contributors" :key="contributor.name" class="contributor">
@@ -133,7 +133,7 @@ const checkUpdate = () => {
           <div class="contributor-name">{{ contributor.name }}</div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- 更新日志区域 -->
     <div class="section">

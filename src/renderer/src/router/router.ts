@@ -16,6 +16,11 @@ const routes = [
         component: () => import('../views/setting/theme/theme.vue')
       },
       {
+        path: 'cardStyle',
+        name: 'CardStyle',
+        component: () => import('../views/setting/card-style/card-style.vue')
+      },
+      {
         path: 'language',
         name: 'Language',
         component: () => import('../views/setting/language/language.vue')

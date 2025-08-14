@@ -33,6 +33,7 @@ const menuItems: MenuItem[] = [
     labelKey: 'setting.menu.general',
     children: [
       { id: 'Theme', labelKey: 'setting.menu.appearance', name: 'Theme' },
+      { id: 'CardStyle', labelKey: 'setting.menu.cardStyle', name: 'CardStyle' },
       { id: 'Language', labelKey: 'setting.menu.language', name: 'Language' },
       { id: 'Keyboard', labelKey: 'setting.menu.keyboard', name: 'Keyboard' },
       { id: 'Sclip', labelKey: 'setting.menu.sclip', name: 'Sclip' },

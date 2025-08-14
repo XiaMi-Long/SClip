@@ -66,7 +66,11 @@ export class ApplicationRegister {
    * 主窗口的配置参数
    */
   private static get mainWindowParams(): BrowserWindowConstructorOptions {
-    const { width, height } = this.getScaledWindowSize(300, 450)
+    const setting = ConfigManager.getInstance().getSetting()
+    const { width, height } = this.getScaledWindowSize(
+      setting.clipboardCardStyle[setting.currentCardStyle].windowWidth,
+      setting.clipboardCardStyle[setting.currentCardStyle].windowHeight
+    )
     return {
       width,
       height,
@@ -415,7 +419,10 @@ export class ApplicationRegister {
               // 监听显示器变化事件
               screen.on('display-metrics-changed', (event, display, changedMetrics) => {
                 if (changedMetrics.includes('scaleFactor')) {
-                  const { width, height } = ApplicationRegister.getScaledWindowSize(300, 450)
+                  const { width, height } = ApplicationRegister.getScaledWindowSize(
+                    setting.clipboardCardStyle[setting.currentCardStyle].windowWidth,
+                    setting.clipboardCardStyle[setting.currentCardStyle].windowHeight
+                  )
                   mainWindow.setSize(width, height)
                   // 可选：保持窗口在屏幕中心
                   mainWindow.center()

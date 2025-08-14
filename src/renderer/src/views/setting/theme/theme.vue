@@ -277,6 +277,7 @@ const handleColorInput = (e: Event): void => {
 </template>
 
 <style lang="scss" scoped>
+@use '../base.scss';
 // 主题卡片尺寸变量 - 可根据需要调整
 $theme-card-width: 230px; // 卡片宽度
 $theme-card-preview-height: 150px; // 预览区域高度
@@ -288,38 +289,6 @@ $title-font-size: 20px;
 $subtitle-font-size: 13px;
 $section-title-font-size: 16px;
 $text-font-size: 14px;
-
-.theme-settings {
-  color: var(--text-color);
-  transition: color 0.5s;
-  font-size: $text-font-size;
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.settings-header {
-  margin-bottom: 25px;
-
-  h2 {
-    font-size: $title-font-size;
-    font-weight: 600;
-    margin-bottom: 4px;
-  }
-
-  .subtitle {
-    font-size: $subtitle-font-size;
-    color: var(--text-color);
-    transition: color 0.5s;
-  }
-}
-
-// 分隔线样式
-.divider {
-  height: 1px;
-  background-color: var(--title-bar-bg);
-  transition: background-color 0.5s;
-  margin: 30px 0;
-}
 
 // 主题选择部分
 .theme-section {
