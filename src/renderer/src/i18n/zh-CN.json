@@ -18,6 +18,14 @@
       "selectLanguage": "选择语言",
       "applyButton": "应用"
     },
+    "cardStyle": {
+      "title": "卡片样式",
+      "subtitle": "选择您偏好的卡片显示样式",
+      "contentDisplay": "卡片样式显示",
+      "customizeContentDisplay": "定制您的剪贴板卡片显示方式",
+      "default": "默认",
+      "transitionEffects": "过渡效果"
+    },
     "theme": {
       "title": "外观设置",
       "subtitle": "选择您的风格或自定义主题",
@@ -70,6 +78,7 @@
       "subtitle": "自定义SClip的行为和外观",
       "contentDisplay": "SClip 内容显示",
       "customizeContentDisplay": "定制您的剪贴板内容显示方式",
+
       "behaviorSettings": "应用行为设置",
       "customizeBehavior": "自定义应用的操作逻辑",
       "jumpToFirstPage": "显示主窗口时回到首页",

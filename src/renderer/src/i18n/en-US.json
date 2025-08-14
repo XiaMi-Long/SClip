@@ -32,6 +32,14 @@
       "accentColorDesc": "Select the main color of the app, affecting buttons, selected states, and other elements",
       "customAccentColor": "Custom Accent Color"
     },
+    "cardStyle": {
+      "title": "Card Style",
+      "subtitle": "Choose your preferred card display style",
+      "contentDisplay": "Card Style Display",
+      "customizeContentDisplay": "Customize how your clipboard cards are displayed",
+      "default": "Default",
+      "transitionEffects": "Transition Effects"
+    },
     "keyboard": {
       "title": "Keyboard Shortcuts",
       "subtitle": "Customize keyboard shortcuts to improve efficiency",
@@ -70,6 +78,7 @@
       "subtitle": "Customize SClip's behavior and appearance",
       "contentDisplay": "SClip Content Display",
       "customizeContentDisplay": "Customize how your clipboard content is displayed",
+
       "behaviorSettings": "Application Behavior Settings",
       "customizeBehavior": "Customize the operational logic of the application",
       "jumpToFirstPage": "Return to home page when showing main window",
