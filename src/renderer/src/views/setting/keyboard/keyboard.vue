@@ -384,36 +384,13 @@ const clearShortcut = (): void => {
 </template>
 
 <style lang="scss" scoped>
+@use '../base.scss';
 $title-font-size: 20px;
 $subtitle-font-size: 13px;
 $section-title-font-size: 16px;
 $text-font-size: 14px;
 $animation-size: 36px;
 $animation-color: var(--button-primary-bg);
-
-.keyboard-settings {
-  color: var(--text-color);
-  transition: color 0.5s;
-  font-size: $text-font-size;
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.settings-header {
-  margin-bottom: 25px;
-
-  h2 {
-    font-size: $title-font-size;
-    font-weight: 600;
-    margin-bottom: 4px;
-  }
-
-  .subtitle {
-    font-size: $subtitle-font-size;
-    color: var(--text-color);
-    opacity: 0.8;
-  }
-}
 
 .shortcuts-section {
   margin-bottom: 30px;
@@ -845,12 +822,5 @@ $animation-color: var(--button-primary-bg);
     margin-left: 0;
     margin-top: 10px;
   }
-}
-
-.divider {
-  height: 1px;
-  background-color: var(--title-bar-bg);
-  transition: background-color 0.5s;
-  margin: 30px 0;
 }
 </style>

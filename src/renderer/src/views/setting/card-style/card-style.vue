@@ -6,7 +6,7 @@ const i18nStore = useI18nStore()
 </script>
 
 <template>
-  <div class="sclip-settings">
+  <div class="card-style-settings">
     <div class="settings-header">
       <h2>{{ i18nStore.t('setting.cardStyle.title') }}</h2>
       <p class="subtitle">{{ i18nStore.t('setting.cardStyle.subtitle') }}</p>

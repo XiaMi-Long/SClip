@@ -153,6 +153,7 @@ const checkUpdate = () => {
 </template>
 
 <style lang="scss" scoped>
+@use '../base.scss';
 .about-container {
   max-width: 800px;
   margin: 0 auto;

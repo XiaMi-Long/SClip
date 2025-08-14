@@ -124,6 +124,8 @@ onMounted(() => {
 </template>
 
 <style scoped lang="scss">
+@use '../base.scss';
+
 .log-viewer {
   height: 100%;
   display: flex;
@@ -131,24 +133,7 @@ onMounted(() => {
   color: var(--text-color);
   transition: color 0.5s ease;
   padding: 0;
-
-  .log-viewer-header {
-    margin-bottom: 20px;
-
-    h2 {
-      font-size: 18px;
-      font-weight: 500;
-      margin: 0;
-      margin-bottom: 8px;
-    }
-
-    .log-viewer-subtitle {
-      font-size: 14px;
-      color: var(--text-color);
-      transition: color 0.5s ease;
-      opacity: 0.7;
-    }
-  }
+  gap: 10px;
 
   .log-container {
     flex: 1;

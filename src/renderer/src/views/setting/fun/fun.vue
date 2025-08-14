@@ -117,6 +117,7 @@ const enableFirstShowTransition = firstShowTransitionMotion
 </template>
 
 <style lang="scss" scoped>
+@use '../base.scss';
 $title-font-size: 20px;
 $subtitle-font-size: 13px;
 $section-title-font-size: 16px;
@@ -153,31 +154,6 @@ $accent-color: var(--button-primary-bg);
   color: var(--text-color);
   opacity: 0.7;
   transition: color $transition-default;
-}
-
-// 整体部分样式
-.fun-settings {
-  color: var(--text-color);
-  transition: color 0.5s;
-  font-size: $text-font-size;
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.settings-header {
-  margin-bottom: 25px;
-
-  h2 {
-    font-size: $title-font-size;
-    font-weight: 600;
-    margin-bottom: 4px;
-  }
-
-  .subtitle {
-    font-size: $subtitle-font-size;
-    color: var(--text-color);
-    opacity: 0.8;
-  }
 }
 
 // Mac 状态栏设置区域样式
