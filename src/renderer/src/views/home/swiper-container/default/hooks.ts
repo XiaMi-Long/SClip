@@ -11,7 +11,8 @@ import {
   toRaw,
   type Ref,
   type ComputedRef,
-  onUnmounted
+  onUnmounted,
+  nextTick
 } from 'vue'
 import { useClipboardStore } from '@renderer/store/useClipboardStore'
 import { useConfigStore } from '@renderer/store/useConfigStore'
@@ -99,6 +100,7 @@ export type UseCarouselReturn = {
  */
 export function useCarousel(): UseCarouselReturn {
   const clipboardStore = useClipboardStore()
+  const configStore = useConfigStore()
 
   // ===== 状态核心 =====
   const state: CarouselState = {
@@ -114,6 +116,19 @@ export function useCarousel(): UseCarouselReturn {
         state.currentPage.value = 0
         state.currentCardIndex.value = 0
       }
+    }
+  )
+
+  // 当文本样式开关变化时，重新渲染卡片
+  watch(
+    () => configStore.getSetting.clipboard.enableTextStyle,
+    (_) => {
+      const clipboardList = clipboardStore.getClipboard
+      clipboardStore.clearClipboard()
+      // 防止如果不nexttick渲染,vue会当成一次可以优化的一次性变化,导致数据本身没有经历变化
+      nextTick(() => {
+        clipboardStore.pushClipboard(clipboardList)
+      })
     }
   )
 
