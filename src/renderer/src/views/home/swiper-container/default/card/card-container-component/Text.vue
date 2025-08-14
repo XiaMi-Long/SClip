@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { onMounted, ref, toRaw, computed } from 'vue'
+import hljs from 'highlight.js'
 import { useConfigStore } from '@renderer/store/useConfigStore'
+import {
+  isColorValue as isColorValueFun,
+  hexToRgb,
+  isCodeValue as isCodeValueFun
+} from '@renderer/util/common.fun'
 
 const props = defineProps<{
   clipboardOptions: ClipboardState
@@ -10,45 +16,36 @@ const displayContent = ref('')
 const containerRef = ref<HTMLElement | null>(null)
 const configStore = useConfigStore()
 
-const enableTextStyle = () => {
+const enableTextStyle = computed(() => {
   return configStore.getSetting.clipboard.enableTextStyle
-}
+})
 
-const longTextLimit = () => {
-  return configStore.getSetting.clipboard.longTextLimit
-}
-
-const hasHtmlContent = () => {
+const isHtmlContent = computed(() => {
   return (
     props.clipboardOptions.clipboardTypes.includes('text/html') &&
     props.clipboardOptions.meta.htmlContent &&
-    enableTextStyle()
+    enableTextStyle.value &&
+    !isColorValue.value
   )
-}
+})
 
-const content = () => {
-  if (!hasHtmlContent()) {
-    if (props.clipboardOptions.content.length > longTextLimit()) {
-      displayContent.value = props.clipboardOptions.content.slice(0, longTextLimit()) + '...'
-    } else {
-      displayContent.value = toRaw(props.clipboardOptions.content)
-    }
-  }
-}
+const isColorValue = computed(() => {
+  return isColorValueFun(props.clipboardOptions.content)
+})
 
-/**
- * 判断是否是颜色值
- * @returns {boolean} 是否是颜色值
- */
-const isColorValue = () => {
-  return /^#([0-9A-F]{3}){1,2}$/i.test(props.clipboardOptions.content)
+const isCodeValue = computed(() => {
+  return isCodeValueFun(props.clipboardOptions.content)
+})
+
+const longTextLimit = () => {
+  return configStore.getSetting.clipboard.longTextLimit
 }
 
 /**
  * 计算颜色值对应的CSS变量
  */
 const colorStyle = computed(() => {
-  if (!isColorValue()) return {}
+  if (!isColorValue.value) return {}
 
   // 直接使用原始内容，而不是displayContent
   const color = props.clipboardOptions.content
@@ -60,23 +57,21 @@ const colorStyle = computed(() => {
   }
 })
 
-/**
- * 将十六进制颜色转换为RGB格式
- */
-const hexToRgb = (hex: string) => {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-  if (!result) return '0, 0, 0'
-  return `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
-}
-
 onMounted(() => {
-  content()
+  if (!isHtmlContent.value) {
+    if (props.clipboardOptions.content.length > longTextLimit()) {
+      displayContent.value = props.clipboardOptions.content.slice(0, longTextLimit()) + '...'
+    } else {
+      displayContent.value = toRaw(props.clipboardOptions.content)
+    }
+  }
 
-  if (hasHtmlContent() && containerRef.value) {
+  if (isHtmlContent.value && containerRef.value) {
     const shadow = containerRef.value.attachShadow({ mode: 'open' })
 
     const style = document.createElement('style')
     style.textContent = `
+
       :host {
         display: block;
         height: 100%;
@@ -121,21 +116,30 @@ onMounted(() => {
     shadow.appendChild(style)
     shadow.appendChild(content)
   }
+
+  // if (isCodeValue.value) {
+  //   displayContent.value = hljs.highlightAuto(displayContent.value).value
+  // }
 })
 </script>
 
 <template>
   <div
     class="clipboard-card-text-container"
-    :class="{ 'color-value-container': isColorValue() }"
+    :class="{ 'color-value-container': isColorValue }"
     :style="colorStyle"
   >
-    <template v-if="hasHtmlContent()">
+    <template v-if="isHtmlContent">
       <div ref="containerRef"></div>
     </template>
-    <template v-else-if="isColorValue()">
+    <template v-else-if="isColorValue">
       <div class="color-value">{{ displayContent }}</div>
     </template>
+    <!-- <template v-else-if="isCodeValue">
+      <pre class="code-value">
+        <code  v-html="displayContent.replaceAll('', '')"></code>
+      </pre>
+    </template> -->
     <template v-else>
       <div class="plain-text">{{ displayContent }}</div>
     </template>
@@ -177,5 +181,28 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   height: 100%;
+}
+
+.code-value {
+  // background-color: #f6f8fa;
+  border-radius: 6px;
+  padding: 12px;
+  margin: 0;
+  zoom: 0.5;
+  // overflow-x: auto;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 13px;
+  line-height: 1.4;
+  // border: 1px solid #e1e4e8;
+
+  code {
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    border: none;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+  }
 }
 </style>

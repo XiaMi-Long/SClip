@@ -34,12 +34,17 @@ const PAGE_WIDTH = computed(() => {
 
 /** 总页数 */
 const totalPages = computed(() => {
-  return Math.ceil(getters.allCards.value.length / 3)
+  return Math.ceil(cardsLength.value / 3)
 })
 
 /** 是否显示分页状态 */
 const displayCardsIsEmptyData = computed(() => {
-  return getters.allCards.value.length > 0
+  return cardsLength.value > 0
+})
+
+/** 卡片数量 */
+const cardsLength = computed(() => {
+  return getters.allCards.value.length
 })
 
 /**
@@ -62,12 +67,7 @@ console.log(getters.allCards.value)
 <template>
   <div class="carousel-container">
     <!-- 内层列表，将所有卡片渲染出来 -->
-
-    <div
-      v-if="getters.allCards && getters.allCards.value.length === 0"
-      v-motion="noDataMotion"
-      class="no-data-container"
-    >
+    <div v-if="!cardsLength" v-motion="noDataMotion" class="no-data-container">
       <div class="no-data-content">
         <div class="no-data-icon">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

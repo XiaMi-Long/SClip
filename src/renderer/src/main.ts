@@ -1,4 +1,5 @@
 import './assets/main.scss'
+// import './highlight'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
