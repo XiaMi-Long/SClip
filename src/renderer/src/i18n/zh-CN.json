@@ -24,7 +24,8 @@
       "contentDisplay": "卡片样式显示",
       "customizeContentDisplay": "定制您的剪贴板卡片显示方式",
       "default": "默认",
-      "transitionEffects": "过渡效果"
+      "transitionEffects": "过渡效果",
+      "saveSuccess": "卡片样式设置已成功应用，下次启动时生效"
     },
     "theme": {
       "title": "外观设置",

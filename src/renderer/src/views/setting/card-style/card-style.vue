@@ -2,21 +2,30 @@
 import { ref, watch } from 'vue'
 import { useI18nStore } from '@renderer/store/useI18nStore'
 import { useConfigStore } from '@renderer/store/useConfigStore'
+import { Message } from '@renderer/components/VMessage'
 
 // 获取 i18n store
 const i18nStore = useI18nStore()
 const configStore = useConfigStore()
 const setting = configStore.getSetting
 
+const markTop = ref('-100%')
 const currentCardStyle = ref(setting.currentCardStyle)
 
-// 监听卡片样式变化并更新配置
-watch(currentCardStyle, (newValue) => {
-  configStore.setSetting({
-    ...setting,
-    currentCardStyle: newValue
-  })
-})
+const handleClick = (value: 'default' | 'effects') => {
+  markTop.value = '0'
+  setTimeout(() => {
+    currentCardStyle.value = value
+    configStore.setCardStyle(value)
+    // 显示成功消息通知
+    Message.success({
+      title: i18nStore.t('common.save'),
+      message: i18nStore.t('setting.cardStyle.saveSuccess'),
+      duration: 2000
+    })
+    markTop.value = '-100%'
+  }, 1000)
+}
 </script>
 
 <template>
@@ -37,18 +46,49 @@ watch(currentCardStyle, (newValue) => {
     <!-- 卡片样式选择区域 -->
     <div class="card-style-preview">
       <div class="card-style-preview__container">
+        <!-- 遮罩 -->
+        <div
+          class="mask"
+          :style="{
+            top: markTop
+          }"
+        ></div>
+
         <!-- default -->
         <div v-if="currentCardStyle === 'default'" class="default-list">
-          <div class="default-list__item">default</div>
-          <div class="default-list__item">default</div>
-          <div class="default-list__item">default</div>
+          <div class="default-list__item">
+            <svg
+              viewBox="0 0 84 84"
+              width="100%"
+              height="80%"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect x="22" y="-11" width="44" height="33" rx="2" fill="#fff" />
+              <rect x="22" y="24" width="44" height="33" rx="2" fill="#fff" />
+              <rect x="22" y="59" width="44" height="33" rx="2" fill="#fff" />
+            </svg>
+          </div>
         </div>
 
         <!-- effects -->
         <div v-if="currentCardStyle === 'effects'" class="effects-list">
-          <div class="effects-list__item">effects</div>
-          <div class="effects-list__item">effects</div>
-          <div class="effects-list__item">effects</div>
+          <div class="effects-list__item">
+            <svg
+              viewBox="0 0 64 64"
+              width="100%"
+              height="100%"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                opacity=".5"
+                d="M43 17.735a2 2 0 0 1 1.717-1.98l10-1.429A2 2 0 0 1 57 16.306v27.388a2 2 0 0 1-2.283 1.98l-10-1.429A2 2 0 0 1 43 42.265v-24.53Zm-22 0a2 2 0 0 0-1.717-1.98l-10-1.429A2 2 0 0 0 7 16.306v27.388a2 2 0 0 0 2.283 1.98l10-1.429A2 2 0 0 0 21 42.265v-24.53Z"
+                fill="currentColor"
+              />
+              <rect x="16" y="9" width="32" height="46" rx="2" fill="currentColor" />
+            </svg>
+          </div>
         </div>
       </div>
     </div>
@@ -59,7 +99,7 @@ watch(currentCardStyle, (newValue) => {
       <div
         class="style-button"
         :class="{ active: currentCardStyle === 'default' }"
-        @click="currentCardStyle = 'default'"
+        @click="handleClick('default')"
       >
         <div class="style-button__icon">
           <svg
@@ -81,7 +121,7 @@ watch(currentCardStyle, (newValue) => {
       <div
         class="style-button"
         :class="{ active: currentCardStyle === 'effects' }"
-        @click="currentCardStyle = 'effects'"
+        @click="handleClick('effects')"
       >
         <div class="style-button__icon">
           <svg
@@ -129,13 +169,40 @@ $transition-default: 0.5s ease;
 
 .card-style-preview {
   .card-style-preview__container {
+    position: relative;
     width: 100%;
     height: 400px;
     zoom: 1;
     background-color: var(--title-bar-bg);
     border-radius: 10px;
+    overflow: hidden;
     @include card-container-base;
     @include flex-center;
+
+    .mask {
+      &::after {
+        content: 'SClip';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 48px;
+        font-weight: bold;
+        color: var(--text-color);
+        opacity: 1;
+      }
+      position: absolute;
+      // top: -100%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: var(--button-primary-bg);
+      z-index: 1;
+      transition: top 1s ease;
+    }
+
+    .mask-move {
+    }
 
     .default-list {
       width: 250px;
@@ -144,18 +211,17 @@ $transition-default: 0.5s ease;
       padding: 3px;
       box-sizing: border-box;
       overflow: hidden;
-      display: flex;
-      gap: 5px;
-      flex-direction: column;
-      flex-wrap: wrap;
+      @include flex-center;
 
       &__item {
         width: calc(250px - 6px);
-        height: calc(380px / 3 - 7px);
+        height: calc(380px - 6px);
         @include flex-center;
         background-color: var(--container-bg);
         flex-direction: column;
         border-radius: $border-radius;
+        padding: 20px;
+        box-sizing: border-box;
       }
     }
 
@@ -166,18 +232,17 @@ $transition-default: 0.5s ease;
       padding: 3px;
       box-sizing: border-box;
       overflow: hidden;
-      display: flex;
-      gap: 5px;
-      flex-direction: column;
-      flex-wrap: wrap;
+      @include flex-center;
 
       &__item {
         width: calc(250px - 6px);
-        height: calc(380px / 3 - 7px);
+        height: calc(380px - 6px);
         @include flex-center;
         background-color: var(--container-bg);
         flex-direction: column;
         border-radius: $border-radius;
+        padding: 20px;
+        box-sizing: border-box;
       }
     }
   }

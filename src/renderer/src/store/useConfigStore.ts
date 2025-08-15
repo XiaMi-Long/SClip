@@ -237,6 +237,16 @@ export const useConfigStore = defineStore('config', {
     setEndenableDataDeduplication(endenableDataDeduplication: boolean) {
       this.setting.enableDataDeduplication = endenableDataDeduplication
       sendToMain.updateConfigSetting(toRaw(this.setting), this.windowId)
+    },
+
+    /**
+     * 设置卡片样式
+     * @param {string} cardStyle 卡片样式
+     * @description 设置卡片样式，并更新应用配置
+     */
+    setCardStyle(cardStyle: 'default' | 'effects') {
+      this.setting.currentCardStyle = cardStyle
+      sendToMain.updateConfigSetting(toRaw(this.setting), this.windowId)
     }
   }
 })
