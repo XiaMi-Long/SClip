@@ -65,7 +65,8 @@ export class ConfigManager {
         },
         effects: {
           windowWidth: 300,
-          windowHeight: 300
+          windowHeight: 450,
+          cardBgColor: '#494949'
         }
       }
     }

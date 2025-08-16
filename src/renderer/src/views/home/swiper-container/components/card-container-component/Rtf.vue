@@ -70,7 +70,7 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .clipboard-card-text-container {
-  height: 90%;
+  height: 100%;
   overflow: hidden;
 }
 </style>

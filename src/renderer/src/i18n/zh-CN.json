@@ -24,8 +24,11 @@
       "contentDisplay": "卡片样式显示",
       "customizeContentDisplay": "定制您的剪贴板卡片显示方式",
       "default": "默认",
-      "transitionEffects": "过渡效果",
-      "saveSuccess": "卡片样式设置已成功应用，下次启动时生效"
+      "transitionEffects": "层叠卡片",
+      "saveSuccess": "卡片样式设置已成功应用，下次启动时生效",
+      "colorPickerTitle": "层叠卡片卡片背景颜色设置",
+      "colorPickerDesc": "使层叠卡片的背景颜色与选中颜色一致",
+      "colorPresets": "颜色预设"
     },
     "theme": {
       "title": "外观设置",

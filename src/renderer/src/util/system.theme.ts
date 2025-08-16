@@ -21,6 +21,8 @@ interface SystemTheme {
   stickyBadgeBg: string
   stickyBadgeErrorBg: string
   buttonPrimaryBg: string
+
+  cardStyleCardBg: string
 }
 
 /**
@@ -38,7 +40,9 @@ const lightTheme: SystemTheme = {
   settingMenuActiveBg: '#d9d9d9',
   stickyBadgeBg: '#d7d7d7',
   stickyBadgeErrorBg: '#f26a76',
-  buttonPrimaryBg: '#4285f4'
+  buttonPrimaryBg: '#4285f4',
+
+  cardStyleCardBg: ''
 }
 
 /**
@@ -51,7 +55,9 @@ const darkTheme: SystemTheme = {
   settingMenuActiveBg: '#676767',
   stickyBadgeBg: '#464646',
   stickyBadgeErrorBg: '#f26a76',
-  buttonPrimaryBg: '#4285f4'
+  buttonPrimaryBg: '#4285f4',
+
+  cardStyleCardBg: ''
 }
 
 /**

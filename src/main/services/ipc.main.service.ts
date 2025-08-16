@@ -157,6 +157,7 @@ export class MainIPCService {
      */
     ipcMain.on('appConfig:update-config-setting', (event, setting: Setting, windowId: string) => {
       ConfigManager.getInstance().updateSetting(setting)
+
       // 获取所有窗口
       const allWindows = BrowserWindowManager.getBrowserWindows()
       // 遍历所有窗口，向非 windowId 窗口发送更新配置事件

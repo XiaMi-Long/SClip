@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { useI18nStore } from '@renderer/store/useI18nStore'
 import { useConfigStore } from '@renderer/store/useConfigStore'
 import { Message } from '@renderer/components/VMessage'
+import VDialog from '@renderer/components/VDialog'
 
 // 获取 i18n store
 const i18nStore = useI18nStore()
@@ -10,13 +11,24 @@ const configStore = useConfigStore()
 const setting = configStore.getSetting
 
 const markTop = ref('-100%')
+const showRestartDialog = ref(false)
+const selectedEffectsBgColor = ref(setting.clipboardCardStyle.effects.cardBgColor)
+const pendingCardStyle = ref<'default' | 'effects'>(
+  setting.currentCardStyle as 'default' | 'effects'
+)
 const currentCardStyle = ref(setting.currentCardStyle)
 
 const handleClick = (value: 'default' | 'effects') => {
+  pendingCardStyle.value = value
+  showRestartDialog.value = true
+}
+
+const handleConfirmRestart = () => {
+  // 显示重启提示对话框
   markTop.value = '0'
   setTimeout(() => {
-    currentCardStyle.value = value
-    configStore.setCardStyle(value)
+    currentCardStyle.value = pendingCardStyle.value
+    configStore.setCardStyle(currentCardStyle.value)
     // 显示成功消息通知
     Message.success({
       title: i18nStore.t('common.save'),
@@ -25,6 +37,48 @@ const handleClick = (value: 'default' | 'effects') => {
     })
     markTop.value = '-100%'
   }, 1000)
+}
+
+const handleCancelRestart = () => {}
+
+// 预设颜色选项 - 10个时尚色系（一半浅色一半深色）
+const colorPresets = ref([
+  { name: '经典', color: '#494949' }, // 默认颜色放在最前面
+  { name: '薄荷绿', color: '#7FDBDA' }, // 浅色
+  { name: '珊瑚粉', color: '#FF6B6B' }, // 深色
+  { name: '天空蓝', color: '#74B9FF' }, // 浅色
+  { name: '深紫罗兰', color: '#6C5CE7' }, // 深色
+  { name: '奶油黄', color: '#FDCB6E' }, // 浅色
+  { name: '深青绿', color: '#00B894' }, // 深色
+  { name: '淡玫瑰', color: '#FD79A8' }, // 浅色
+  { name: '深蓝灰', color: '#2D3436' }, // 深色
+  { name: '浅薰衣草', color: '#A29BFE' } // 浅色
+])
+
+const handleColorInput = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  if (target && target.value) {
+    selectedEffectsBgColor.value = target.value
+    configStore.setCardStyleBgColor(target.value)
+    // 显示成功消息通知
+    Message.success({
+      title: i18nStore.t('common.save'),
+      message: i18nStore.t('setting.cardStyle.saveSuccess'),
+      duration: 2000
+    })
+  }
+}
+
+// 处理预设颜色点击
+const handlePresetClick = (color: string) => {
+  selectedEffectsBgColor.value = color
+  configStore.setCardStyleBgColor(color)
+  // 显示成功消息通知
+  Message.success({
+    title: i18nStore.t('common.save'),
+    message: i18nStore.t('setting.cardStyle.saveSuccess'),
+    duration: 2000
+  })
 }
 </script>
 
@@ -64,9 +118,9 @@ const handleClick = (value: 'default' | 'effects') => {
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <rect x="22" y="-11" width="44" height="33" rx="2" fill="#fff" />
-              <rect x="22" y="24" width="44" height="33" rx="2" fill="#fff" />
-              <rect x="22" y="59" width="44" height="33" rx="2" fill="#fff" />
+              <rect x="22" y="-11" width="44" height="33" rx="2" fill="#ecedef" />
+              <rect x="22" y="24" width="44" height="33" rx="2" fill="#ecedef" />
+              <rect x="22" y="59" width="44" height="33" rx="2" fill="#ecedef" />
             </svg>
           </div>
         </div>
@@ -84,11 +138,44 @@ const handleClick = (value: 'default' | 'effects') => {
               <path
                 opacity=".5"
                 d="M43 17.735a2 2 0 0 1 1.717-1.98l10-1.429A2 2 0 0 1 57 16.306v27.388a2 2 0 0 1-2.283 1.98l-10-1.429A2 2 0 0 1 43 42.265v-24.53Zm-22 0a2 2 0 0 0-1.717-1.98l-10-1.429A2 2 0 0 0 7 16.306v27.388a2 2 0 0 0 2.283 1.98l10-1.429A2 2 0 0 0 21 42.265v-24.53Z"
-                fill="currentColor"
+                :fill="selectedEffectsBgColor + '99'"
               />
-              <rect x="16" y="9" width="32" height="46" rx="2" fill="currentColor" />
+              <rect x="16" y="9" width="32" height="46" rx="2" :fill="selectedEffectsBgColor" />
             </svg>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- effects颜色配置区域 -->
+    <div class="toggle-option">
+      <div class="option-info">
+        <div class="option-title">
+          {{ i18nStore.t('setting.cardStyle.colorPickerTitle') }}
+        </div>
+        <div class="option-description">
+          {{ i18nStore.t('setting.cardStyle.colorPickerDesc') }}
+        </div>
+      </div>
+      <input
+        type="color"
+        class="color-input"
+        :value="selectedEffectsBgColor"
+        @input="handleColorInput"
+      />
+    </div>
+
+    <!-- 颜色推荐区域 -->
+    <div class="toggle-option">
+      <div class="color-preset-container">
+        <div
+          v-for="preset in colorPresets"
+          :key="preset.name"
+          class="color-preset-item"
+          @click="handlePresetClick(preset.color)"
+        >
+          <div class="color-preview" :style="{ backgroundColor: preset.color }"></div>
+          <span class="color-name">{{ preset.name }}</span>
         </div>
       </div>
     </div>
@@ -144,6 +231,18 @@ const handleClick = (value: 'default' | 'effects') => {
         </div>
       </div>
     </div>
+
+    <!-- 重启提示对话框 -->
+    <VDialog
+      v-if="showRestartDialog"
+      message="更改此配置，需重启才可生效"
+      type="warning"
+      confirm-text="确定"
+      cancel-text="取消"
+      @confirm="handleConfirmRestart"
+      @cancel="handleCancelRestart"
+      @close="showRestartDialog = false"
+    />
   </div>
 </template>
 
@@ -168,6 +267,9 @@ $transition-default: 0.5s ease;
 }
 
 .card-style-preview {
+  position: relative;
+  margin-bottom: 20px;
+
   .card-style-preview__container {
     position: relative;
     width: 100%;
@@ -188,7 +290,7 @@ $transition-default: 0.5s ease;
         transform: translate(-50%, -50%);
         font-size: 48px;
         font-weight: bold;
-        color: var(--text-color);
+        color: white;
         opacity: 1;
       }
       position: absolute;
@@ -305,6 +407,67 @@ $transition-default: 0.5s ease;
     &__text {
       font-weight: 500;
       line-height: 1.2;
+    }
+  }
+}
+
+.color-input {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: transparent;
+  margin-right: 15px;
+
+  &::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+
+  &::-webkit-color-swatch {
+    border: none;
+    border-radius: 6px;
+  }
+}
+
+.color-preset-container {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+
+  .color-preset-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    flex: 1;
+    padding: 10px 6px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: var(--button-primary-bg);
+      transform: translateY(-2px);
+    }
+
+    .color-preview {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .color-name {
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-align: center;
+      line-height: 1.2;
+      transition: color 0.3s ease;
     }
   }
 }

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import TextCard from './card-container-component/Text.vue'
-import ImageCard from './card-container-component/Image.vue'
-import RtfCard from './card-container-component/Rtf.vue'
+import TextCard from '../../components/card-container-component/Text.vue'
+import ImageCard from '../../components/card-container-component/Image.vue'
+import RtfCard from '../../components/card-container-component/Rtf.vue'
 
 const props = defineProps<{
   clipboardOptions: ClipboardState

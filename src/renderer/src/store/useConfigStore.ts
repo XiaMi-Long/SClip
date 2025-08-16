@@ -247,6 +247,16 @@ export const useConfigStore = defineStore('config', {
     setCardStyle(cardStyle: 'default' | 'effects') {
       this.setting.currentCardStyle = cardStyle
       sendToMain.updateConfigSetting(toRaw(this.setting), this.windowId)
+    },
+
+    /**
+     * 设置层叠卡片背景颜色
+     * @param {string} color 选择颜色
+     * @description 设置层叠卡片背景颜色,并更新应用配置
+     */
+    setCardStyleBgColor(color: string) {
+      this.setting.clipboardCardStyle.effects.cardBgColor = color
+      sendToMain.updateConfigSetting(toRaw(this.setting), this.windowId)
     }
   }
 })

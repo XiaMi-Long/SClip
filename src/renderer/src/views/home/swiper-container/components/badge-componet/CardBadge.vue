@@ -3,7 +3,7 @@
  * @file CardBadge 组件
  * @description 统一的卡片标记组件，支持多种标记类型（固定、选中等）
  */
-import stickyImage from '../../../../../../assets/sticky_white.png'
+import stickyImage from '@renderer/assets/sticky_white.png'
 import { computed } from 'vue'
 
 /**

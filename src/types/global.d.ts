@@ -200,6 +200,7 @@ declare global {
       effects: {
         windowWidth: number
         windowHeight: number
+        cardBgColor: string
       }
     }
   }

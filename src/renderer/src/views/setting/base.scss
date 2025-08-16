@@ -58,3 +58,31 @@ $text-font-size: 14px;
     transition: color 0.5s ease;
   }
 }
+
+.toggle-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
+  background-color: var(--title-bar-bg);
+  transition: background-color 0.5s ease;
+  border-radius: 10px;
+  margin-bottom: 15px;
+
+  .option-info {
+    flex: 1;
+
+    .option-title {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+
+    .option-description {
+      font-size: 14px;
+      color: var(--text-color);
+      opacity: 0.7;
+      transition: color 0.5s ease;
+    }
+  }
+}

@@ -38,7 +38,11 @@
       "contentDisplay": "Card Style Display",
       "customizeContentDisplay": "Customize how your clipboard cards are displayed",
       "default": "Default",
-      "transitionEffects": "Transition Effects"
+      "transitionEffects": "Transition Effects",
+      "saveSuccess": "Card style settings have been successfully applied, effective on next launch",
+      "colorPickerTitle": "Transition Effects Card Background Color Settings",
+      "colorPickerDesc": "Make the background color of transition effects cards consistent with the selected color",
+      "colorPresets": "Color Presets"
     },
     "keyboard": {
       "title": "Keyboard Shortcuts",
