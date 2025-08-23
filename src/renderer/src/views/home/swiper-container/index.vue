@@ -2,6 +2,7 @@
 // 改为静态导入
 import DefaultSwiper from './default/swiper.vue'
 import EffectsSwiper from './effects/index.vue'
+import Tutorial from './tutorial/index.vue'
 import { useConfigStore } from '@renderer/store/useConfigStore'
 import { computed } from 'vue'
 
