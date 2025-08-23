@@ -75,7 +75,7 @@ const handleClear = async () => {
         :class="[isMainWindow ? 'setting-button-show' : 'setting-button-hidden']"
         @click="handleClear"
       >
-        <img :src="clearImage" alt="清除" class="tool-icon clear-icon" />
+        <img :src="clearImage" alt="清除" class="tool-icon clear-icon" draggable="false" />
       </button>
 
       <!-- 固定按钮 -->
@@ -87,7 +87,7 @@ const handleClear = async () => {
         ]"
         @click="handleAffix"
       >
-        <img :src="affixImage" alt="固定" class="tool-icon affix-icon" />
+        <img :src="affixImage" alt="固定" class="tool-icon affix-icon" draggable="false" />
       </button>
 
       <!-- 设置按钮 -->
@@ -96,7 +96,7 @@ const handleClear = async () => {
         :class="[isMainWindow ? 'setting-button-show' : 'setting-button-hidden']"
         @click="handleSetting"
       >
-        <img :src="settingImage" alt="设置" class="tool-icon setting-icon" />
+        <img :src="settingImage" alt="设置" class="tool-icon setting-icon" draggable="false" />
       </button>
     </div>
 

@@ -19,6 +19,7 @@ export class ConfigManager {
       applicationTheme: 'light',
       applicationPrimaryColor: '#4285f4',
       forceMacStatusBar: false,
+      showTutorial: true,
       clipboard: {
         rtfTextZoom: 0.7,
         rtfRenderType: 'rtf',

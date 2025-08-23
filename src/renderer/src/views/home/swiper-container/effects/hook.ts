@@ -5,12 +5,14 @@ import throttle from 'lodash/throttle'
 import { listenFromMain, sendToMain } from '@renderer/util/ipc.renderer.service'
 interface Status {
   activeIndex: Ref<number>
+  isShowDeleteAnimation: Ref<boolean>
 }
 interface Getters {
   getAllCards: ComputedRef<ClipboardState[]>
   effectsCardBgColor: ComputedRef<string>
   isMac: ComputedRef<boolean>
   getActiveCard: ComputedRef<ClipboardState>
+  isDelete: ComputedRef<(index: number) => boolean>
 }
 
 interface Actions {
@@ -30,7 +32,8 @@ export const useStyles = () => {
   const configStore = useConfigStore()
 
   const status: Status = {
-    activeIndex: ref(0)
+    activeIndex: ref(0),
+    isShowDeleteAnimation: ref(false)
   }
 
   const getters: Getters = {
@@ -50,6 +53,13 @@ export const useStyles = () => {
     /** 当前系统是不是mac */
     isMac: computed(() => {
       return useConfigStore().getSetting.system.isMac
+    }),
+
+    /** 获取当前卡片是否是删除状态 */
+    isDelete: computed(() => {
+      return (index: number) => {
+        return status.isShowDeleteAnimation.value && index === status.activeIndex.value
+      }
     })
   }
 
@@ -87,18 +97,26 @@ export const useStyles = () => {
 
       const currentIndex = count - status.activeIndex.value - 1
       const currentItem = clipboardStore.getClipboard[currentIndex]
+      if (currentItem.isSticky === 'true') return
 
-      clipboardStore.removeClipboardItem(currentIndex)
       sendToMain.deleteClipboardItem(toRaw(currentItem))
-      // 如果删除的是最后一位则返回上一个位置
-      if (count - 1 === status.activeIndex.value) {
-        status.activeIndex.value = Math.max(status.activeIndex.value - 1, 0)
-      }
+      status.isShowDeleteAnimation.value = true
+      setTimeout(() => {
+        status.isShowDeleteAnimation.value = false
+        clipboardStore.removeClipboardItem(currentIndex)
+        // 如果删除的是最后一位则返回上一个位置
+        if (count - 1 === status.activeIndex.value) {
+          status.activeIndex.value = Math.max(status.activeIndex.value - 1, 0)
+        }
+      }, 500)
     },
-    writeToClipboard: () => {}
+    writeToClipboard: () => {
+      const item = getters.getActiveCard.value
+      if (item) {
+        sendToMain.writeClipboard(toRaw(item))
+      }
+    }
   }
-
-  // 1  3
 
   /**
    * 根据卡片索引计算其样式

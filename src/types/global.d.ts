@@ -43,6 +43,11 @@ declare global {
     forceMacStatusBar: boolean
 
     /**
+     * 是否显示新手教程
+     */
+    showTutorial: boolean
+
+    /**
      * 剪贴板卡片样式
      */
     clipboard: {

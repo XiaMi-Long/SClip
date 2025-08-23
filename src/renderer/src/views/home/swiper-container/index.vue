@@ -8,7 +8,11 @@ import { computed } from 'vue'
 const configStore = useConfigStore()
 
 const isShow = computed(() => {
-  return configStore.getSetting?.applicationTheme
+  return configStore.getSetting?.applicationTheme && !configStore.getSetting?.showTutorial
+})
+
+const isShowTutorial = computed(() => {
+  return configStore.getSetting?.showTutorial
 })
 
 const currentCardStyle = computed(() => {
@@ -18,8 +22,13 @@ const currentCardStyle = computed(() => {
 
 <template>
   <div class="swiper-container">
-    <DefaultSwiper v-if="currentCardStyle === 'default' && isShow" />
-    <EffectsSwiper v-if="currentCardStyle === 'effects' && isShow" />
+    <template v-if="isShowTutorial">
+      <Tutorial />
+    </template>
+    <template v-else>
+      <DefaultSwiper v-if="currentCardStyle === 'default' && isShow" />
+      <EffectsSwiper v-if="currentCardStyle === 'effects' && isShow" />
+    </template>
   </div>
 </template>
 

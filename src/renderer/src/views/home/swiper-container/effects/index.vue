@@ -7,7 +7,7 @@ import ImageCard from '../components/card-container-component/Image.vue'
 import RtfCard from '../components/card-container-component/Rtf.vue'
 import CardBadge from './CardBadge.vue'
 
-const { getters, getCardStyle } = useStyles()
+const { getters, getCardStyle, status } = useStyles()
 
 const cardStyle = ref({
   text: 'clipboard-card',
@@ -29,6 +29,9 @@ const cardType = (type: string) => {
         v-for="(item, index) in getters.getAllCards.value"
         :key="item.id"
         class="card-item"
+        :class="{
+          'delete-animation': getters.isDelete.value(index)
+        }"
         :style="getCardStyle(index)"
         :data-index="index"
       >
@@ -69,6 +72,11 @@ const cardType = (type: string) => {
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.delete-animation {
+  transform: scale(0.5) !important;
+  opacity: 0 !important;
 }
 
 .card-swiper-wrapper {
