@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import VClipboardCard from './card/index.vue'
-import CardBadge from '../components/badge-componet/CardBadge.vue'
+import CardBadge from './badge-componet/CardBadge.vue'
 import PaginationIndicator from './card/pagination-component/PaginationIndicator.vue'
 import { useCarousel } from './hooks'
 import { listenFromMain } from '@renderer/util/ipc.renderer.service'

@@ -5,8 +5,9 @@ import NoData from '../components/no-data/index.vue'
 import TextCard from '../components/card-container-component/Text.vue'
 import ImageCard from '../components/card-container-component/Image.vue'
 import RtfCard from '../components/card-container-component/Rtf.vue'
+import CardBadge from './CardBadge.vue'
 
-const { getters, getCardStyle, status } = useStyles()
+const { getters, getCardStyle } = useStyles()
 
 const cardStyle = ref({
   text: 'clipboard-card',
@@ -44,6 +45,14 @@ const cardType = (type: string) => {
         </div>
       </div>
     </div>
+
+    <div class="barge-container">
+      <CardBadge
+        :card="getters.getActiveCard.value"
+        :show-type-indicator="true"
+        :show-long-content-tip="true"
+      />
+    </div>
   </div>
 </template>
 
@@ -56,6 +65,10 @@ const cardType = (type: string) => {
   align-items: center;
   // 设置 3D 透视效果
   perspective: 1000px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .card-swiper-wrapper {
@@ -64,6 +77,7 @@ const cardType = (type: string) => {
   height: 250px;
   // 保持 3D 变换
   transform-style: preserve-3d;
+
   // overflow: hidden;
 }
 
@@ -85,7 +99,7 @@ const cardType = (type: string) => {
   word-wrap: break-word; /* 长单词换行 */
   word-break: break-word; /* 在单词内换行 */
   text-align: center; /* 文字居中对齐 */
-  padding: 10px; /* 添加内边距，避免文字贴边 */
+  padding: 5px; /* 添加内边距，避免文字贴边 */
   box-sizing: border-box; /* 确保padding不会影响总宽高 */
   border-radius: 10px;
   // 平滑过渡效果
@@ -99,5 +113,19 @@ const cardType = (type: string) => {
   width: 100%;
   height: 100%;
   // padding: 10px;
+}
+
+.barge-container {
+  width: 100px;
+  height: 40px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  // background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--title-bar-bg);
+  border-radius: 10px;
+  z-index: 10;
 }
 </style>

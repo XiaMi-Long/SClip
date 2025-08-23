@@ -10,6 +10,7 @@ interface Getters {
   getAllCards: ComputedRef<ClipboardState[]>
   effectsCardBgColor: ComputedRef<string>
   isMac: ComputedRef<boolean>
+  getActiveCard: ComputedRef<ClipboardState>
 }
 
 interface Actions {
@@ -41,6 +42,11 @@ export const useStyles = () => {
       () => configStore.getSetting.clipboardCardStyle.effects.cardBgColor
     ),
 
+    /** 获取当前activeindex的卡片 */
+    getActiveCard: computed(() => {
+      return getters.getAllCards.value[status.activeIndex.value]
+    }),
+
     /** 当前系统是不是mac */
     isMac: computed(() => {
       return useConfigStore().getSetting.system.isMac
@@ -65,7 +71,13 @@ export const useStyles = () => {
       status.activeIndex.value = 0
     },
 
-    toggleSticky: () => {},
+    toggleSticky: () => {
+      const item = getters.getAllCards.value[status.activeIndex.value]
+      if (item) {
+        item.isSticky = item.isSticky === 'true' ? 'false' : 'true'
+        sendToMain.updateClipboardItem(toRaw(item))
+      }
+    },
 
     /** 删除 */
     deleteCurrent: () => {
