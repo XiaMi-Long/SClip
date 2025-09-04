@@ -1,0 +1,51 @@
+<!-- 卡片区域 -->
+<!-- <transition name="cards-section-fade">
+        <div v-if="showCards" class="cards-section">
+          初始卡片
+          <transition-group v-if="currentStep === 'initial'" name="cards-fade">
+            <div key="start-tutorial" class="tutorial-card" @click="startTutorial">
+              <div class="card-content">
+                <h3>开始教程</h3>
+                <p>了解SClip的功能特性</p>
+              </div>
+            </div>
+            <div key="start-using" class="tutorial-card" @click="startUsing">
+              <div class="card-content">
+                <h3>开始使用</h3>
+                <p>直接开始使用SClip</p>
+              </div>
+            </div>
+          </transition-group>
+
+          教程选择卡片
+          <transition-group v-if="currentStep === 'tutorial-select'" name="cards-fade">
+            <div key="classic-tutorial" class="tutorial-card" @click="selectClassicTutorial">
+              <div class="card-content">
+                <h3>经典样式教程</h3>
+                <p>传统界面的使用指南</p>
+              </div>
+            </div>
+            <div key="modern-tutorial" class="tutorial-card" @click="selectModernTutorial">
+              <div class="card-content">
+                <h3>新版样式教程</h3>
+                <p>全新界面的使用指南</p>
+              </div>
+            </div>
+          </transition-group>
+        </div>
+      </transition> -->
+
+<!-- 教程内容区域 -->
+<!-- <transition name="content-fade" mode="out-in">
+        <div v-if="currentStep === 'classic-demo'" class="tutorial-content">
+          <button class="back-btn" @click="backToTutorialSelect">← 返回</button>
+          <DefaultDemo />
+        </div>
+      </transition> -->
+
+<!-- <transition name="content-fade" mode="out-in">
+        <div v-if="currentStep === 'modern-demo'" class="tutorial-content">
+          <button class="back-btn" @click="backToTutorialSelect">← 返回</button>
+          <EffectsDemo />
+        </div>
+      </transition> -->
