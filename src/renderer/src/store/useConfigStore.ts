@@ -257,6 +257,16 @@ export const useConfigStore = defineStore('config', {
     setCardStyleBgColor(color: string) {
       this.setting.clipboardCardStyle.effects.cardBgColor = color
       sendToMain.updateConfigSetting(toRaw(this.setting), this.windowId)
+    },
+
+    /**
+     * 设置是否显示教程
+     * @param {boolean} showTutorial 是否显示教程
+     * @description 设置是否显示教程,并更新应用配置
+     */
+    setShowTutorial(showTutorial: boolean) {
+      this.setting.showTutorial = showTutorial
+      sendToMain.updateConfigSetting(toRaw(this.setting), this.windowId)
     }
   }
 })

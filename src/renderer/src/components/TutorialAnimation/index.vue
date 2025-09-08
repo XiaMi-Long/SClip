@@ -268,7 +268,7 @@ const logoPTextMotion = {
     .shape-line {
       width: 100%;
       height: 100%;
-      background-color: white;
+      background-color: var(--button-primary-bg);
     }
   }
 
@@ -280,7 +280,7 @@ const logoPTextMotion = {
     .shape-line {
       width: 100%;
       height: 100%;
-      background-color: white;
+      background-color: var(--button-primary-bg);
     }
   }
 }
@@ -299,7 +299,7 @@ const logoPTextMotion = {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: var(--button-primary-bg);
     font-size: 2.5em;
     font-weight: bold;
     letter-spacing: 5px;

@@ -7,7 +7,7 @@ import { useConfigStore } from '@renderer/store/useConfigStore'
 import { computed } from 'vue'
 
 const configStore = useConfigStore()
-
+// configStore.setShowTutorial(true)
 const isShow = computed(() => {
   return configStore.getSetting?.applicationTheme && !configStore.getSetting?.showTutorial
 })

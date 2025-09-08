@@ -16,7 +16,7 @@
               </div>
             </div>
           </transition-group>
-
+background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
           教程选择卡片
           <transition-group v-if="currentStep === 'tutorial-select'" name="cards-fade">
             <div key="classic-tutorial" class="tutorial-card" @click="selectClassicTutorial">
