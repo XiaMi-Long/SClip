@@ -49,7 +49,7 @@ asarUnpack:
 # 移除不必要的文件
 removePackageScripts: true
 # 添加图标配置
-icon: resources/images/icons/icon.png
+icon: resources/images/icons/icon-512x512.png
 win:
   executableName: clipboard
   # Windows特定图标配置
@@ -88,7 +88,7 @@ linux:
   maintainer: electronjs.org
   category: Utility
   # Linux特定图标配置
-  icon: resources/images/icons/icon.png
+  icon: resources/images/icons/icon-512x512.png
 appImage:
   artifactName: ${name}-${version}.${ext}
 publish:

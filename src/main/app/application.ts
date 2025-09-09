@@ -1,7 +1,7 @@
 import { join } from 'path'
 import { screen, nativeTheme } from 'electron'
 import { Menu, MenuItemConstructorOptions } from 'electron'
-import icon from '../../../resources/images/icons/icon.png?asset'
+import icon from '../../../resources/images/icons/icon-512x512.png?asset'
 import {
   app,
   shell,
