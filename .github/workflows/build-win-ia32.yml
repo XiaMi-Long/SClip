@@ -1,0 +1,43 @@
+name: Build Windows x86 Installer
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+
+jobs:
+  build-win-ia32:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          CI: true
+
+      - name: Rebuild native modules for Electron
+        run: npm run rebuild
+
+      - name: Build win-ia32 installer (no publish)
+        run: npm run build && npx electron-builder --win --ia32 --publish=never
+        env:
+          CI: true
+
+      - name: Upload installer artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sclip-win-ia32-${{ github.run_number }}
+          path: |
+            dist/*.exe
+            dist/*.blockmap
+            dist/latest.yml
+            dist/win-ia32-unpacked/**
+          if-no-files-found: error

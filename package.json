@@ -19,6 +19,9 @@
     "postinstall": "electron-builder install-app-deps",
     "build:unpack": "npm run build && electron-builder --dir",
     "build:win": "npm run build && electron-builder --win",
+    "build:win-x64": "npm run build && electron-builder --win --x64",
+    "build:win-ia32": "npm run build && electron-builder --win --ia32",
+    "build:win-arm64": "npm run build && electron-builder --win --arm64",
     "build:mac": "npm run build && electron-builder --mac ",
     "build:linux": "npm run build && electron-builder --linux"
   },

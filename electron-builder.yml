@@ -1,6 +1,7 @@
 appId: com.electron.sclip
 productName: clipboard
 buildDependenciesFromSource: true
+npmRebuild: true
 compression: maximum
 asar: true
 directories:
@@ -43,6 +44,8 @@ files:
 asarUnpack:
   - 'node_modules/robotjs/build/Release/robotjs.node'
   - 'node_modules/better-sqlite3/build/Release/better_sqlite3.node'
+# 确保原生模块正确编译
+# nodeGypRebuild: true  # 注释掉，让electron-builder自动处理
 # 移除不必要的文件
 removePackageScripts: true
 # 添加图标配置
@@ -51,6 +54,13 @@ win:
   executableName: clipboard
   # Windows特定图标配置
   icon: resources/images/icons/icon.ico
+  # 支持多种架构
+  target:
+    - target: nsis
+      arch:
+        - x64
+        - ia32
+        - arm64
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
@@ -81,7 +91,6 @@ linux:
   icon: resources/images/icons/icon.png
 appImage:
   artifactName: ${name}-${version}.${ext}
-npmRebuild: true
 publish:
   provider: generic
   url: https://example.com/auto-updates
