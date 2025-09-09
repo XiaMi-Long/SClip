@@ -1,4 +1,4 @@
-import hljs from 'highlight.js'
+// import hljs from 'highlight.js/lib/core'
 /**
  * 通用首次显示动画
  * @returns 动画配置
@@ -55,11 +55,11 @@ const hexToRgb = (hex: string) => {
  * 判断是否是代码值
  * @returns {boolean} 是否是代码值
  */
-const isCodeValue = (code: string) => {
-  const result = hljs.highlightAuto(code)
-  const relevanceThreshold = 2
-  console.log(`String: "${code}", Relevance: ${result.relevance}`)
-  return result.relevance > relevanceThreshold
-}
+// const isCodeValue = (code: string) => {
+//   const result = hljs.highlightAuto(code)
+//   const relevanceThreshold = 2
+//   console.log(`String: "${code}", Relevance: ${result.relevance}`)
+//   return result.relevance > relevanceThreshold
+// }
 
-export { formatDateTime, firstShowTransitionMotion, isColorValue, hexToRgb, isCodeValue }
+export { formatDateTime, firstShowTransitionMotion, isColorValue, hexToRgb }

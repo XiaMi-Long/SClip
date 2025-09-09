@@ -1,6 +1,8 @@
 appId: com.electron.sclip
 productName: clipboard
 buildDependenciesFromSource: true
+compression: maximum
+asar: true
 directories:
   buildResources: build
   output: dist
@@ -16,14 +18,33 @@ files:
   - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
   - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
   - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
-# asarUnpack:
-#   - 'resources/**'
-#   - 'resources/images/**'
-#   - 'resources/images/icons/**'
-#   - 'node_modules/robotjs/build/Release/robotjs.node'
-#   - 'node_modules/better-sqlite3/build/Release/better_sqlite3.node'
-#   - 'node_modules/sqlite3'
-#   - 'dist/main/chunks/*.node'
+  # 排除开发依赖和不需要的 node_modules
+  - '!node_modules/@types/**'
+  - '!node_modules/@eslint/**'
+  - '!node_modules/@babel/**'
+  - '!node_modules/typescript/**'
+  - '!node_modules/prettier/**'
+  - '!node_modules/eslint/**'
+  - '!node_modules/vue-tsc/**'
+  - '!node_modules/electron-builder/**'
+  - '!node_modules/electron-rebuild/**'
+  - '!node_modules/app-builder-bin/**'
+  - '!node_modules/7zip-bin/**'
+  - '!node_modules/lzma-native/**'
+  - '!node_modules/@typescript-eslint/**'
+  - '!node_modules/colorjs.io/**'
+  - '!node_modules/@esbuild/**'
+  - '!node_modules/vite/**'
+  - '!node_modules/rollup/**'
+  - '!node_modules/electron-vite/**'
+  - '!node_modules/@vitejs/**'
+  - '!node_modules/sass-embedded/**'
+  - '!node_modules/sass-embedded-darwin-arm64/**'
+asarUnpack:
+  - 'node_modules/robotjs/build/Release/robotjs.node'
+  - 'node_modules/better-sqlite3/build/Release/better_sqlite3.node'
+# 移除不必要的文件
+removePackageScripts: true
 # 添加图标配置
 icon: resources/images/icons/icon.png
 win:
@@ -44,6 +65,7 @@ mac:
     - NSMicrophoneUsageDescription: Application requests access to the device's microphone.
     - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
     - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
+    - CFBundleDevelopmentRegion: en
   notarize: false
   darkModeSupport: true
 dmg:

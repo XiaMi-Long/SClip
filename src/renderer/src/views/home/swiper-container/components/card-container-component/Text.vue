@@ -1,12 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, toRaw, computed } from 'vue'
-import hljs from 'highlight.js'
 import { useConfigStore } from '@renderer/store/useConfigStore'
-import {
-  isColorValue as isColorValueFun,
-  hexToRgb,
-  isCodeValue as isCodeValueFun
-} from '@renderer/util/common.fun'
+import { isColorValue as isColorValueFun, hexToRgb } from '@renderer/util/common.fun'
 
 const props = defineProps<{
   clipboardOptions: ClipboardState
@@ -33,9 +28,9 @@ const isColorValue = computed(() => {
   return isColorValueFun(props.clipboardOptions.content)
 })
 
-const isCodeValue = computed(() => {
-  return isCodeValueFun(props.clipboardOptions.content)
-})
+// const isCodeValue = computed(() => {
+//   return isCodeValueFun(props.clipboardOptions.content)
+// })
 
 const longTextLimit = () => {
   return configStore.getSetting.clipboard.longTextLimit
