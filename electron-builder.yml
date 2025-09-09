@@ -2,7 +2,7 @@ appId: com.electron.sclip
 productName: clipboard
 buildDependenciesFromSource: true
 npmRebuild: true
-compression: maximum
+# compression: maximum
 asar: true
 directories:
   buildResources: build
